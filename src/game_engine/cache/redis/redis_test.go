@@ -1,106 +1,95 @@
-// Copyright 2014 beego Author. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-package redis
+package main
 
 import (
-	"testing"
-	"time"
-
-	"github.com/garyburd/redigo/redis"
-
-	"github.com/astaxie/beego/cache"
+	"bytes"
+	"encoding/gob"
+	"fmt"
+	"game_engine/redis"
 )
 
-func TestRedisCache(t *testing.T) {
-	bm, err := cache.NewCache("redis", `{"conn": "127.0.0.1:6379"}`)
-	if err != nil {
-		t.Error("init err")
+type PlayerInfo struct { //玩家的基本信息，正常情况不会改变
+	ID        string //玩家的唯一ID
+	Name      string //玩家的名字
+	Gender    bool   //玩家的性别
+	WorldName string //玩家所在世界的名字
+	Gold      int
+}
+
+func (this *PlayerInfo) Save(redis *redis.Client) error {
+	buf := bytes.NewBuffer(nil)
+	enc := gob.NewEncoder(buf)
+	err := enc.Encode(this)
+	if err == nil {
+		err = redis.Set(this.ID, buf.Bytes())
 	}
-	if err = bm.Put("astaxie", 1, 10); err != nil {
-		t.Error("set Error", err)
-	}
-	if !bm.IsExist("astaxie") {
-		t.Error("check err")
+	return err
+}
+
+func LoadPlayer(redis *redis.Client, id string) *PlayerInfo {
+	data, err := redis.Get(id)
+	if err == nil {
+		playerInfo := new(PlayerInfo)
+		buf := bytes.NewBuffer(data)
+		dec := gob.NewDecoder(buf)
+		dec.Decode(playerInfo)
+		return playerInfo
 	}
 
-	time.Sleep(10 * time.Second)
+	return nil
+}
 
-	if bm.IsExist("astaxie") {
-		t.Error("check err")
-	}
-	if err = bm.Put("astaxie", 1, 10); err != nil {
-		t.Error("set Error", err)
-	}
+func DeletePlayerInfo(redis *redis.Client, id string) (bool, error) {
+	return redis.Del(id)
+}
 
-	if v, _ := redis.Int(bm.Get("astaxie"), err); v != 1 {
-		t.Error("get err")
-	}
+//序列化测试
+func (this *PlayerInfo) ZAdd(redis *redis.Client, key string, i float64) error {
 
-	if err = bm.Incr("astaxie"); err != nil {
-		t.Error("Incr Error", err)
+	buf := bytes.NewBuffer(nil)
+	enc := gob.NewEncoder(buf)
+	err := enc.Encode(this)
+	if err == nil {
+		_, err := redis.Zadd(key, buf.Bytes(), i)
+		return err
 	}
+	return nil
 
-	if v, _ := redis.Int(bm.Get("astaxie"), err); v != 2 {
-		t.Error("get err")
-	}
+}
 
-	if err = bm.Decr("astaxie"); err != nil {
-		t.Error("Decr Error", err)
-	}
+func DecodeItem(data []byte, item *PlayerInfo) {
+	buf := bytes.NewBuffer(data)
+	dec := gob.NewDecoder(buf)
+	dec.Decode(item)
+}
 
-	if v, _ := redis.Int(bm.Get("astaxie"), err); v != 1 {
-		t.Error("get err")
-	}
-	bm.Delete("astaxie")
-	if bm.IsExist("astaxie") {
-		t.Error("delete err")
-	}
+//排序
+func ZRange(redis *redis.Client, key string) {
+	//items, _ := redis.Zrangebyscore(key, 0, 100) //取出所有拍卖的物品
+	//items, _ := redis.Zrevrange(key, 0, -1)
+	items, _ := redis.ZMyGet(key, "0", "100", "2")
 
-	//test string
-	if err = bm.Put("astaxie", "author", 10); err != nil {
-		t.Error("set Error", err)
-	}
-	if !bm.IsExist("astaxie") {
-		t.Error("check err")
-	}
-
-	if v, _ := redis.String(bm.Get("astaxie"), err); v != "author" {
-		t.Error("get err")
+	fmt.Println("items.len = ", len(items), items)
+	player_info := make([]PlayerInfo, len(items))
+	for k, data := range items {
+		DecodeItem(data, &player_info[k])
+		fmt.Println("player_info[k].Gold = ", player_info[k].Gold, "player_info[k].ID = ", player_info[k].ID)
 	}
 
-	//test GetMulti
-	if err = bm.Put("astaxie1", "author1", 10); err != nil {
-		t.Error("set Error", err)
-	}
-	if !bm.IsExist("astaxie1") {
-		t.Error("check err")
-	}
+}
 
-	vv := bm.GetMulti([]string{"astaxie", "astaxie1"})
-	if len(vv) != 2 {
-		t.Error("GetMulti ERROR")
-	}
-	if v, _ := redis.String(vv[0], nil); v != "author" {
-		t.Error("GetMulti ERROR")
-	}
-	if v, _ := redis.String(vv[1], nil); v != "author1" {
-		t.Error("GetMulti ERROR")
-	}
+func main() {
+	redis := new(redis.Client)
+	ZRange(redis, "Market:super")
+	//pl := PlayerInfo{"114", "hjl", true, "worldName", 5}
+	//result := pl.ZAdd(redis, "Market:super", float64(pl.Gold))
+	//if result != nil {
+	//fmt.Println("result = ", result)
+	//}
 
-	// test clear all
-	if err = bm.ClearAll(); err != nil {
-		t.Error("clear all err")
-	}
+	//pl := LoadPlayer(redis, "111")
+	//fmt.Println("pl.ID = ", pl.ID, "pl.WorldName = ", pl.WorldName, "pl.Gold = ", pl.Gold, "pl.Exp = ", pl.Exp, "pl.GroupName = ", pl.GroupName)
+	//result, _ := DeletePlayerInfo(redis, "112")
+	//if result {
+	//fmt.Println("delete successfull")
+	//}
 }
