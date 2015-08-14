@@ -1,4 +1,4 @@
-package main
+package redis_test
 
 import (
 	"bytes"
@@ -77,6 +77,7 @@ func ZRange(redis *redis.Client, key string) {
 
 }
 
+/*
 func main() {
 	redis := new(redis.Client)
 	ZRange(redis, "Market:super")
@@ -93,3 +94,4 @@ func main() {
 	//fmt.Println("delete successfull")
 	//}
 }
+*/
