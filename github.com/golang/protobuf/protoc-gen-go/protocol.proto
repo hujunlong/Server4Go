@@ -1,0 +1,19 @@
+package protocol;
+
+message S2SSystem {
+	message Helloworld{
+		optional int32     id = 1;  // ID 
+		required string    str = 2;  // str 
+		required int32     opt = 3;  //optional field 
+	}
+
+	message QueryOrder {
+		optional int32     id = 1;  // ID 
+		optional string begin_time = 2;
+		optional string end_time = 3;
+	}
+	
+	optional QueryOrder my_queryorder = 1;
+	optional Helloworld my_helloworld = 2;
+	
+	}
