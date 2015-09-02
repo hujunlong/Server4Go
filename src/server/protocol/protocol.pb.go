@@ -21,54 +21,46 @@ var _ = proto.Marshal
 var _ = math.Inf
 
 type S2SSystem struct {
-	Mylogininfo      *S2SSystem_LoginInfo    `protobuf:"bytes,1,opt,name=mylogininfo" json:"mylogininfo,omitempty"`
-	Myregisterinfo   *S2SSystem_RegisterInfo `protobuf:"bytes,2,opt,name=myregisterinfo" json:"myregisterinfo,omitempty"`
-	Mychatmsg        *S2SSystem_ChatMsg      `protobuf:"bytes,3,opt,name=mychatmsg" json:"mychatmsg,omitempty"`
-	Resultinfo       *S2SSystem_ResultInfo   `protobuf:"bytes,4,opt,name=resultinfo" json:"resultinfo,omitempty"`
-	XXX_unrecognized []byte                  `json:"-"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *S2SSystem) Reset()         { *m = S2SSystem{} }
 func (m *S2SSystem) String() string { return proto.CompactTextString(m) }
 func (*S2SSystem) ProtoMessage()    {}
 
-func (m *S2SSystem) GetMylogininfo() *S2SSystem_LoginInfo {
-	if m != nil {
-		return m.Mylogininfo
-	}
-	return nil
+type S2SSystem_GetType struct {
+	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *S2SSystem) GetMyregisterinfo() *S2SSystem_RegisterInfo {
-	if m != nil {
-		return m.Myregisterinfo
-	}
-	return nil
-}
+func (m *S2SSystem_GetType) Reset()         { *m = S2SSystem_GetType{} }
+func (m *S2SSystem_GetType) String() string { return proto.CompactTextString(m) }
+func (*S2SSystem_GetType) ProtoMessage()    {}
 
-func (m *S2SSystem) GetMychatmsg() *S2SSystem_ChatMsg {
-	if m != nil {
-		return m.Mychatmsg
+func (m *S2SSystem_GetType) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
-	return nil
-}
-
-func (m *S2SSystem) GetResultinfo() *S2SSystem_ResultInfo {
-	if m != nil {
-		return m.Resultinfo
-	}
-	return nil
+	return 0
 }
 
 type S2SSystem_LoginInfo struct {
-	Name             *string `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Passworld        *string `protobuf:"bytes,2,req,name=passworld" json:"passworld,omitempty"`
+	Type             *int32  `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Name             *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Passworld        *string `protobuf:"bytes,3,opt,name=passworld" json:"passworld,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
 func (m *S2SSystem_LoginInfo) Reset()         { *m = S2SSystem_LoginInfo{} }
 func (m *S2SSystem_LoginInfo) String() string { return proto.CompactTextString(m) }
 func (*S2SSystem_LoginInfo) ProtoMessage()    {}
+
+func (m *S2SSystem_LoginInfo) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
 
 func (m *S2SSystem_LoginInfo) GetName() string {
 	if m != nil && m.Name != nil {
@@ -85,10 +77,11 @@ func (m *S2SSystem_LoginInfo) GetPassworld() string {
 }
 
 type S2SSystem_RegisterInfo struct {
-	Name             *string `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
-	Passworld        *string `protobuf:"bytes,2,req,name=passworld" json:"passworld,omitempty"`
-	Age              *int32  `protobuf:"varint,3,req,name=age" json:"age,omitempty"`
-	Sex              *int32  `protobuf:"varint,4,req,name=sex" json:"sex,omitempty"`
+	Type             *int32  `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Name             *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
+	Age              *int32  `protobuf:"varint,3,opt,name=age" json:"age,omitempty"`
+	Passworld        *string `protobuf:"bytes,4,opt,name=passworld" json:"passworld,omitempty"`
+	Sex              *int32  `protobuf:"varint,5,opt,name=sex" json:"sex,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
@@ -96,16 +89,16 @@ func (m *S2SSystem_RegisterInfo) Reset()         { *m = S2SSystem_RegisterInfo{}
 func (m *S2SSystem_RegisterInfo) String() string { return proto.CompactTextString(m) }
 func (*S2SSystem_RegisterInfo) ProtoMessage()    {}
 
+func (m *S2SSystem_RegisterInfo) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
+
 func (m *S2SSystem_RegisterInfo) GetName() string {
 	if m != nil && m.Name != nil {
 		return *m.Name
-	}
-	return ""
-}
-
-func (m *S2SSystem_RegisterInfo) GetPassworld() string {
-	if m != nil && m.Passworld != nil {
-		return *m.Passworld
 	}
 	return ""
 }
@@ -117,6 +110,13 @@ func (m *S2SSystem_RegisterInfo) GetAge() int32 {
 	return 0
 }
 
+func (m *S2SSystem_RegisterInfo) GetPassworld() string {
+	if m != nil && m.Passworld != nil {
+		return *m.Passworld
+	}
+	return ""
+}
+
 func (m *S2SSystem_RegisterInfo) GetSex() int32 {
 	if m != nil && m.Sex != nil {
 		return *m.Sex
@@ -124,38 +124,78 @@ func (m *S2SSystem_RegisterInfo) GetSex() int32 {
 	return 0
 }
 
-type S2SSystem_ChatMsg struct {
-	Playername       *string `protobuf:"bytes,1,req,name=playername" json:"playername,omitempty"`
-	Msg              *string `protobuf:"bytes,2,req,name=msg" json:"msg,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+type S2SSystem_Request struct {
+	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Result           *int32 `protobuf:"varint,2,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *S2SSystem_ChatMsg) Reset()         { *m = S2SSystem_ChatMsg{} }
-func (m *S2SSystem_ChatMsg) String() string { return proto.CompactTextString(m) }
-func (*S2SSystem_ChatMsg) ProtoMessage()    {}
+func (m *S2SSystem_Request) Reset()         { *m = S2SSystem_Request{} }
+func (m *S2SSystem_Request) String() string { return proto.CompactTextString(m) }
+func (*S2SSystem_Request) ProtoMessage()    {}
 
-func (m *S2SSystem_ChatMsg) GetPlayername() string {
-	if m != nil && m.Playername != nil {
-		return *m.Playername
+func (m *S2SSystem_Request) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
-	return ""
+	return 0
 }
 
-func (m *S2SSystem_ChatMsg) GetMsg() string {
-	if m != nil && m.Msg != nil {
-		return *m.Msg
+func (m *S2SSystem_Request) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
 	}
-	return ""
+	return 0
+}
+
+type S2SSystem_ResultChatMsg struct {
+	Type             []int32  `protobuf:"varint,1,rep,name=type" json:"type,omitempty"`
+	Playername       []string `protobuf:"bytes,2,rep,name=playername" json:"playername,omitempty"`
+	Msg              []string `protobuf:"bytes,3,rep,name=msg" json:"msg,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
+}
+
+func (m *S2SSystem_ResultChatMsg) Reset()         { *m = S2SSystem_ResultChatMsg{} }
+func (m *S2SSystem_ResultChatMsg) String() string { return proto.CompactTextString(m) }
+func (*S2SSystem_ResultChatMsg) ProtoMessage()    {}
+
+func (m *S2SSystem_ResultChatMsg) GetType() []int32 {
+	if m != nil {
+		return m.Type
+	}
+	return nil
+}
+
+func (m *S2SSystem_ResultChatMsg) GetPlayername() []string {
+	if m != nil {
+		return m.Playername
+	}
+	return nil
+}
+
+func (m *S2SSystem_ResultChatMsg) GetMsg() []string {
+	if m != nil {
+		return m.Msg
+	}
+	return nil
 }
 
 type S2SSystem_ResultInfo struct {
-	Result           *int32 `protobuf:"varint,1,req,name=result" json:"result,omitempty"`
+	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Result           *int32 `protobuf:"varint,2,opt,name=result" json:"result,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *S2SSystem_ResultInfo) Reset()         { *m = S2SSystem_ResultInfo{} }
 func (m *S2SSystem_ResultInfo) String() string { return proto.CompactTextString(m) }
 func (*S2SSystem_ResultInfo) ProtoMessage()    {}
+
+func (m *S2SSystem_ResultInfo) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
 
 func (m *S2SSystem_ResultInfo) GetResult() int32 {
 	if m != nil && m.Result != nil {

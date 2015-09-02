@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-func Login(logininfo_proto *protocol.S2SSystem_LoginInfo) int32 {
+func Login(logininfo_proto *protocol.S2SSystem_LoginInfo) (int32, *player.Player) {
 	player := new(player.Player)
 	data, err := global.Redis.Get("player:" + logininfo_proto.GetName())
 	if err == nil { //先根据name查询数据 在验证密码
@@ -19,14 +19,14 @@ func Login(logininfo_proto *protocol.S2SSystem_LoginInfo) int32 {
 		dec := gob.NewDecoder(buf)
 		dec.Decode(player)
 		if strings.EqualFold(logininfo_proto.GetPassworld(), player.Password) {
-			return global.SUCCESS
+			return global.LOGINSUCCESS, player
 		} else {
-			return global.PASSWDERROR
+			return global.PASSWDERROR, nil
 		}
 
 	}
 	fmt.Println(player.Info.Name, player.Info.Age, player.Money, player.Password)
-	return global.LOGINERROR
+	return global.LOGINERROR, nil
 }
 
 func Register(registerInfo_proto *protocol.S2SSystem_RegisterInfo) error {

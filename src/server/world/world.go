@@ -1,19 +1,18 @@
 package world
 
 import (
-	"game_engine/cache/redis"
-	"game_engine/logs"
+	"server/chat"
 	"server/player"
 )
 
-type Msg struct {
-	Name string
-	Info string
+type WorldMsg struct {
+	Players    map[string]*player.Player //世界内玩家指针 map
+	Money_rank []*player.Player          //财富排名
 }
 
-type World struct {
-	players    map[string]*player.Player //世界内玩家指针 map
-	redis      *redis.Client             //redis对象
-	money_rank []*player.Player          //财富排名
-	chat       []Msg                     //聊天记录
+var World *WorldMsg //全局世界的数据
+
+func Init() { //初始化world相关数据
+	chat.Init() //初始化聊天
+	World = &WorldMsg{make(map[string]*player.Player), make([]*player.Player, 100)}
 }
