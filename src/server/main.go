@@ -1,8 +1,9 @@
-package main
+//package main
 
+/*
 import (
 	"fmt"
-	"game_engine/protobuf/github.com/golang/protobuf/proto"
+	"github.com/golang/protobuf/proto"
 	"io"
 	"net"
 )
@@ -143,4 +144,18 @@ func main() {
 			}
 		}
 	}
+}
+*/
+
+package main
+
+import (
+	"github.com/game_engine/models"
+	_ "github.com/go-sql-driver/mysql"
+)
+
+func main() {
+	//models.ConnectDB()
+	models.Insert()
+	models.Add()
 }

@@ -1,8 +1,8 @@
 package global
 
 import (
-	"game_engine/cache/redis"
-	"game_engine/logs"
+	"github.com/game_engine/data/redis"
+	"github.com/game_engine/logs"
 )
 
 //用于全局

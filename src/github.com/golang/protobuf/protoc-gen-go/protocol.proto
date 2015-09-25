@@ -1,19 +1,39 @@
 package protocol;
 
 message S2SSystem {
-	message Helloworld{
-		optional int32     id = 1;  // ID 
-		required string    str = 2;  // str 
-		required int32     opt = 3;  //optional field 
+
+   
+	message GetType{
+		optional int32 type = 1;
+	}
+	
+	message LoginInfo{
+		optional int32 type = 1;  //type = 1
+		optional string   name = 2;  
+		optional string   passworld = 3;
 	}
 
-	message QueryOrder {
-		optional int32     id = 1;  // ID 
-		optional string begin_time = 2;
-		optional string end_time = 3;
+	message RegisterInfo {
+		optional int32 type = 1; //type = 2
+		optional string name = 2;
+		optional int32 age = 3;
+		optional string passworld = 4;
+		optional int32 sex = 5;
 	}
 	
-	optional QueryOrder my_queryorder = 1;
-	optional Helloworld my_helloworld = 2;
-	
+	message Request {
+	    optional int32 type = 1;//type = 3
+		optional int32 result = 2;
 	}
+
+	message ResultChatMsg {
+		repeated int32 type = 1; //type = 4
+		repeated string playername = 2;
+		repeated string msg = 3;
+	}
+	
+	message ResultInfo {
+		optional int32 type = 1;//type = 5
+		optional int32 result = 2;
+	}
+}
