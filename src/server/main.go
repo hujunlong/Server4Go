@@ -1,6 +1,5 @@
-//package main
+package main
 
-/*
 import (
 	"fmt"
 	"github.com/golang/protobuf/proto"
@@ -58,12 +57,12 @@ func Handler(conn net.Conn) {
 					player.Conn = &conn
 					world.World.Players[player.Info.Name] = player
 				}
-				result := new(protocol.S2SSystem_ResultInfo)
-				buff := int32(login_result)
-				var mytype int32
-				mytype = 5
-				result.Type = &mytype
-				result.Result = &buff
+
+				result := &protocol.S2SSystem_ResultInfo{
+					Type:   proto.Int32(protocol.Default_S2SSystem_ResultInfo_Type),
+					Result: proto.Int32(login_result),
+				}
+
 				global.Log.Trace("%s login rsult %d", login.GetName(), login_result)
 				encObj, _ := proto.Marshal(result)
 				conn.Write(encObj)
@@ -129,11 +128,6 @@ func Handler(conn net.Conn) {
 }
 
 func main() {
-
-	//初始化数据(redis log)
-	global.Init()
-	world.Init()
-
 	listener, err := net.Listen("tcp", "0.0.0.0:8087")
 	if !CheckError(err) {
 		for {
@@ -144,18 +138,4 @@ func main() {
 			}
 		}
 	}
-}
-*/
-
-package main
-
-import (
-	"github.com/game_engine/models"
-	_ "github.com/go-sql-driver/mysql"
-)
-
-func main() {
-	//models.ConnectDB()
-	models.Insert()
-	models.Add()
 }

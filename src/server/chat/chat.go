@@ -13,7 +13,7 @@ const (
 
 var ChatList []ChatMsg
 
-func Init() {
+func init() {
 	ChatList = make([]ChatMsg, 0)
 }
 

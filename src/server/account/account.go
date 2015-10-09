@@ -1,10 +1,9 @@
 package account
 
 import (
-	"bytes"
-	"encoding/gob"
 	"errors"
 	"fmt"
+	"github.com/game_engine/cache/redis"
 	"server/global"
 	"server/player"
 	"server/protocol"
@@ -13,19 +12,15 @@ import (
 
 func Login(logininfo_proto *protocol.S2SSystem_LoginInfo) (int32, *player.Player) {
 	player := new(player.Player)
-	data, err := global.Redis.Get("player:" + logininfo_proto.GetName())
-	if err == nil { //先根据name查询数据 在验证密码
-		buf := bytes.NewBuffer(data)
-		dec := gob.NewDecoder(buf)
-		dec.Decode(player)
+	err := redis.Find("player:"+logininfo_proto.GetName(), player)
+
+	if err == nil { //查到改数据
 		if strings.EqualFold(logininfo_proto.GetPassworld(), player.Password) {
 			return global.LOGINSUCCESS, player
 		} else {
 			return global.PASSWDERROR, nil
 		}
-
 	}
-	fmt.Println(player.Info.Name, player.Info.Age, player.Money, player.Password)
 	return global.LOGINERROR, nil
 }
 
@@ -33,12 +28,12 @@ func Register(registerInfo_proto *protocol.S2SSystem_RegisterInfo) error {
 	player := new(player.Player)
 
 	//查询玩家名字是否被占用
-	data, _ := global.Redis.Get("player:" + registerInfo_proto.GetName())
-	if data != nil {
+	err := redis.Find("player:"+registerInfo_proto.GetName(), player)
+	if err == nil {
 		return errors.New("same nick")
 	}
 	//玩家id 增加1 读取现在最大玩家数据
-	id, err := global.Redis.Incr("Register:MaxId")
+	id, err := redis.Incr("Register:MaxId")
 	if err != nil {
 		return err
 	}
@@ -54,11 +49,6 @@ func Register(registerInfo_proto *protocol.S2SSystem_RegisterInfo) error {
 	player.Conn = nil
 
 	//存储现在的玩家数据
-	buf := bytes.NewBuffer(nil)
-	enc := gob.NewEncoder(buf)
-	err = enc.Encode(player)
-	if err == nil {
-		err = global.Redis.Set("player:"+registerInfo_proto.GetName(), buf.Bytes())
-	}
+	redis.Add("player:"+registerInfo_proto.GetName(), player)
 	return err
 }

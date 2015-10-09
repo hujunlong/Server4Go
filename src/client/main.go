@@ -71,10 +71,11 @@ func ReciveResult(conn net.Conn, cn chan int) {
 func main() {
 
 	conn, _ := net.Dial("tcp", "127.0.0.1:8087")
-
+	
 	ch := make(chan int)
 	go ReciveResult(conn, ch)
 
+ 
 	for true {
 		if !ok {
 			fmt.Println("please enter nick:")
@@ -112,6 +113,22 @@ func main() {
 	}
 
 	<-ch
+ 
+	/*
+	loginInfo := &protocol.S2SSystem_RegisterInfo{
+				Type:      proto.Int32(2),
+				Name:      proto.String("bbbb"),
+				Age :	   proto.Int32(10),
+				Passworld: proto.String("12345678"),
+				Sex: proto.Int32(2),
+			}
+
+			//发送数据包
+			encObj, err := proto.Marshal(loginInfo)
+			CheckError(err)
+			fmt.Println(encObj)
+			conn.Write(encObj)
+	*/		
 	defer conn.Close()
 
 }

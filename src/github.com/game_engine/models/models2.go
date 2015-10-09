@@ -15,9 +15,7 @@ func init() {
 }
 
 func Add() {
-	o := orm.NewOrm()
 	user := new(User)
 	user.Name = "2010"
 	o.Insert(user)
-
 }

@@ -1,10 +1,8 @@
 package player
 
 import (
-	"bytes"
-	"encoding/gob"
 	"net"
-	"server/global"
+	"github.com/game_engine/cache/redis"
 )
 
 type PlayerInfo struct {
@@ -23,13 +21,9 @@ type Player struct {
 }
 
 func LoadPlayer(conn *net.Conn, id string) *Player { //读取玩家数据
-	data, err := global.Redis.Get(id)
+	playerInfo := new(Player)
+	err := redis.Find(id,playerInfo)
 	if err == nil {
-		playerInfo := new(Player)
-		buf := bytes.NewBuffer(data)
-		dec := gob.NewDecoder(buf)
-		dec.Decode(playerInfo)
-		playerInfo.Conn = conn //内存数据库中没存现在的连接 所以每次load必须获取现在连接
 		return playerInfo
 	}
 	return nil

@@ -1,16 +1,13 @@
 package global
 
 import (
-	"github.com/game_engine/data/redis"
 	"github.com/game_engine/logs"
 )
 
 //用于全局
-var Redis *redis.Client
 var Log *logs.BeeLogger
 
-func Init() {
-	Redis = new(redis.Client)   //内存数据
+func init() {
 	Log = logs.NewLogger(10000) //日志
 	Log.EnableFuncCallDepth(true)
 	Log.SetLogger("file", `{"filename":"game.log"}`)

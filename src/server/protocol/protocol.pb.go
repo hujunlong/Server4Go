@@ -45,7 +45,7 @@ func (m *S2SSystem_GetType) GetType() int32 {
 }
 
 type S2SSystem_LoginInfo struct {
-	Type             *int32  `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Type             *int32  `protobuf:"varint,1,opt,name=type,def=1" json:"type,omitempty"`
 	Name             *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
 	Passworld        *string `protobuf:"bytes,3,opt,name=passworld" json:"passworld,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
@@ -55,11 +55,13 @@ func (m *S2SSystem_LoginInfo) Reset()         { *m = S2SSystem_LoginInfo{} }
 func (m *S2SSystem_LoginInfo) String() string { return proto.CompactTextString(m) }
 func (*S2SSystem_LoginInfo) ProtoMessage()    {}
 
+const Default_S2SSystem_LoginInfo_Type int32 = 1
+
 func (m *S2SSystem_LoginInfo) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
-	return 0
+	return Default_S2SSystem_LoginInfo_Type
 }
 
 func (m *S2SSystem_LoginInfo) GetName() string {
@@ -77,7 +79,7 @@ func (m *S2SSystem_LoginInfo) GetPassworld() string {
 }
 
 type S2SSystem_RegisterInfo struct {
-	Type             *int32  `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Type             *int32  `protobuf:"varint,1,opt,name=type,def=2" json:"type,omitempty"`
 	Name             *string `protobuf:"bytes,2,opt,name=name" json:"name,omitempty"`
 	Age              *int32  `protobuf:"varint,3,opt,name=age" json:"age,omitempty"`
 	Passworld        *string `protobuf:"bytes,4,opt,name=passworld" json:"passworld,omitempty"`
@@ -89,11 +91,13 @@ func (m *S2SSystem_RegisterInfo) Reset()         { *m = S2SSystem_RegisterInfo{}
 func (m *S2SSystem_RegisterInfo) String() string { return proto.CompactTextString(m) }
 func (*S2SSystem_RegisterInfo) ProtoMessage()    {}
 
+const Default_S2SSystem_RegisterInfo_Type int32 = 2
+
 func (m *S2SSystem_RegisterInfo) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
-	return 0
+	return Default_S2SSystem_RegisterInfo_Type
 }
 
 func (m *S2SSystem_RegisterInfo) GetName() string {
@@ -125,7 +129,7 @@ func (m *S2SSystem_RegisterInfo) GetSex() int32 {
 }
 
 type S2SSystem_Request struct {
-	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Type             *int32 `protobuf:"varint,1,opt,name=type,def=3" json:"type,omitempty"`
 	Result           *int32 `protobuf:"varint,2,opt,name=result" json:"result,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
@@ -134,11 +138,13 @@ func (m *S2SSystem_Request) Reset()         { *m = S2SSystem_Request{} }
 func (m *S2SSystem_Request) String() string { return proto.CompactTextString(m) }
 func (*S2SSystem_Request) ProtoMessage()    {}
 
+const Default_S2SSystem_Request_Type int32 = 3
+
 func (m *S2SSystem_Request) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
-	return 0
+	return Default_S2SSystem_Request_Type
 }
 
 func (m *S2SSystem_Request) GetResult() int32 {
@@ -181,7 +187,7 @@ func (m *S2SSystem_ResultChatMsg) GetMsg() []string {
 }
 
 type S2SSystem_ResultInfo struct {
-	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Type             *int32 `protobuf:"varint,1,opt,name=type,def=5" json:"type,omitempty"`
 	Result           *int32 `protobuf:"varint,2,opt,name=result" json:"result,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
@@ -190,11 +196,13 @@ func (m *S2SSystem_ResultInfo) Reset()         { *m = S2SSystem_ResultInfo{} }
 func (m *S2SSystem_ResultInfo) String() string { return proto.CompactTextString(m) }
 func (*S2SSystem_ResultInfo) ProtoMessage()    {}
 
+const Default_S2SSystem_ResultInfo_Type int32 = 5
+
 func (m *S2SSystem_ResultInfo) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
-	return 0
+	return Default_S2SSystem_ResultInfo_Type
 }
 
 func (m *S2SSystem_ResultInfo) GetResult() int32 {

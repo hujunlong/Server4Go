@@ -1,7 +1,7 @@
 package world
 
 import (
-	"server/chat"
+	_ "server/chat"
 	"server/player"
 )
 
@@ -12,7 +12,6 @@ type WorldMsg struct {
 
 var World *WorldMsg //全局世界的数据
 
-func Init() { //初始化world相关数据
-	chat.Init() //初始化聊天
+func init() { //初始化world相关数据
 	World = &WorldMsg{make(map[string]*player.Player), make([]*player.Player, 100)}
 }
