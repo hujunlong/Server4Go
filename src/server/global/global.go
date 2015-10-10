@@ -6,7 +6,6 @@ import (
 
 //用于全局
 var Log *logs.BeeLogger
-
 func init() {
 	Log = logs.NewLogger(10000) //日志
 	Log.EnableFuncCallDepth(true)

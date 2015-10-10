@@ -42,7 +42,12 @@ func Find(key string, inter interface{}) error {
 	return err
 }
 
-func Incr(key string) (int64,error) {
-	id,err := redis_.Incr(key)
-	return id,err
+func Incr(key string) (int64, error) {
+	id, err := redis_.Incr(key)
+	return id, err
+}
+
+func Del(key string) (bool, error) {
+	ok, err := redis_.Del(key)
+	return ok, err
 }
