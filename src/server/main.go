@@ -127,18 +127,21 @@ func Handler(conn net.Conn) {
 
 }
 
+func myPrint() {
+	fmt.Println("hello world")
+}
+
 func main() {
-	/*
-		listener, err := net.Listen("tcp", "0.0.0.0:8087")
-		if !CheckError(err) {
-			for {
-				conn, err1 := listener.Accept()
-				if !CheckError(err1) {
-					fmt.Println(conn.RemoteAddr(), "connected")
-					go Handler(conn)
-				}
+
+	listener, err := net.Listen("tcp", "0.0.0.0:8087")
+	if !CheckError(err) {
+		for {
+			conn, err1 := listener.Accept()
+			if !CheckError(err1) {
+				fmt.Println(conn.RemoteAddr(), "connected")
+				go Handler(conn)
 			}
 		}
-	*/
+	}
 
 }
