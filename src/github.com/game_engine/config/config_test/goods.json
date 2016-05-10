@@ -1,1 +1,6 @@
-[{"id":1,"name":"单刀","discri":"一把单刀，很牛B","gold":20},{"id":2,"name":"长矛","discri":"一把长矛，很牛B","gold":30},{"id":3,"name":"弓箭","discri":"百步穿杨","gold":62}]
+[{"event_type":0,"per":1000,"event_type":1,"per":5000,"event_type":2,"per":5000,"event_type":3,"per":5000,"event_type":4,"per":500}]
+
+[{"event_type":0,"per":1000},{"event_type":1,"per":5000},{"event_type":2,"per":5000},{"event_type":3,"per":5000},{"event_type":4,"per":500}]
+
+
+[{"posID":1,"monsterID":2002,"posID":2,"monsterID":,"posID":3,"monsterID":2004,"posID":4,"monsterID":,"posID":5,"monsterID":,"posID":6,"monsterID":,"posID":7,"monsterID":,"posID":8,"monsterID":,"posID":9,"monsterID":}]

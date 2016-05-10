@@ -1,0 +1,301 @@
+package protocol;
+
+message Game {
+	
+	message PlayerInfo { //主角基础属性
+		optional int32 level = 1;//等级
+		optional int32 exp = 2;//经验
+		optional int32 hp = 3;//血量
+		optional int32 energy = 4;//当前体力 
+		optional int32 energy_max = 5;//体力上线 
+		optional int32 vip = 6;//vip
+		optional int32 gold = 7;//金币
+		optional int32 diamond = 8;//元宝
+		optional int32 power = 9;//战力
+		optional string nick = 10;//昵称
+		optional string signature = 11;//签名
+		repeated bool option = 12;//设置()
+		optional int32 sign_days = 13;//签到天数
+		optional int32 achievement_points = 14;//成就点数(待定)
+		optional int32 task_points = 15;//任务点数
+	}
+	
+	message HeroInfo { //hero基础属性
+		optional int32 level = 1;//等级
+		optional int32 exp = 2;//经验
+		optional int32 hp = 3;//血量
+		optional int32 power = 4;//战力
+		optional int32 star_level = 5;//星级
+		optional int32 step_level = 6;//阶级
+	}
+	
+	message Attribute {//属性
+		optional int32 key = 1;
+		optional int32 value = 2;
+		optional int32 group = 3;
+	}
+	
+	message HeroStruct {//英雄
+		 optional int32 hero_id = 1;//英雄id
+		 optional int32 hero_uid = 2;//英雄唯一标识
+		 optional HeroInfo hero_info = 3;//基础信息
+		 repeated Attribute attribute = 4;//属性 （装备 buff vip 成就）
+	}
+	
+	message PropStruct {//道具
+		 optional int32 prop_id = 1;//道具id
+		 optional int32 prop_uid = 2;//道具唯一标识
+		 optional int32 prop_count = 3;//道具数量
+	}
+		
+	message FormationStruct {//阵型
+		optional int32 type = 1;//(1竞技场，2副本，4挂机)
+		optional int32 hero_uid = 2;//英雄唯一标识
+		optional int32 pos = 3;//位置
+	}
+ 
+	message EquipInfo{
+		optional int32 id = 1;//装备
+		optional int32 uid = 2;//装备唯一id
+		optional int32 equip_level = 3;//装备等级
+		optional int32 strengthen_count = 4;//强化次数
+		optional int32 refine_count = 5;//精炼次数
+		optional int32 pos = 6;//位置(-1表示空)
+		optional int32 quality = 7;//品质
+	}
+	
+	message EquipStruct{
+		optional EquipInfo equip_info = 1;//装备基础
+		repeated Attribute attribute = 2;//动态属性(强化 品质)
+	}
+	
+	message StageBaseDrop {
+		optional int32 type = 1;//1主角经验  2金币 3装备 4道具 5奇遇 
+		optional int32 id = 2;//对应id (1主角经验  2金币 id为0)
+		optional int32 count = 3;//数量 
+	}
+	
+	message StageBossDrop {
+		repeated int32 conditions = 1;//条件（击杀XX个怪物 修炼XX小时/分钟 修炼中获得XX铜钱 修炼中获得XX经验）
+		
+	}
+	
+	message Stage { 
+		optional int32 type = 1;//状态 1副本 2挂机	
+		optional int32 state = 2;//状态 (-1 未通关  0解锁未通关 1 一星级通关 2二星通关 3三星通关)	
+		optional int32 stage_id = 3;//关卡id
+	}
+	
+	//pid = 1001	客户端发送注册角色信息
+	message RegisterRole {
+		optional int32 player_id = 1;//玩家的id 账号服务器返回的 player id用来验证是否合法
+		optional string nick = 2;//角色昵称
+		optional int32 hero_id = 3;//所选英雄id 配置表验证
+	}
+	
+	//pid = 1001 服务器返回 角色注册信息
+	message RegisterRoleResult{
+		optional int32 result = 1;//100：成功 101：失败 102:传入hero_id未找到相应配置
+	}
+	
+	//pid = 1002 获取角色信息
+	message GetRoleInfo{
+		optional int32 player_id = 1;
+	}
+
+	//pid = 1002 角色返回
+	message RoleInfoResult {
+		optional bool is_create = 1; //是否已经创建 如果false 客户的不需要读取下面数据
+		optional PlayerInfo player_info = 2;//角色相关结构
+		repeated FormationStruct formation_struct = 3;//阵型
+		repeated HeroStruct hero_struct = 4;//英雄相关
+		repeated PropStruct prop_struct = 5;//道具相关
+		repeated EquipStruct equip_struct = 6;//所有装备列表
+		repeated Stage copy_levels = 7;//副本开启的所有状态	
+		repeated Stage hangup_levels = 8;//挂机开启的所有状态
+	}
+	
+	//pid = 1003 关卡挑战
+	message WarMapStage {
+		optional int32 stage_id = 1;//关卡
+	}
+	
+	//pid = 1003 战斗是否允许 阵容(后期添加) 返回
+	message MapStageResult {
+		optional int32 result = 1;//(0：允许 1：前置地图未完成 2：体力不够)
+	}
+	
+	message Reward { //奖励 
+		optional int32 player_exp = 2;                  //角色经验
+		optional int32 player_gold = 3;                 //战斗金币
+		optional int32 hero_exp = 4;                    //战斗英雄经验
+		repeated EquipStruct equips = 5;//随机掉落的装备
+		repeated PropStruct props = 6;//随机掉落的道具
+	
+	}
+	
+	//pid = 1004 战斗结果客户的通知服务器
+	message WarMapNoteServer {
+		optional Stage stage = 1;//关卡
+	}
+	
+	//pid = 1004 战斗结果客户的通知服务器 result
+	message WarMapNoteServerResult{ 
+		optional Reward reward = 1;//战斗奖励结果 
+	}
+	
+	//pid = 1005 扫荡
+	message SweepMapStage {
+		optional int32 stage_id = 1;//关卡
+		optional int32 count = 2;//扫荡次数
+	}
+	
+	//pid = 1005 扫荡 result
+	message SweepMapStageResult {
+		optional int32 result = 1;//(0：允许 1：前置地图未完成 2：体力不够)
+		repeated Reward reward = 2;//战斗奖励结果
+	}
+	
+	
+	//pid = 1006 服务器主动通知客户端 背包中道具变化(such as:掉落时候 )
+	message Notice2CProp
+	{
+		optional int32 type = 1;//(1:添加 2:删除)
+		repeated PropStruct prop = 2;//道具
+	}
+	
+	//pid = 1008 服务器主动背包中装备变化通知客户端(such as:掉落时候 )1006类似
+	message Notice2CEquip
+	{
+		optional int32 type = 1;//(1:添加 2:删除)
+		repeated EquipStruct equip = 2;//道具
+	}
+	
+	//pid = 1009 玩家分解装备
+	message EquipOperation
+	{
+		repeated int32 uid = 1;//装备uid
+	}
+	
+	//pid = 1009 玩家操作背包中的装备 返回
+	message RopOperationResult
+	{
+		repeated PropStruct prop =1;//道具
+	} 
+
+	//pid = 1010 服务器通知客户端玩家基础属性变化 
+	message Notice2CRoleInfo
+	{
+		optional int32 level = 1;//等级
+		optional int32 exp = 2;//经验
+		optional int32 power = 3;//战力
+		optional int32 hp = 4;//血量
+	}
+	
+	//pid = 1011 钱变化
+	message Notice2CMoney {
+		optional int32 gold = 1;//金币
+		optional int32 diamond = 2;//元宝
+	}
+	
+	//pid = 1012 体力变化
+	message Notice2CEnergy {
+		optional int32 energy = 1;//当前体力 
+		optional int32 energy_max = 2;//体力上线 
+	}
+	
+	
+	//pid = 1013 关卡变化
+	message Notice2CheckPoint
+	{
+		optional Stage latest_checkpoint = 1;//最新关卡
+	}
+	
+	
+	//pid = 1014 离线挂机收益
+	message OffNotice2CGuaji 
+	{
+		optional int32 point_id = 1;//挂机关卡id
+		optional int32 gold = 2;//获取的金币
+		optional int32 exp = 3;//获取的经验
+		optional int32 guaji_time = 4;//挂机时间(秒)
+		optional int32 kill_npc_num = 5;//击杀XX个怪物
+	}
+	
+	//pid = 1015 在线挂机收益
+	message OnNotice2CGuaji 
+	{
+		optional int32 guaji_type = 1;//type (1 怪物事件 2开宝箱事件 3装备事件)
+		optional int32 npc_id = 2;//npc id
+		optional int32 gold = 3;//获取的金币
+		optional int32 exp = 4;//获取的经验
+		repeated EquipStruct equips = 5;//随机掉落的装备
+		repeated PropStruct props = 6;//随机掉落的道具
+		
+	}
+	
+	
+	message Conditions { //挂机事件
+		optional int32 type = 1;//101 击杀XX个怪物 102修炼XX小时/分钟 103 修炼中获得XX铜钱 104 修炼中获得XX经验
+		optional int32 count = 2; //对应数量
+		optional int32 cur_count = 3; //当前对应数量
+	}
+
+	
+	//pid = 1016 C2S 请求挂机信息
+	message getGuajiInfo {
+		optional int32 id = 1;//关卡id
+	}
+	
+	//pid = 1016 请求挂机 返回
+	message GuajiInfoResult {
+		repeated Conditions conditions = 1;//挂机对应事件
+	}
+	
+	
+	//pid = 1017 C2S boss 挑战
+	message ChallengeBoss {
+		optional int32 id = 1;//关卡id
+	}
+	
+	//pid = 1017 挑战 返回
+	message ChallengeBossResult {
+		//repeated FormationStruct formation_1 = 1;//队一(自己)
+		//repeated FormationStruct formation_2 = 2;//队二(其他)
+	}
+	
+	//pid = 1018 客户端通知服务器boss挑战结果
+	message C2SChallenge {
+		optional Stage stage = 1;//是否挑战成功boss
+	}
+	
+	//pid = 1018 服务器返回boss 奖励
+	message C2SChallengeResult {
+		repeated PropStruct prop_struct = 1;//道具
+		repeated EquipStruct equip_struct = 2;//装备
+	}
+	
+	//pid 1019 客户端通知服务器退出
+	message LoginOut {
+	}
+	
+	//pid = 1020 C2S 切换关卡
+	message ChangeGuajiInfo {
+		optional int32 id = 1;//关卡id
+	}
+	
+	//pid = 1020 C2S 切换关卡 result
+	message ChangeGuajiInfoResult {
+		optional bool is_ok = 1;
+	}
+	
+	//pid = 1021 快速战斗
+	message FastWar {
+		optional Stage stage = 1;//关卡
+	}
+	
+	//pid = 1021 快速战斗 result
+	message FastWarResult{ 
+		optional Reward reward = 1;//战斗奖励结果 
+	}
+}

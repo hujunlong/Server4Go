@@ -1,4 +1,4 @@
-package i18n
+package il8n
 
 import (
 	"bufio"
@@ -9,15 +9,20 @@ import (
 
 var (
 	path string
-	Data map[string]string
+	Data map[interface{}]interface{}
 )
 
 func init() {
-	Data = make(map[string]string)
+	Data = make(map[interface{}]interface{})
 	path = "server/global/locale.ini"
 }
 
 func add2Map(str string) {
+	str = strings.TrimSpace(str)
+	if strings.HasPrefix(str, "#") {
+		return
+	}
+
 	strs := strings.Split(str, "=")
 	if len(strs) == 2 {
 		key := strings.TrimSpace(strs[0]) //utf8 无 bom

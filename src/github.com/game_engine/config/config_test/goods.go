@@ -15,10 +15,7 @@ type goods struct {
 }
 
 func main() {
-	cnf, err := config.NewConfig("json", "goods.json")
-
-	ErrorMsg(err)
-	fmt.Println(cnf)
+	cnf, _ := config.NewConfig("json", "goods.json")
 
 	rootArray, _ := cnf.DIY("rootArray")
 	rootArrayCasted := rootArray.([]interface{})

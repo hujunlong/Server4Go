@@ -3,12 +3,18 @@ package redis
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 )
 
 var redis_ *Client
 
 func init() {
 	redis_ = new(Client)
+}
+
+type Role struct {
+	Name string
+	Gold int32
 }
 
 func Add(key string, inter interface{}) error {
@@ -18,6 +24,7 @@ func Add(key string, inter interface{}) error {
 	if err == nil {
 		err = redis_.Set(key, buf.Bytes())
 	}
+	fmt.Println("err:", err)
 	return err
 }
 
@@ -28,6 +35,7 @@ func Modify(key string, inter interface{}) error {
 	if err == nil {
 		err = redis_.Set(key, buf.Bytes())
 	}
+	fmt.Println("err:", err)
 	return err
 }
 
@@ -39,6 +47,7 @@ func Find(key string, inter interface{}) error {
 		dec := gob.NewDecoder(buf)
 		dec.Decode(inter)
 	}
+	fmt.Println("err:", err)
 	return err
 }
 
@@ -50,4 +59,9 @@ func Incr(key string) (int64, error) {
 func Del(key string) (bool, error) {
 	ok, err := redis_.Del(key)
 	return ok, err
+}
+
+func Exists(key string) (bool, error) {
+	result, err := redis_.Exists(key)
+	return result, err
 }

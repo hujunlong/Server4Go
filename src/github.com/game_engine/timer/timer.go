@@ -25,7 +25,8 @@ func findInputIsError(input [6]int) error {
 		leap_year = true
 	}
 
-	if input[1] == 2 {
+	switch input[1] {
+	case 2:
 		if leap_year {
 			if input[2] > 28 {
 				return errors.New("February, more than 28")
@@ -35,9 +36,7 @@ func findInputIsError(input [6]int) error {
 				return errors.New("February, more than 27")
 			}
 		}
-	}
-
-	if input[1] == 1 || input[1] == 3 || input[1] == 5 || input[1] == 7 || input[1] == 8 || input[1] == 10 || input[1] == 12 {
+	case 1, 3, 5, 7, 8, 10, 12:
 		if input[2] > 31 {
 			return errors.New("more than 31")
 		} else {
