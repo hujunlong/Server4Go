@@ -4,18 +4,14 @@ import (
 	"fmt"
 	"net"
 	"server/gameServer/game"
-	"server/share/global"
 	"server/share/protocol"
-	"strconv"
 
-	"github.com/game_engine/timer"
 	"github.com/golang/protobuf/proto"
 )
 
 var sys_config *game.SysConfig
 
 type Deal4C struct {
-	word      *game.World
 	server_id int32 //游戏服务器具体id编号
 }
 
@@ -24,12 +20,6 @@ func (this *Deal4C) Init() {
 	sys_config = new(game.SysConfig)
 	sys_config.Init()
 	this.server_id = sys_config.GameId
-
-	this.word = new(game.World)
-	this.word.Init()
-
-	//开启定时器
-	timer.CreateTimer(sys_config.DistanceTime, true, this.word.TimerDealOnlineGuaji)
 }
 
 func (this *Deal4C) Deal4Client(listener net.Listener) {
@@ -42,213 +32,244 @@ func (this *Deal4C) Deal4Client(listener net.Listener) {
 }
 
 func (this *Deal4C) Handler4C(conn net.Conn) {
-	defer conn.Close()
 
 	var player *game.Player //玩家对象的指针
+	var is_login bool = false
 
-	const MAXLEN = 1024
-	buf := make([]byte, MAXLEN)
+	defer func() {
+		if player != nil {
+			player.ExitGame()
+		}
+		fmt.Println("socket is close")
+		conn.Close()
+	}()
+
+	const MAXLEN = 10240
+	buff := make([]byte, MAXLEN)
+
 	for {
-
-		n, err := conn.Read(buf) //接收具体消息
+		n, err := conn.Read(buff) //接收具体消息
 		if err != nil {
 			return
 		}
 
-		if n > MAXLEN {
-			game.Log.Error("recive error n> MAXLEN")
+		if n > MAXLEN || n < 8 {
 			return
 		}
 
-		fmt.Println(buf[0:n])
-
 		//接收包头
-		_, head_pid := GetHead(buf)
-
-		//包体
-		switch head_pid {
-		case 1001: //注册
-			register := new(protocol.Game_RegisterRole)
-			if err := proto.Unmarshal(buf[8:n], register); err == nil {
-				player = new(game.Player)
-				player.Init()
-				result := player.RegisterRole(int64(register.GetPlayerId()+this.server_id*1000000), register.GetNick(), register.GetHeroId(), &conn)
-				result4C := &protocol.Game_RegisterRoleResult{
-					Result: proto.Int32(result),
-				}
-				encObj, _ := proto.Marshal(result4C)
-				fmt.Println("register:", encObj)
-				SendPackage(conn, 1001, encObj)
-
-				//加载保存于内存中
-				if global.REGISTERROLESUCCESS == result {
-					this.word.EnterWorld(player)
-				}
+		for n >= 8 {
+			body_len, head_pid := GetHead(buff[:8])
+			if int(body_len) > n {
+				return
 			}
+			buf := buff[:body_len]
+			buff = buff[body_len:]
+			n = n - int(body_len)
 
-		case 1002: //获取player基础属性
-			get_info := new(protocol.Game_GetRoleInfo)
-			if err := proto.Unmarshal(buf[8:n], get_info); err != nil {
+			//添加开关
+			if (head_pid > 1002) && !is_login {
 				return
 			}
 
-			//先查询world中是否存在该玩家 未查询到 就读取内存数据库
-			player_id_str := strconv.FormatInt(int64(get_info.GetPlayerId()+this.server_id*1000000), 10)
-			player = this.word.SearchPlayer(player_id_str)
-			if player == nil {
-				player = game.LoadPlayer(player_id_str)
-				if player != nil {
+			switch head_pid {
+
+			case 1001: //注册
+				register := new(protocol.Game_RegisterRole)
+				if err := proto.Unmarshal(buf[8:body_len], register); err == nil {
+
+					player = new(game.Player)
 					player.Init()
-				}
 
-			}
-
-			if player == nil {
-				fmt.Println("player_id_str not found id = ", player_id_str)
-				game.Log.Error("player_id_str not found id = %s", player_id_str)
-				return
-			}
-
-			//先判断是否创建角色
-			fmt.Println("create time:", player.CreateTime)
-			if player.CreateTime <= 0 {
-				var is_create bool = false
-				result4C := &protocol.Game_RoleInfoResult{
-					IsCreate: &is_create,
-				}
-
-				encObj, _ := proto.Marshal(result4C)
-				SendPackage(conn, 1002, encObj)
-
-			} else {
-				var is_create bool = true
-
-				//英雄列表
-				var HeroStruct_ []*protocol.Game_HeroStruct
-				for i := 0; i < len(player.Heros); i++ {
-					hero_struct := &protocol.Game_HeroStruct{
-						HeroId:  &player.Heros[i].Hero_Info.Hero_id,
-						HeroUid: &player.Heros[i].Hero_Info.Hero_uid,
-
-						HeroInfo: &protocol.Game_HeroInfo{
-							Level:     &player.Heros[i].Hero_Info.Level,
-							Hp:        &player.Heros[i].Hero_Info.Hp,
-							Power:     &player.Heros[i].Hero_Info.Power,
-							StarLevel: &player.Heros[i].Hero_Info.Star_level,
-							StepLevel: &player.Heros[i].Hero_Info.Step_level,
-						},
+					result := player.RegisterRole(int64(register.GetPlayerId()+this.server_id*1000000), register.GetNick(), register.GetHeroId(), &conn)
+					result4C := &protocol.Game_RegisterRoleResult{
+						Result: proto.Int32(result),
 					}
-					HeroStruct_ = append(HeroStruct_, hero_struct)
-					fmt.Println("player.Heros[i].Hero_Info.Hero_id:", player.Heros[i].Hero_Info.Hero_id)
+					encObj, _ := proto.Marshal(result4C)
+					SendPackage(conn, 1001, encObj)
 				}
 
-				//道具
-
-				//装备
-
-				//副本开启
-				var type_ int32 = 1
-				var copy_levels []*protocol.Game_Stage
-				for id_str, v := range player.Stage.Map_stage_pass {
-					copy_level := new(protocol.Game_Stage)
-					copy_level.Type = &type_
-					copy_level.State = &v
-					stage_id_32 := game.Str2Int32(id_str)
-					copy_level.StageId = &stage_id_32
-					copy_levels = append(copy_levels, copy_level)
+			case 1002: //获取player基础属性
+				get_info := new(protocol.Game_GetRoleInfo)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
 				}
-				//挂机
-				var type_guaji int32 = 2
-				var guaji_stages []*protocol.Game_Stage
-				for id_str, v := range player.Guaji_Stage.Guaji_Map_stage_pass {
-					guaji_stage := new(protocol.Game_Stage)
-					guaji_stage.Type = &type_guaji
-					guaji_stage.State = &v
-					stage_id_32 := game.Str2Int32(id_str)
-					guaji_stage.StageId = &stage_id_32
-					guaji_stages = append(guaji_stages, guaji_stage)
+				//内存数据库
+				is_login, player = player.Login(int64(get_info.GetPlayerId()+this.server_id*1000000), &conn)
+			case 1019: //玩家退出
+				player.ExitGame()
+
+			case 1003: //战斗准备进行关卡
+				get_info := new(protocol.Game_WarMapStage)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
 				}
 
-				result4C := &protocol.Game_RoleInfoResult{
-					IsCreate: &is_create,
-					PlayerInfo: &protocol.Game_PlayerInfo{
-						Level:     &player.Info.Level,
-						Exp:       &player.Info.Exp,
-						Hp:        &player.Info.Hp,
-						Energy:    &player.Info.Energy,
-						EnergyMax: &player.Info.EnergyMax,
-						Vip:       &player.Info.Vip,
-						Gold:      &player.Info.Gold,
-						Diamond:   &player.Info.Diamond,
-						Power:     &player.Info.Power,
-						Nick:      &player.Info.Nick,
-						Signature: &player.Info.Signature,
-						Option:    player.Info.Option,
-					},
-
-					HeroStruct:   HeroStruct_,
-					CopyLevels:   copy_levels,
-					HangupLevels: guaji_stages,
+				result := player.Stage.IsCanThroughMap(get_info.GetStageId(), player.Info.Energy, 1, 1)
+				result4C := &protocol.Game_MapStageResult{
+					Result: &result,
 				}
-
 				encObj, _ := proto.Marshal(result4C)
-				SendPackage(conn, 1002, encObj)
-			}
+				SendPackage(conn, 1003, encObj)
 
-		case 1019: //玩家退出
-			player.ExitGame()
+			case 1004: //战斗结果客户的通知服务器
+				get_info := new(protocol.Game_WarMapNoteServer)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				player.WarMapNoteServerResult(get_info.GetStage().GetState(), get_info.GetStage().GetStageId())
 
-		case 1003: //战斗准备进行关卡
-			get_info := new(protocol.Game_WarMapStage)
-			if err := proto.Unmarshal(buf[8:n], get_info); err != nil {
-				return
-			}
+			case 1005: //扫荡
+				get_info := new(protocol.Game_SweepMapStage)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
 
-			result := player.Stage.IsCanThroughMap(get_info.GetStageId(), player.Info.Energy, 1)
-			result4C := &protocol.Game_MapStageResult{
-				Result: &result,
-			}
-			encObj, _ := proto.Marshal(result4C)
-			SendPackage(conn, 1003, encObj)
+				player.SweepMapStageResult(get_info.GetStageId(), get_info.GetCount())
 
-		case 1004: //战斗结果客户的通知服务器
-			get_info := new(protocol.Game_WarMapNoteServer)
-			if err := proto.Unmarshal(buf[8:n], get_info); err != nil {
-				return
-			}
-			player.WarMapNoteServerResult(get_info.GetStage().GetState(), get_info.GetStage().GetStageId())
+			case 1015: //在线挂机
+				player.OnNotice2CGuaji()
+			case 1016: //挂机事件
+				get_info := new(protocol.GameGetGuajiInfo)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				result4C := player.Guaji_Stage.GuajiInfoResult(get_info.GetId())
+				if result4C != nil {
+					encObj, _ := proto.Marshal(result4C)
+					SendPackage(conn, 1016, encObj)
+				}
 
-		case 1005: //扫荡
-			get_info := new(protocol.Game_SweepMapStage)
-			if err := proto.Unmarshal(buf[8:n], get_info); err != nil {
-				return
-			}
-			player.SweepMapStageResult(get_info.GetStageId(), get_info.GetCount())
+			case 1017: //挑战boss的阵容信息
+				get_info := new(protocol.Game_ChallengeBoss)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				player.ChallengeBoss(get_info.GetId())
 
-		case 1016: //挂机事件
-			get_info := new(protocol.GameGetGuajiInfo)
-			if err := proto.Unmarshal(buf[8:n], get_info); err != nil {
-				return
-			}
-			result4C := player.Guaji_Stage.GuajiInfoResult(get_info.GetId())
-			if result4C != nil {
+			case 1018: //客户端通知服务器boss挑战结果
+				get_info := new(protocol.Game_C2SChallenge)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				player.C2SChallengeResult(get_info.Stage.GetState(), get_info.Stage.GetStageId())
+
+			case 1020: //切换挂机地方
+				get_info := new(protocol.Game_ChangeGuajiInfo)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				is_ok := player.Guaji_Stage.ChangeStage(get_info.GetId(), player.PlayerId)
+				result4C := &protocol.Game_ChangeGuajiInfoResult{
+					IsOk: &is_ok,
+				}
 				encObj, _ := proto.Marshal(result4C)
-				SendPackage(conn, 1016, encObj)
-			}
+				SendPackage(conn, 1020, encObj)
 
-		case 1017: //挑战boss
-			get_info := new(protocol.Game_ChallengeBoss)
-			if err := proto.Unmarshal(buf[8:n], get_info); err != nil {
-				return
-			}
+			case 1021: //快速战斗
+				get_info := new(protocol.Game_FastWar)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				result4C := player.Guaji_Stage.FastWar(get_info.GetStage().GetStageId())
+				encObj, _ := proto.Marshal(result4C)
+				SendPackage(conn, 1021, encObj)
 
-		case 1018: //客户端通知服务器boss挑战结果
-			get_info := new(protocol.Game_C2SChallenge)
-			if err := proto.Unmarshal(buf[8:n], get_info); err != nil {
-				return
+			case 1022: //获取玩家当前挂机列表
+				GuajiRoleInfos_ := player.Guaji_Stage.GetGuajiRoleListResult()
+				result4C := &protocol.Game_GetGuajiRoleListResult{
+					GuajiRoleInfos: GuajiRoleInfos_,
+				}
+				encObj, _ := proto.Marshal(result4C)
+				SendPackage(conn, 1022, encObj)
+
+			case 1023: //请求阵型
+				get_info := new(protocol.Game_GetGuajiRoleFormation)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				player.GetFomation(get_info.GetRoleId(), get_info.GetType())
+
+			case 1024: //英雄上阵 下阵
+				get_info := new(protocol.Game_HerosFormation)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				player.HerosFormation(get_info.GetType(), get_info.GetIsOn(), get_info.GetPosId(), get_info.GetHeroUid())
+
+			case 1025: //位置交换
+				get_info := new(protocol.Game_ChangeHerosFormation)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				player.ChangeHerosFormation(get_info.GetPosId_1(), get_info.GetPosId_2())
+
+			case 1026: //挑战玩家
+				get_info := new(protocol.Game_ChallengePlayer)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				player.ChallengePlayer(get_info.GetType(), get_info.GetRoleId())
+
+			case 1027: //使用某个道具
+				get_info := new(protocol.Game_UseProp)
+				if err := proto.Unmarshal(buf[8:body_len], get_info); err != nil {
+					return
+				}
+				result, props := player.Bag_Prop.Use(get_info.GetUid(), get_info.GetCount())
+				result4C := &protocol.Game_UsePropResult{
+					Result: &result,
+				}
+				encObj, _ := proto.Marshal(result4C)
+				SendPackage(conn, 1027, encObj)
+
+				if result == 0 { //0:ok 1:不存该道具id 2:道具总量少于请求数量
+					player.Notice2CProp(2, props) //道具删除
+				}
+
+			case 1029: //查看道具背包
+				result4C := new(protocol.Game_CheckPropBagResult)
+				var propStruct_s []*protocol.Game_PropStruct
+
+				for _, buff_v := range player.Bag_Prop.Props {
+					v := buff_v
+					propStruct := new(protocol.Game_PropStruct)
+					propStruct.PropUid = &v.Prop_uid
+					propStruct.PropId = &v.Prop_id
+					propStruct.PropCount = &v.Count
+					propStruct_s = append(propStruct_s, propStruct)
+				}
+
+				result4C.PropStruct = propStruct_s
+				encObj, _ := proto.Marshal(result4C)
+				SendPackage(conn, 1029, encObj)
+
+			case 1030: //查看装备背包
+				result4C := new(protocol.Game_CheckEquipBagResult)
+				var equipStruct_s []*protocol.Game_EquipStruct
+
+				for _, v_buff := range player.Bag_Equip.BagEquip {
+					v := v_buff
+					equipStruct := new(protocol.Game_EquipStruct)
+					EquipInfo := new(protocol.Game_EquipInfo)
+
+					EquipInfo.Id = &v.Equip_id
+					EquipInfo.Uid = &v.Equip_uid
+					EquipInfo.Pos = &v.Pos
+					EquipInfo.Quality = &v.Quality
+					EquipInfo.EquipLevel = &v.Equip_level
+					EquipInfo.StrengthenCount = &v.Strengthen_count
+					EquipInfo.RefineCount = &v.Refine_count
+
+					equipStruct.EquipInfo = EquipInfo
+					equipStruct_s = append(equipStruct_s, equipStruct)
+				}
+
+				result4C.EquipStruct = equipStruct_s
+				encObj, _ := proto.Marshal(result4C)
+				SendPackage(conn, 1030, encObj)
+			default:
 			}
-			player.C2SChallengeResult(get_info.Stage.GetState(), get_info.Stage.GetStageId())
-		default:
 		}
 	}
 }

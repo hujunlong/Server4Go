@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"strconv"
 )
 
 var redis_ *Client
@@ -12,56 +13,65 @@ func init() {
 	redis_ = new(Client)
 }
 
-type Role struct {
-	Name string
-	Gold int32
+func dealInterface(key interface{}) string {
+	var str string = ""
+
+	switch key.(type) {
+	case string:
+		str = key.(string)
+	case int32:
+		str = strconv.Itoa(int(key.(int32)))
+	case int:
+		str = strconv.Itoa(key.(int))
+	case int64:
+		str = strconv.FormatInt(key.(int64), 10)
+	default:
+	}
+
+	return str
 }
 
-func Add(key string, inter interface{}) error {
+func Modify(key interface{}, inter interface{}) error {
 	buf := bytes.NewBuffer(nil)
 	enc := gob.NewEncoder(buf)
 	err := enc.Encode(inter)
+
 	if err == nil {
-		err = redis_.Set(key, buf.Bytes())
+		str := dealInterface(key)
+		redis_.Set(str, buf.Bytes())
 	}
-	fmt.Println("err:", err)
 	return err
 }
 
-func Modify(key string, inter interface{}) error {
-	buf := bytes.NewBuffer(nil)
-	enc := gob.NewEncoder(buf)
-	err := enc.Encode(inter)
-	if err == nil {
-		err = redis_.Set(key, buf.Bytes())
-	}
-	fmt.Println("err:", err)
-	return err
-}
+func Find(key interface{}, inter interface{}) error {
 
-func Find(key string, inter interface{}) error {
-	data, err := redis_.Get(key)
+	str := dealInterface(key)
+	data, err := redis_.Get(str)
 
 	if err == nil {
 		buf := bytes.NewBuffer(data)
 		dec := gob.NewDecoder(buf)
 		dec.Decode(inter)
+	} else {
+		fmt.Println("err:", err)
 	}
-	fmt.Println("err:", err)
 	return err
 }
 
-func Incr(key string) (int64, error) {
-	id, err := redis_.Incr(key)
+func Incr(key interface{}) (int64, error) {
+	str := dealInterface(key)
+	id, err := redis_.Incr(str)
 	return id, err
 }
 
-func Del(key string) (bool, error) {
-	ok, err := redis_.Del(key)
+func Del(key interface{}) (bool, error) {
+	str := dealInterface(key)
+	ok, err := redis_.Del(str)
 	return ok, err
 }
 
-func Exists(key string) (bool, error) {
-	result, err := redis_.Exists(key)
+func Exists(key interface{}) (bool, error) {
+	str := dealInterface(key)
+	result, err := redis_.Exists(str)
 	return result, err
 }

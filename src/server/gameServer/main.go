@@ -30,7 +30,7 @@ func init() {
 
 func CheckError(err error) bool {
 	if err != nil {
-		fmt.Println("err:", err.Error())
+		fmt.Println("err2:", err.Error())
 		return false
 	}
 	return true
@@ -50,6 +50,7 @@ func SendPackage(conn net.Conn, pid int32, body []byte) {
 	msg := append(len_buf.Bytes(), pid_buf.Bytes()...)
 	msg2 := append(msg, body...)
 	conn.Write(msg2)
+	fmt.Println("pid=", pid, msg2)
 }
 
 func GetHead(buf []byte) (int32, int32) {
@@ -68,7 +69,6 @@ func GetHead(buf []byte) (int32, int32) {
 
 func main() {
 	//连接账号服务器
-
 	var err error
 	conn2a, err = net.Dial("tcp", sys_config.Server2AccountAddress)
 	if CheckError(err) {

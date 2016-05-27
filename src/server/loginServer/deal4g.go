@@ -40,7 +40,7 @@ func (this *Deal4G) Handler4Game(conn net.Conn) {
 		conn.Close()
 	}()
 
-	const MAXLEN = 1024
+	const MAXLEN = 2048
 	buf := make([]byte, MAXLEN)
 	for {
 		n, err := conn.Read(buf) //接收具体消息

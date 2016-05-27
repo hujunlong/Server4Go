@@ -22,6 +22,7 @@ const (
 	REGISTERROLESUCCESS = 100 //注册角色成功
 	REGISTERROLEERROR   = 101 //注册角色失败
 	CSVHEROIDEERROR     = 102 //CSV读取错误
+	ALREADYHAVE         = 103 //已经拥有
 )
 
 const (
@@ -32,4 +33,9 @@ const (
 	Type_gem          = 5 //英雄
 	Type_jewelry      = 6 //首饰
 	Type_magic_weapon = 7 //法宝
+)
+
+const (
+	Open_copy_stage  int32 = 1 //副本开启
+	Open_guaji_stage int32 = 2 //挂机开启
 )

@@ -28,7 +28,7 @@ func init() {
 
 func CheckError(err error) bool {
 	if err != nil {
-		fmt.Println("err:", err.Error())
+		fmt.Println("err3:", err.Error())
 		return false
 	}
 	return true

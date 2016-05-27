@@ -9,21 +9,68 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/game_engine/cache/redis"
 )
 
-var Csv *CsvConfig          //CSV 配置
-var Sys_config *SysConfig   //系统配置
-var Json_config *JsonConfig //json 配置
-var rand_ *rand.Rand        //随机数
+var Csv *CsvConfig                     //CSV 配置
+var Sys_config *SysConfig              //系统配置
+var Json_config *JsonConfig            //json 配置
+var rand_ *rand.Rand                   //随机数
+var Global_Uid int32 = 0               //uid
+var global_guaji_players *GuajiPlayers //全局的玩家进入关卡数据
+var word *World                        //全局玩家
+
+func createbeginUid() int32 {
+	t1 := int(time.Now().Unix())
+	fmt.Println(t1)
+	str1 := strconv.Itoa(t1)
+	str1 = str1[5:]
+
+	rand_ := rand.New(rand.NewSource(time.Now().UnixNano()))
+	t2 := int(rand_.Intn(100000000))
+	fmt.Println(t2)
+	str2 := strconv.Itoa(t2)
+
+	if len(str2) < 4 {
+		str2 = str2[:len(str2)]
+	} else {
+		str2 = str2[:4]
+	}
+
+	str3 := str1 + str2
+	result, _ := strconv.Atoi(str3)
+	return int32(result)
+}
 
 func init() {
+	//初始化随机数
 	rand_ = rand.New(rand.NewSource(time.Now().UnixNano()))
 
+	//csv初始化
 	Csv = new(CsvConfig)
 	Csv.Init()
 
+	//json初始化
 	Json_config = new(JsonConfig)
 	Json_config.Init()
+
+	//uid初始化
+	err := redis.Find("uid", &Global_Uid)
+	if err != nil {
+		Global_Uid = createbeginUid()
+		fmt.Println("Global_Uid", Global_Uid)
+	} else {
+		Global_Uid += 200 //解决宕机后Global_uid未存储
+	}
+
+	//world 初始化
+	word = new(World)
+	word.Init()
+
+	//各个关卡挂机玩家
+	global_guaji_players = new(GuajiPlayers)
+	global_guaji_players.Init()
 }
 
 func SendPackage(conn net.Conn, pid int32, body []byte) {
@@ -43,8 +90,8 @@ func SendPackage(conn net.Conn, pid int32, body []byte) {
 }
 
 func GetUid() int32 {
-	time_sec := time.Now().Unix()
-	return (int32(time_sec) + int32(rand_.Intn(9999999)))
+	Global_Uid = Global_Uid + 1
+	return Global_Uid
 }
 
 func Str2Int32(str string) int32 {
@@ -66,7 +113,7 @@ func Str2Int(str string) int {
 }
 
 func writeInfo(str string) {
-	fmt.Println("hahah", str)
+	//fmt.Println("hahah", str)
 	//Log.Error(str)
 }
 
@@ -75,14 +122,10 @@ func randGold(data int32) int32 {
 		return 10
 	}
 	index := Csv.property.index_value["102"]
-	data_str := Csv.property.simple_info_map["2009"][index]
-	data_int32 := Str2Int32(data_str)
+	data_float32 := Csv.property.simple_info_map[2009][index]
 
-	fmt.Println("data_int32:", data_int32, "data:", data)
-	var float_32 float32 = float32(data*data_int32) / 10000.0
-	fmt.Println("float_32:", float_32)
+	var float_32 float32 = float32(data) * data_float32 / 10000.0
 	rand_data := rand_.Int31n(int32(float_32))
-	fmt.Println("rand_data:", rand_data)
 	return data + rand_data
 }
 
@@ -91,7 +134,10 @@ func randGoodsNum(min int32, max int32) int32 {
 	if max < min {
 		return 0
 	}
-
+	if min == max {
+		return min
+	}
+	fmt.Println("randGoodsNum min max", min, max)
 	var num int32 = min
 	num += int32(rand_.Intn(int(max - min)))
 	return num

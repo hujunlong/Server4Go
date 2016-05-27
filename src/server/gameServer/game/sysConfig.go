@@ -14,7 +14,6 @@ import (
 )
 
 //全局性
-//var O orm.Ormer
 var Log *logs.BeeLogger
 
 type SysConfig struct {

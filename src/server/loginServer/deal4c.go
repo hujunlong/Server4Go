@@ -68,7 +68,7 @@ func (this *Deal4C) NoteGame(player_id int32, game_id int32) error {
 
 func (this *Deal4C) Handler4C(conn net.Conn) {
 	defer conn.Close()
-	const MAXLEN = 1024
+	const MAXLEN = 2048
 	buf := make([]byte, MAXLEN)
 
 	for {
@@ -112,7 +112,7 @@ func (this *Deal4C) Handler4C(conn net.Conn) {
 				if global.REGISTERSUCCESS == result {
 					err := this.NoteGame(player_id, game_id)
 					if err != nil {
-						account.Log.Error("err:", err)
+						account.Log.Error("err1:", err)
 					}
 					account.Log.Info("player_id = %d game_id=%d", player_id, game_id)
 				}

@@ -1,11 +1,10 @@
 package main
 
 import (
-	"fmt"
+	//"fmt"
 	"net"
 	"server/gameServer/game"
 	"server/share/protocol"
-	"strconv"
 	"sync"
 
 	"github.com/game_engine/cache/redis"
@@ -37,7 +36,6 @@ func (this *Deal2A) send2AccountMenber() {
 
 	encObj, _ := proto.Marshal(result2A)
 	SendPackage(conn2a, 101, encObj)
-	fmt.Println(encObj)
 
 }
 
@@ -59,11 +57,10 @@ func (this *Deal2A) Task(pid int32, buf []byte, n int) {
 func (this *Deal2A) NoteGame(player_id int64) {
 	this.deal2amx.Lock()
 	defer this.deal2amx.Unlock()
-	key := strconv.Itoa(int(player_id))
-	is_exists, _ := redis.Exists(key)
 
+	is_exists, _ := redis.Exists(player_id)
 	if !is_exists {
-		redis.Add(key, "")
+		redis.Modify(player_id, "")
 	}
 }
 

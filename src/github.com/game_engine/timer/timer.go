@@ -103,9 +103,9 @@ func dofunc(i interface{}, f func()) (int, error) {
 	case int:
 		second_ = i.(int)
 	case int32:
-		second_ = i.(int)
+		second_ = int(i.(int32))
 	case int64:
-		second_ = i.(int)
+		second_ = int(i.(int64))
 	case string:
 		var err error
 		second_, err = str2timeSecond(i.(string))

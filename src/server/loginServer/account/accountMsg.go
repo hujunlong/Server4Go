@@ -40,7 +40,7 @@ func (this *AccountInfo) Register(name string, pwd string, server_id int32) (int
 		user := LoginBase{PlayerId: db_count_max, PlayerName: name, PlayerPwd: pwd, ServerId: server_id, IsForBid: false}
 		this.redis_login_base.Servers = append(this.redis_login_base.Servers, server_id)
 		//内存数据库
-		err_redis_player := redis.Add("PlayerName:"+name, user)
+		err_redis_player := redis.Modify("PlayerName:"+name, user)
 		err_redis_count := redis.Modify("PlayerCount", db_count_max)
 
 		if err_redis_player == nil && err_redis_count == nil {
