@@ -1,6 +1,7 @@
 package account
 
 import (
+	"fmt"
 	"server/share/global"
 	"strings"
 	"sync"
@@ -45,10 +46,12 @@ func (this *AccountInfo) Register(name string, pwd string, server_id int32) (int
 
 		if err_redis_player == nil && err_redis_count == nil {
 			return global.REGISTERSUCCESS, db_count_max
+		} else {
+			fmt.Println("数据写入错误")
 		}
+	} else {
+		Log.Trace("name = %s pwd = %s have same SAMENICK", name, pwd)
 	}
-
-	Log.Trace("name = %s pwd = %s have same SAMENICK", name, pwd)
 	return global.SAMENICK, 0
 }
 

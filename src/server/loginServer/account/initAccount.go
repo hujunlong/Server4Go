@@ -12,14 +12,14 @@ import (
 
 //全局性
 var Log *logs.BeeLogger
-var db_count_max int32 //数据库最大注册人数
+var db_count_max int32
+
 type Config struct {
-	count              int32 //现在最大的playerid
 	account_log_max    int64
-	Listen4CAddress    string
-	Listen4GameAddress string
-	NewServerAddress   map[int32]string
-	AllServerAddress   map[int32]string
+	Listen4CAddress    string           //账号服务器地址
+	Listen4GameAddress string           //game服务器连接到账号服务器地址
+	NewServerAddress   map[int32]string //新开服务器列表
+	AllServerAddress   map[int32]string //总共服务器列表
 }
 
 func (this *Config) Init() {
@@ -29,6 +29,7 @@ func (this *Config) Init() {
 	this.readConfig()
 	this.openNewServerConfig()
 	this.openAllServerConfig()
+	getMaxId()
 }
 
 func (this *Config) setLog() {
@@ -79,15 +80,13 @@ func (this *Config) openAllServerConfig() {
 	}
 }
 
-func getMaxId() int32 {
-	var count int32 = 0
-	err := redis.Find("PlayerCount", count)
+func getMaxId() {
+	err := redis.Find("PlayerCount", db_count_max)
+	fmt.Println("数据库 getMaxId:", db_count_max)
 	if err != nil {
-		return 0
+		return
+	} else {
+		fmt.Println("数据库读取错误", err)
 	}
-	return count
-}
 
-func init() {
-	db_count_max = getMaxId()
 }

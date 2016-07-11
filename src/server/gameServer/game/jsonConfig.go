@@ -57,7 +57,8 @@ type GuajiPercentEquip_UnMarshal struct {
 }
 
 type GuajiPercentEquip struct {
-	Item0 []GuajiPercentEquip_UnMarshal
+	Item0          []GuajiPercentEquip_UnMarshal
+	QualityGroupID int32
 }
 
 type GuajiEventBox_UnMarshal struct {
@@ -117,7 +118,7 @@ type GuajiReward_UnMarshal_2 struct {
 
 type GuajiReward struct {
 	Item0 []GuajiReward_UnMarshal_1
-	Item1 []GuajiReward_UnMarshal_2
+	Quality int32
 }
 
 type GuajiEventPlayer_UnMarshal struct {
@@ -218,7 +219,7 @@ type JsonConfig struct {
 	//挂机
 	guaji_event         map[int32]GuajiEvent
 	guaji_event_monster map[int32]GuajiEventMonster
-	guaji_quality_equip map[int32]GuajiQualityEquip
+	//guaji_quality_equip map[int32]GuajiQualityEquip
 	guaji_percent_equip map[int32]GuajiPercentEquip
 	guaji_event_box     map[int32]GuajiEventBox
 	guaji_boss_info     map[int32]GuajiBossInfo
@@ -228,11 +229,11 @@ type JsonConfig struct {
 	guaji_event_player  map[int32]GuajiEventPlayer
 
 	//基础杂项
-	stage_monster_info  map[int32]StageMonsterInfo
-	stage_std_reward    map[int32]StageStdReward
-	stage_rand_reward   map[int32]StageRandReward
-	stage_equip_reward  map[int32]StageEquipReward
-	stage_equip_quality map[int32]StageEquipQuality
+	stage_monster_info map[int32]StageMonsterInfo
+	stage_std_reward   map[int32]StageStdReward
+	stage_rand_reward  map[int32]StageRandReward
+	stage_equip_reward map[int32]StageEquipReward
+	//stage_equip_quality map[int32]StageEquipQuality
 
 	//奇遇
 	qiyu_boss_jisha    map[int32]QiyuBossJiSha
@@ -255,12 +256,14 @@ func (this *JsonConfig) changeKey(inter interface{}) {
 			key_int, _ := strconv.Atoi(key)
 			this.guaji_event_monster[int32(key_int)] = v
 		}
-	case "map[string]game.GuajiQualityEquip":
-		this.guaji_quality_equip = make(map[int32]GuajiQualityEquip)
-		for key, v := range inter.(map[string]GuajiQualityEquip) {
-			key_int, _ := strconv.Atoi(key)
-			this.guaji_quality_equip[int32(key_int)] = v
-		}
+		/*
+			case "map[string]game.GuajiQualityEquip":
+				this.guaji_quality_equip = make(map[int32]GuajiQualityEquip)
+				for key, v := range inter.(map[string]GuajiQualityEquip) {
+					key_int, _ := strconv.Atoi(key)
+					this.guaji_quality_equip[int32(key_int)] = v
+				}
+		*/
 	case "map[string]game.GuajiPercentEquip":
 		this.guaji_percent_equip = make(map[int32]GuajiPercentEquip)
 		for key, v := range inter.(map[string]GuajiPercentEquip) {
@@ -327,12 +330,14 @@ func (this *JsonConfig) changeKey(inter interface{}) {
 			key_int, _ := strconv.Atoi(key)
 			this.stage_equip_reward[int32(key_int)] = v
 		}
-	case "map[string]game.StageEquipQuality":
-		this.stage_equip_quality = make(map[int32]StageEquipQuality)
-		for key, v := range inter.(map[string]StageEquipQuality) {
-			key_int, _ := strconv.Atoi(key)
-			this.stage_equip_quality[int32(key_int)] = v
-		}
+		/*
+			case "map[string]game.StageEquipQuality":
+				this.stage_equip_quality = make(map[int32]StageEquipQuality)
+				for key, v := range inter.(map[string]StageEquipQuality) {
+					key_int, _ := strconv.Atoi(key)
+					this.stage_equip_quality[int32(key_int)] = v
+				}
+		*/
 	case "map[string]game.QiyuBossJiSha":
 		this.qiyu_boss_jisha = make(map[int32]QiyuBossJiSha)
 		for key, v := range inter.(map[string]QiyuBossJiSha) {

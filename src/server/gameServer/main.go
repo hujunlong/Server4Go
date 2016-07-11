@@ -30,7 +30,7 @@ func init() {
 
 func CheckError(err error) bool {
 	if err != nil {
-		fmt.Println("err2:", err.Error())
+		fmt.Println("err:", err.Error())
 		return false
 	}
 	return true
@@ -73,7 +73,6 @@ func main() {
 	conn2a, err = net.Dial("tcp", sys_config.Server2AccountAddress)
 	if CheckError(err) {
 		//定时告诉账号服务器当前人数
-		deal_2a.send2AccountMenber()
 		timer.CreateTimer(sys_config.DistanceTime, true, deal_2a.send2AccountMenber)
 
 		//接收account服务器发来的消息

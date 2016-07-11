@@ -210,7 +210,7 @@ func dealjson(file_name string, save_name string) {
 	//遍历循环
 	for _, sheet := range xlFile.Sheets {
 		get_data_list := findCanWrite(sheet.Rows)
-
+		fmt.Println(get_data_list)
 		if len(get_data_list) > 0 {
 			f, _ = os.Create("result/" + sheet.Name + ".json") //创建文件
 			f.WriteString("{\n")
@@ -220,6 +220,7 @@ func dealjson(file_name string, save_name string) {
 
 		count := EffectiveNum(sheet.Rows)
 		distance_ints = nil
+		fmt.Println(get_data_list[1:])
 		getDistance(get_data_list[1:], sheet.Rows[1].Cells[1:])
 		var total_str string = ""
 		for i, row := range sheet.Rows[:count+2] {
@@ -260,6 +261,7 @@ func dealjson(file_name string, save_name string) {
 					} else { //数组
 						if j != len(distance_ints)-1 {
 							total_str += assemblyArray(j, same_count, buff_get_data_list[:v], row.Cells[:v]) + ","
+							fmt.Println(total_str)
 						} else { //最后一个值
 							if i != count+1 {
 								total_str += assemblyArray(j, same_count, buff_get_data_list[:v], row.Cells[:v]) + "},\n"

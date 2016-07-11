@@ -9,7 +9,26 @@ It is generated from these files:
 	Game.proto
 
 It has these top-level messages:
-	Game
+	Attribute
+	FightingAttr
+	Stage
+	RwardProp
+	PropStruct
+	EquipInfo
+	EquipStruct
+	TaskType
+	SubItem
+	TaskInfo
+	AchievementInfo
+	PlayerBase
+	StageBase
+	NoticeMsg
+	Formation
+	Hero
+	Goods
+	GM
+	Activity
+	Task
 */
 package protocol
 
@@ -20,15 +39,457 @@ import math "math"
 var _ = proto.Marshal
 var _ = math.Inf
 
-type Game struct {
+// 公共
+type Attribute struct {
+	Group            *int32   `protobuf:"varint,1,opt,name=group" json:"group,omitempty"`
+	Key              *int32   `protobuf:"varint,2,opt,name=key" json:"key,omitempty"`
+	Value            *float32 `protobuf:"fixed32,3,opt,name=value" json:"value,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
+}
+
+func (m *Attribute) Reset()         { *m = Attribute{} }
+func (m *Attribute) String() string { return proto.CompactTextString(m) }
+func (*Attribute) ProtoMessage()    {}
+
+func (m *Attribute) GetGroup() int32 {
+	if m != nil && m.Group != nil {
+		return *m.Group
+	}
+	return 0
+}
+
+func (m *Attribute) GetKey() int32 {
+	if m != nil && m.Key != nil {
+		return *m.Key
+	}
+	return 0
+}
+
+func (m *Attribute) GetValue() float32 {
+	if m != nil && m.Value != nil {
+		return *m.Value
+	}
+	return 0
+}
+
+type FightingAttr struct {
+	Id               *int32       `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Uid              *int32       `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
+	Pos              *int32       `protobuf:"varint,5,opt,name=pos" json:"pos,omitempty"`
+	Level            *int32       `protobuf:"varint,6,opt,name=level" json:"level,omitempty"`
+	Exp              *int32       `protobuf:"varint,7,opt,name=exp" json:"exp,omitempty"`
+	Power            *int32       `protobuf:"varint,8,opt,name=power" json:"power,omitempty"`
+	StarLevel        *int32       `protobuf:"varint,10,opt,name=star_level" json:"star_level,omitempty"`
+	StepLevel        *int32       `protobuf:"varint,11,opt,name=step_level" json:"step_level,omitempty"`
+	Skill            []int32      `protobuf:"varint,20,rep,name=skill" json:"skill,omitempty"`
+	Attribute        []*Attribute `protobuf:"bytes,21,rep,name=attribute" json:"attribute,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *FightingAttr) Reset()         { *m = FightingAttr{} }
+func (m *FightingAttr) String() string { return proto.CompactTextString(m) }
+func (*FightingAttr) ProtoMessage()    {}
+
+func (m *FightingAttr) GetId() int32 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
+}
+
+func (m *FightingAttr) GetUid() int32 {
+	if m != nil && m.Uid != nil {
+		return *m.Uid
+	}
+	return 0
+}
+
+func (m *FightingAttr) GetPos() int32 {
+	if m != nil && m.Pos != nil {
+		return *m.Pos
+	}
+	return 0
+}
+
+func (m *FightingAttr) GetLevel() int32 {
+	if m != nil && m.Level != nil {
+		return *m.Level
+	}
+	return 0
+}
+
+func (m *FightingAttr) GetExp() int32 {
+	if m != nil && m.Exp != nil {
+		return *m.Exp
+	}
+	return 0
+}
+
+func (m *FightingAttr) GetPower() int32 {
+	if m != nil && m.Power != nil {
+		return *m.Power
+	}
+	return 0
+}
+
+func (m *FightingAttr) GetStarLevel() int32 {
+	if m != nil && m.StarLevel != nil {
+		return *m.StarLevel
+	}
+	return 0
+}
+
+func (m *FightingAttr) GetStepLevel() int32 {
+	if m != nil && m.StepLevel != nil {
+		return *m.StepLevel
+	}
+	return 0
+}
+
+func (m *FightingAttr) GetSkill() []int32 {
+	if m != nil {
+		return m.Skill
+	}
+	return nil
+}
+
+func (m *FightingAttr) GetAttribute() []*Attribute {
+	if m != nil {
+		return m.Attribute
+	}
+	return nil
+}
+
+type Stage struct {
+	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	State            *int32 `protobuf:"varint,2,opt,name=state" json:"state,omitempty"`
+	StageId          *int32 `protobuf:"varint,3,opt,name=stage_id" json:"stage_id,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game) Reset()         { *m = Game{} }
-func (m *Game) String() string { return proto.CompactTextString(m) }
-func (*Game) ProtoMessage()    {}
+func (m *Stage) Reset()         { *m = Stage{} }
+func (m *Stage) String() string { return proto.CompactTextString(m) }
+func (*Stage) ProtoMessage()    {}
 
-type Game_PlayerInfo struct {
+func (m *Stage) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
+
+func (m *Stage) GetState() int32 {
+	if m != nil && m.State != nil {
+		return *m.State
+	}
+	return 0
+}
+
+func (m *Stage) GetStageId() int32 {
+	if m != nil && m.StageId != nil {
+		return *m.StageId
+	}
+	return 0
+}
+
+type RwardProp struct {
+	PropUid          *int32 `protobuf:"varint,1,opt,name=prop_uid" json:"prop_uid,omitempty"`
+	Num              *int32 `protobuf:"varint,2,opt,name=num" json:"num,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *RwardProp) Reset()         { *m = RwardProp{} }
+func (m *RwardProp) String() string { return proto.CompactTextString(m) }
+func (*RwardProp) ProtoMessage()    {}
+
+func (m *RwardProp) GetPropUid() int32 {
+	if m != nil && m.PropUid != nil {
+		return *m.PropUid
+	}
+	return 0
+}
+
+func (m *RwardProp) GetNum() int32 {
+	if m != nil && m.Num != nil {
+		return *m.Num
+	}
+	return 0
+}
+
+type PropStruct struct {
+	PropId           *int32 `protobuf:"varint,1,opt,name=prop_id" json:"prop_id,omitempty"`
+	PropUid          *int32 `protobuf:"varint,2,opt,name=prop_uid" json:"prop_uid,omitempty"`
+	PropCount        *int32 `protobuf:"varint,3,opt,name=prop_count" json:"prop_count,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *PropStruct) Reset()         { *m = PropStruct{} }
+func (m *PropStruct) String() string { return proto.CompactTextString(m) }
+func (*PropStruct) ProtoMessage()    {}
+
+func (m *PropStruct) GetPropId() int32 {
+	if m != nil && m.PropId != nil {
+		return *m.PropId
+	}
+	return 0
+}
+
+func (m *PropStruct) GetPropUid() int32 {
+	if m != nil && m.PropUid != nil {
+		return *m.PropUid
+	}
+	return 0
+}
+
+func (m *PropStruct) GetPropCount() int32 {
+	if m != nil && m.PropCount != nil {
+		return *m.PropCount
+	}
+	return 0
+}
+
+type EquipInfo struct {
+	Id               *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Uid              *int32 `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
+	EquipLevel       *int32 `protobuf:"varint,3,opt,name=equip_level" json:"equip_level,omitempty"`
+	StrengthenCount  *int32 `protobuf:"varint,4,opt,name=strengthen_count" json:"strengthen_count,omitempty"`
+	RefineCount      *int32 `protobuf:"varint,5,opt,name=refine_count" json:"refine_count,omitempty"`
+	Pos              *int32 `protobuf:"varint,6,opt,name=pos" json:"pos,omitempty"`
+	Quality          *int32 `protobuf:"varint,7,opt,name=quality" json:"quality,omitempty"`
+	RefineLevel      *int32 `protobuf:"varint,8,opt,name=refine_level" json:"refine_level,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *EquipInfo) Reset()         { *m = EquipInfo{} }
+func (m *EquipInfo) String() string { return proto.CompactTextString(m) }
+func (*EquipInfo) ProtoMessage()    {}
+
+func (m *EquipInfo) GetId() int32 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
+}
+
+func (m *EquipInfo) GetUid() int32 {
+	if m != nil && m.Uid != nil {
+		return *m.Uid
+	}
+	return 0
+}
+
+func (m *EquipInfo) GetEquipLevel() int32 {
+	if m != nil && m.EquipLevel != nil {
+		return *m.EquipLevel
+	}
+	return 0
+}
+
+func (m *EquipInfo) GetStrengthenCount() int32 {
+	if m != nil && m.StrengthenCount != nil {
+		return *m.StrengthenCount
+	}
+	return 0
+}
+
+func (m *EquipInfo) GetRefineCount() int32 {
+	if m != nil && m.RefineCount != nil {
+		return *m.RefineCount
+	}
+	return 0
+}
+
+func (m *EquipInfo) GetPos() int32 {
+	if m != nil && m.Pos != nil {
+		return *m.Pos
+	}
+	return 0
+}
+
+func (m *EquipInfo) GetQuality() int32 {
+	if m != nil && m.Quality != nil {
+		return *m.Quality
+	}
+	return 0
+}
+
+func (m *EquipInfo) GetRefineLevel() int32 {
+	if m != nil && m.RefineLevel != nil {
+		return *m.RefineLevel
+	}
+	return 0
+}
+
+type EquipStruct struct {
+	EquipInfo        *EquipInfo   `protobuf:"bytes,1,opt,name=equip_info" json:"equip_info,omitempty"`
+	Attribute        []*Attribute `protobuf:"bytes,2,rep,name=attribute" json:"attribute,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *EquipStruct) Reset()         { *m = EquipStruct{} }
+func (m *EquipStruct) String() string { return proto.CompactTextString(m) }
+func (*EquipStruct) ProtoMessage()    {}
+
+func (m *EquipStruct) GetEquipInfo() *EquipInfo {
+	if m != nil {
+		return m.EquipInfo
+	}
+	return nil
+}
+
+func (m *EquipStruct) GetAttribute() []*Attribute {
+	if m != nil {
+		return m.Attribute
+	}
+	return nil
+}
+
+type TaskType struct {
+	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Id               *int32 `protobuf:"varint,2,opt,name=id" json:"id,omitempty"`
+	QualityRef       *int32 `protobuf:"varint,3,opt,name=quality_ref" json:"quality_ref,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *TaskType) Reset()         { *m = TaskType{} }
+func (m *TaskType) String() string { return proto.CompactTextString(m) }
+func (*TaskType) ProtoMessage()    {}
+
+func (m *TaskType) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
+
+func (m *TaskType) GetId() int32 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
+}
+
+func (m *TaskType) GetQualityRef() int32 {
+	if m != nil && m.QualityRef != nil {
+		return *m.QualityRef
+	}
+	return 0
+}
+
+type SubItem struct {
+	TaskId           *int32 `protobuf:"varint,1,opt,name=task_id" json:"task_id,omitempty"`
+	CompleteProgress *int32 `protobuf:"varint,2,opt,name=complete_progress" json:"complete_progress,omitempty"`
+	CompleteTotal    *int32 `protobuf:"varint,3,opt,name=complete_total" json:"complete_total,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *SubItem) Reset()         { *m = SubItem{} }
+func (m *SubItem) String() string { return proto.CompactTextString(m) }
+func (*SubItem) ProtoMessage()    {}
+
+func (m *SubItem) GetTaskId() int32 {
+	if m != nil && m.TaskId != nil {
+		return *m.TaskId
+	}
+	return 0
+}
+
+func (m *SubItem) GetCompleteProgress() int32 {
+	if m != nil && m.CompleteProgress != nil {
+		return *m.CompleteProgress
+	}
+	return 0
+}
+
+func (m *SubItem) GetCompleteTotal() int32 {
+	if m != nil && m.CompleteTotal != nil {
+		return *m.CompleteTotal
+	}
+	return 0
+}
+
+type TaskInfo struct {
+	TypeInfo         *TaskType  `protobuf:"bytes,1,opt,name=type_info" json:"type_info,omitempty"`
+	Subitems         []*SubItem `protobuf:"bytes,2,rep,name=subitems" json:"subitems,omitempty"`
+	XXX_unrecognized []byte     `json:"-"`
+}
+
+func (m *TaskInfo) Reset()         { *m = TaskInfo{} }
+func (m *TaskInfo) String() string { return proto.CompactTextString(m) }
+func (*TaskInfo) ProtoMessage()    {}
+
+func (m *TaskInfo) GetTypeInfo() *TaskType {
+	if m != nil {
+		return m.TypeInfo
+	}
+	return nil
+}
+
+func (m *TaskInfo) GetSubitems() []*SubItem {
+	if m != nil {
+		return m.Subitems
+	}
+	return nil
+}
+
+type AchievementInfo struct {
+	Id               *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	Progress         *int32 `protobuf:"varint,2,opt,name=progress" json:"progress,omitempty"`
+	IsComplete       *bool  `protobuf:"varint,3,opt,name=is_complete" json:"is_complete,omitempty"`
+	IsReward         *bool  `protobuf:"varint,4,opt,name=is_reward" json:"is_reward,omitempty"`
+	CompleteTotal    *int32 `protobuf:"varint,5,opt,name=complete_total" json:"complete_total,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *AchievementInfo) Reset()         { *m = AchievementInfo{} }
+func (m *AchievementInfo) String() string { return proto.CompactTextString(m) }
+func (*AchievementInfo) ProtoMessage()    {}
+
+func (m *AchievementInfo) GetId() int32 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
+}
+
+func (m *AchievementInfo) GetProgress() int32 {
+	if m != nil && m.Progress != nil {
+		return *m.Progress
+	}
+	return 0
+}
+
+func (m *AchievementInfo) GetIsComplete() bool {
+	if m != nil && m.IsComplete != nil {
+		return *m.IsComplete
+	}
+	return false
+}
+
+func (m *AchievementInfo) GetIsReward() bool {
+	if m != nil && m.IsReward != nil {
+		return *m.IsReward
+	}
+	return false
+}
+
+func (m *AchievementInfo) GetCompleteTotal() int32 {
+	if m != nil && m.CompleteTotal != nil {
+		return *m.CompleteTotal
+	}
+	return 0
+}
+
+// 基础属性 1001 - 1100
+type PlayerBase struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *PlayerBase) Reset()         { *m = PlayerBase{} }
+func (m *PlayerBase) String() string { return proto.CompactTextString(m) }
+func (*PlayerBase) ProtoMessage()    {}
+
+type PlayerBase_PlayerInfo struct {
 	Level             *int32  `protobuf:"varint,1,opt,name=level" json:"level,omitempty"`
 	Exp               *int32  `protobuf:"varint,2,opt,name=exp" json:"exp,omitempty"`
 	Hp                *int32  `protobuf:"varint,3,opt,name=hp" json:"hp,omitempty"`
@@ -48,757 +509,149 @@ type Game_PlayerInfo struct {
 	XXX_unrecognized  []byte  `json:"-"`
 }
 
-func (m *Game_PlayerInfo) Reset()         { *m = Game_PlayerInfo{} }
-func (m *Game_PlayerInfo) String() string { return proto.CompactTextString(m) }
-func (*Game_PlayerInfo) ProtoMessage()    {}
+func (m *PlayerBase_PlayerInfo) Reset()         { *m = PlayerBase_PlayerInfo{} }
+func (m *PlayerBase_PlayerInfo) String() string { return proto.CompactTextString(m) }
+func (*PlayerBase_PlayerInfo) ProtoMessage()    {}
 
-func (m *Game_PlayerInfo) GetLevel() int32 {
+func (m *PlayerBase_PlayerInfo) GetLevel() int32 {
 	if m != nil && m.Level != nil {
 		return *m.Level
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetExp() int32 {
+func (m *PlayerBase_PlayerInfo) GetExp() int32 {
 	if m != nil && m.Exp != nil {
 		return *m.Exp
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetHp() int32 {
+func (m *PlayerBase_PlayerInfo) GetHp() int32 {
 	if m != nil && m.Hp != nil {
 		return *m.Hp
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetEnergy() int32 {
+func (m *PlayerBase_PlayerInfo) GetEnergy() int32 {
 	if m != nil && m.Energy != nil {
 		return *m.Energy
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetEnergyMax() int32 {
+func (m *PlayerBase_PlayerInfo) GetEnergyMax() int32 {
 	if m != nil && m.EnergyMax != nil {
 		return *m.EnergyMax
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetVip() int32 {
+func (m *PlayerBase_PlayerInfo) GetVip() int32 {
 	if m != nil && m.Vip != nil {
 		return *m.Vip
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetGold() int32 {
+func (m *PlayerBase_PlayerInfo) GetGold() int32 {
 	if m != nil && m.Gold != nil {
 		return *m.Gold
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetDiamond() int32 {
+func (m *PlayerBase_PlayerInfo) GetDiamond() int32 {
 	if m != nil && m.Diamond != nil {
 		return *m.Diamond
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetPower() int32 {
+func (m *PlayerBase_PlayerInfo) GetPower() int32 {
 	if m != nil && m.Power != nil {
 		return *m.Power
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetNick() string {
+func (m *PlayerBase_PlayerInfo) GetNick() string {
 	if m != nil && m.Nick != nil {
 		return *m.Nick
 	}
 	return ""
 }
 
-func (m *Game_PlayerInfo) GetSignature() string {
+func (m *PlayerBase_PlayerInfo) GetSignature() string {
 	if m != nil && m.Signature != nil {
 		return *m.Signature
 	}
 	return ""
 }
 
-func (m *Game_PlayerInfo) GetOption() []bool {
+func (m *PlayerBase_PlayerInfo) GetOption() []bool {
 	if m != nil {
 		return m.Option
 	}
 	return nil
 }
 
-func (m *Game_PlayerInfo) GetSignDays() int32 {
+func (m *PlayerBase_PlayerInfo) GetSignDays() int32 {
 	if m != nil && m.SignDays != nil {
 		return *m.SignDays
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetAchievementPoints() int32 {
+func (m *PlayerBase_PlayerInfo) GetAchievementPoints() int32 {
 	if m != nil && m.AchievementPoints != nil {
 		return *m.AchievementPoints
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetTaskPoints() int32 {
+func (m *PlayerBase_PlayerInfo) GetTaskPoints() int32 {
 	if m != nil && m.TaskPoints != nil {
 		return *m.TaskPoints
 	}
 	return 0
 }
 
-func (m *Game_PlayerInfo) GetRoleId() int64 {
+func (m *PlayerBase_PlayerInfo) GetRoleId() int64 {
 	if m != nil && m.RoleId != nil {
 		return *m.RoleId
 	}
 	return 0
 }
 
-type Game_HeroAttr struct {
-	Id               *int32            `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Uid              *int32            `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	Type             *int32            `protobuf:"varint,3,opt,name=type" json:"type,omitempty"`
-	Sex              *int32            `protobuf:"varint,4,opt,name=sex" json:"sex,omitempty"`
-	Pos              *int32            `protobuf:"varint,5,opt,name=pos" json:"pos,omitempty"`
-	Level            *int32            `protobuf:"varint,6,opt,name=level" json:"level,omitempty"`
-	Exp              *int32            `protobuf:"varint,7,opt,name=exp" json:"exp,omitempty"`
-	Hp               *int32            `protobuf:"varint,8,opt,name=hp" json:"hp,omitempty"`
-	StarLevel        *int32            `protobuf:"varint,10,opt,name=star_level" json:"star_level,omitempty"`
-	StepLevel        *int32            `protobuf:"varint,11,opt,name=step_level" json:"step_level,omitempty"`
-	Speed            *int32            `protobuf:"varint,12,opt,name=speed" json:"speed,omitempty"`
-	Zodiac           *int32            `protobuf:"varint,13,opt,name=zodiac" json:"zodiac,omitempty"`
-	Feature          *string           `protobuf:"bytes,14,opt,name=feature" json:"feature,omitempty"`
-	Name             *string           `protobuf:"bytes,15,opt,name=name" json:"name,omitempty"`
-	PhysicalAttack   *int32            `protobuf:"varint,16,opt,name=physical_attack" json:"physical_attack,omitempty"`
-	MagicAttack      *int32            `protobuf:"varint,17,opt,name=magic_attack" json:"magic_attack,omitempty"`
-	PhysicalDefense  *int32            `protobuf:"varint,18,opt,name=physical_defense" json:"physical_defense,omitempty"`
-	MagicDefense     *int32            `protobuf:"varint,19,opt,name=magic_defense" json:"magic_defense,omitempty"`
-	Skill            []int32           `protobuf:"varint,20,rep,name=skill" json:"skill,omitempty"`
-	Attribute        []*Game_Attribute `protobuf:"bytes,21,rep,name=attribute" json:"attribute,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *Game_HeroAttr) Reset()         { *m = Game_HeroAttr{} }
-func (m *Game_HeroAttr) String() string { return proto.CompactTextString(m) }
-func (*Game_HeroAttr) ProtoMessage()    {}
-
-func (m *Game_HeroAttr) GetId() int32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetUid() int32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetType() int32 {
-	if m != nil && m.Type != nil {
-		return *m.Type
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetSex() int32 {
-	if m != nil && m.Sex != nil {
-		return *m.Sex
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetPos() int32 {
-	if m != nil && m.Pos != nil {
-		return *m.Pos
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetLevel() int32 {
-	if m != nil && m.Level != nil {
-		return *m.Level
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetExp() int32 {
-	if m != nil && m.Exp != nil {
-		return *m.Exp
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetHp() int32 {
-	if m != nil && m.Hp != nil {
-		return *m.Hp
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetStarLevel() int32 {
-	if m != nil && m.StarLevel != nil {
-		return *m.StarLevel
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetStepLevel() int32 {
-	if m != nil && m.StepLevel != nil {
-		return *m.StepLevel
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetSpeed() int32 {
-	if m != nil && m.Speed != nil {
-		return *m.Speed
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetZodiac() int32 {
-	if m != nil && m.Zodiac != nil {
-		return *m.Zodiac
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetFeature() string {
-	if m != nil && m.Feature != nil {
-		return *m.Feature
-	}
-	return ""
-}
-
-func (m *Game_HeroAttr) GetName() string {
-	if m != nil && m.Name != nil {
-		return *m.Name
-	}
-	return ""
-}
-
-func (m *Game_HeroAttr) GetPhysicalAttack() int32 {
-	if m != nil && m.PhysicalAttack != nil {
-		return *m.PhysicalAttack
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetMagicAttack() int32 {
-	if m != nil && m.MagicAttack != nil {
-		return *m.MagicAttack
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetPhysicalDefense() int32 {
-	if m != nil && m.PhysicalDefense != nil {
-		return *m.PhysicalDefense
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetMagicDefense() int32 {
-	if m != nil && m.MagicDefense != nil {
-		return *m.MagicDefense
-	}
-	return 0
-}
-
-func (m *Game_HeroAttr) GetSkill() []int32 {
-	if m != nil {
-		return m.Skill
-	}
-	return nil
-}
-
-func (m *Game_HeroAttr) GetAttribute() []*Game_Attribute {
-	if m != nil {
-		return m.Attribute
-	}
-	return nil
-}
-
-type Game_Attribute struct {
-	Key              *int32   `protobuf:"varint,1,opt,name=key" json:"key,omitempty"`
-	Value            *float32 `protobuf:"fixed32,2,opt,name=value" json:"value,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
-}
-
-func (m *Game_Attribute) Reset()         { *m = Game_Attribute{} }
-func (m *Game_Attribute) String() string { return proto.CompactTextString(m) }
-func (*Game_Attribute) ProtoMessage()    {}
-
-func (m *Game_Attribute) GetKey() int32 {
-	if m != nil && m.Key != nil {
-		return *m.Key
-	}
-	return 0
-}
-
-func (m *Game_Attribute) GetValue() float32 {
-	if m != nil && m.Value != nil {
-		return *m.Value
-	}
-	return 0
-}
-
-type Game_HeroStruct struct {
-	HeroInfo         *Game_HeroAttr    `protobuf:"bytes,1,opt,name=hero_info" json:"hero_info,omitempty"`
-	Attribute        []*Game_Attribute `protobuf:"bytes,2,rep,name=attribute" json:"attribute,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *Game_HeroStruct) Reset()         { *m = Game_HeroStruct{} }
-func (m *Game_HeroStruct) String() string { return proto.CompactTextString(m) }
-func (*Game_HeroStruct) ProtoMessage()    {}
-
-func (m *Game_HeroStruct) GetHeroInfo() *Game_HeroAttr {
-	if m != nil {
-		return m.HeroInfo
-	}
-	return nil
-}
-
-func (m *Game_HeroStruct) GetAttribute() []*Game_Attribute {
-	if m != nil {
-		return m.Attribute
-	}
-	return nil
-}
-
-type Game_PropStruct struct {
-	PropId           *int32 `protobuf:"varint,1,opt,name=prop_id" json:"prop_id,omitempty"`
-	PropUid          *int32 `protobuf:"varint,2,opt,name=prop_uid" json:"prop_uid,omitempty"`
-	PropCount        *int32 `protobuf:"varint,3,opt,name=prop_count" json:"prop_count,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_PropStruct) Reset()         { *m = Game_PropStruct{} }
-func (m *Game_PropStruct) String() string { return proto.CompactTextString(m) }
-func (*Game_PropStruct) ProtoMessage()    {}
-
-func (m *Game_PropStruct) GetPropId() int32 {
-	if m != nil && m.PropId != nil {
-		return *m.PropId
-	}
-	return 0
-}
-
-func (m *Game_PropStruct) GetPropUid() int32 {
-	if m != nil && m.PropUid != nil {
-		return *m.PropUid
-	}
-	return 0
-}
-
-func (m *Game_PropStruct) GetPropCount() int32 {
-	if m != nil && m.PropCount != nil {
-		return *m.PropCount
-	}
-	return 0
-}
-
-type Game_FormationStruct struct {
-	HeroId           *int32 `protobuf:"varint,1,opt,name=hero_id" json:"hero_id,omitempty"`
-	HeroUid          *int32 `protobuf:"varint,2,opt,name=hero_uid" json:"hero_uid,omitempty"`
-	Pos              *int32 `protobuf:"varint,3,opt,name=pos" json:"pos,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_FormationStruct) Reset()         { *m = Game_FormationStruct{} }
-func (m *Game_FormationStruct) String() string { return proto.CompactTextString(m) }
-func (*Game_FormationStruct) ProtoMessage()    {}
-
-func (m *Game_FormationStruct) GetHeroId() int32 {
-	if m != nil && m.HeroId != nil {
-		return *m.HeroId
-	}
-	return 0
-}
-
-func (m *Game_FormationStruct) GetHeroUid() int32 {
-	if m != nil && m.HeroUid != nil {
-		return *m.HeroUid
-	}
-	return 0
-}
-
-func (m *Game_FormationStruct) GetPos() int32 {
-	if m != nil && m.Pos != nil {
-		return *m.Pos
-	}
-	return 0
-}
-
-type Game_EquipInfo struct {
-	Id               *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Uid              *int32 `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	EquipLevel       *int32 `protobuf:"varint,3,opt,name=equip_level" json:"equip_level,omitempty"`
-	StrengthenCount  *int32 `protobuf:"varint,4,opt,name=strengthen_count" json:"strengthen_count,omitempty"`
-	RefineCount      *int32 `protobuf:"varint,5,opt,name=refine_count" json:"refine_count,omitempty"`
-	Pos              *int32 `protobuf:"varint,6,opt,name=pos" json:"pos,omitempty"`
-	Quality          *int32 `protobuf:"varint,7,opt,name=quality" json:"quality,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_EquipInfo) Reset()         { *m = Game_EquipInfo{} }
-func (m *Game_EquipInfo) String() string { return proto.CompactTextString(m) }
-func (*Game_EquipInfo) ProtoMessage()    {}
-
-func (m *Game_EquipInfo) GetId() int32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *Game_EquipInfo) GetUid() int32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *Game_EquipInfo) GetEquipLevel() int32 {
-	if m != nil && m.EquipLevel != nil {
-		return *m.EquipLevel
-	}
-	return 0
-}
-
-func (m *Game_EquipInfo) GetStrengthenCount() int32 {
-	if m != nil && m.StrengthenCount != nil {
-		return *m.StrengthenCount
-	}
-	return 0
-}
-
-func (m *Game_EquipInfo) GetRefineCount() int32 {
-	if m != nil && m.RefineCount != nil {
-		return *m.RefineCount
-	}
-	return 0
-}
-
-func (m *Game_EquipInfo) GetPos() int32 {
-	if m != nil && m.Pos != nil {
-		return *m.Pos
-	}
-	return 0
-}
-
-func (m *Game_EquipInfo) GetQuality() int32 {
-	if m != nil && m.Quality != nil {
-		return *m.Quality
-	}
-	return 0
-}
-
-type Game_EquipStruct struct {
-	EquipInfo        *Game_EquipInfo   `protobuf:"bytes,1,opt,name=equip_info" json:"equip_info,omitempty"`
-	Attribute        []*Game_Attribute `protobuf:"bytes,2,rep,name=attribute" json:"attribute,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *Game_EquipStruct) Reset()         { *m = Game_EquipStruct{} }
-func (m *Game_EquipStruct) String() string { return proto.CompactTextString(m) }
-func (*Game_EquipStruct) ProtoMessage()    {}
-
-func (m *Game_EquipStruct) GetEquipInfo() *Game_EquipInfo {
-	if m != nil {
-		return m.EquipInfo
-	}
-	return nil
-}
-
-func (m *Game_EquipStruct) GetAttribute() []*Game_Attribute {
-	if m != nil {
-		return m.Attribute
-	}
-	return nil
-}
-
-type Game_MonsterAttr struct {
-	Id               *int32            `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
-	Uid              *int32            `protobuf:"varint,2,opt,name=uid" json:"uid,omitempty"`
-	Pos              *int32            `protobuf:"varint,3,opt,name=pos" json:"pos,omitempty"`
-	Level            *int32            `protobuf:"varint,4,opt,name=level" json:"level,omitempty"`
-	Hp               *int32            `protobuf:"varint,5,opt,name=hp" json:"hp,omitempty"`
-	PhysicalAttack   *float32          `protobuf:"fixed32,6,opt,name=physical_attack" json:"physical_attack,omitempty"`
-	MagicAttack      *float32          `protobuf:"fixed32,7,opt,name=magic_attack" json:"magic_attack,omitempty"`
-	PhysicalDefense  *float32          `protobuf:"fixed32,8,opt,name=physical_defense" json:"physical_defense,omitempty"`
-	MagicDefense     *float32          `protobuf:"fixed32,9,opt,name=magic_defense" json:"magic_defense,omitempty"`
-	Speed            *int32            `protobuf:"varint,10,opt,name=speed" json:"speed,omitempty"`
-	StepLevel        *int32            `protobuf:"varint,11,opt,name=step_level" json:"step_level,omitempty"`
-	StarLevel        *int32            `protobuf:"varint,12,opt,name=star_level" json:"star_level,omitempty"`
-	Name             *string           `protobuf:"bytes,13,opt,name=name" json:"name,omitempty"`
-	Feature          *string           `protobuf:"bytes,14,opt,name=feature" json:"feature,omitempty"`
-	Zodiac           *int32            `protobuf:"varint,15,opt,name=zodiac" json:"zodiac,omitempty"`
-	Sex              *int32            `protobuf:"varint,16,opt,name=sex" json:"sex,omitempty"`
-	Attribute        []*Game_Attribute `protobuf:"bytes,17,rep,name=attribute" json:"attribute,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *Game_MonsterAttr) Reset()         { *m = Game_MonsterAttr{} }
-func (m *Game_MonsterAttr) String() string { return proto.CompactTextString(m) }
-func (*Game_MonsterAttr) ProtoMessage()    {}
-
-func (m *Game_MonsterAttr) GetId() int32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetUid() int32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetPos() int32 {
-	if m != nil && m.Pos != nil {
-		return *m.Pos
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetLevel() int32 {
-	if m != nil && m.Level != nil {
-		return *m.Level
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetHp() int32 {
-	if m != nil && m.Hp != nil {
-		return *m.Hp
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetPhysicalAttack() float32 {
-	if m != nil && m.PhysicalAttack != nil {
-		return *m.PhysicalAttack
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetMagicAttack() float32 {
-	if m != nil && m.MagicAttack != nil {
-		return *m.MagicAttack
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetPhysicalDefense() float32 {
-	if m != nil && m.PhysicalDefense != nil {
-		return *m.PhysicalDefense
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetMagicDefense() float32 {
-	if m != nil && m.MagicDefense != nil {
-		return *m.MagicDefense
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetSpeed() int32 {
-	if m != nil && m.Speed != nil {
-		return *m.Speed
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetStepLevel() int32 {
-	if m != nil && m.StepLevel != nil {
-		return *m.StepLevel
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetStarLevel() int32 {
-	if m != nil && m.StarLevel != nil {
-		return *m.StarLevel
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetName() string {
-	if m != nil && m.Name != nil {
-		return *m.Name
-	}
-	return ""
-}
-
-func (m *Game_MonsterAttr) GetFeature() string {
-	if m != nil && m.Feature != nil {
-		return *m.Feature
-	}
-	return ""
-}
-
-func (m *Game_MonsterAttr) GetZodiac() int32 {
-	if m != nil && m.Zodiac != nil {
-		return *m.Zodiac
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetSex() int32 {
-	if m != nil && m.Sex != nil {
-		return *m.Sex
-	}
-	return 0
-}
-
-func (m *Game_MonsterAttr) GetAttribute() []*Game_Attribute {
-	if m != nil {
-		return m.Attribute
-	}
-	return nil
-}
-
-type Game_MonsterCombatTeam struct {
-	MonsterAttrs     []*Game_MonsterAttr `protobuf:"bytes,1,rep,name=monster_attrs" json:"monster_attrs,omitempty"`
-	XXX_unrecognized []byte              `json:"-"`
-}
-
-func (m *Game_MonsterCombatTeam) Reset()         { *m = Game_MonsterCombatTeam{} }
-func (m *Game_MonsterCombatTeam) String() string { return proto.CompactTextString(m) }
-func (*Game_MonsterCombatTeam) ProtoMessage()    {}
-
-func (m *Game_MonsterCombatTeam) GetMonsterAttrs() []*Game_MonsterAttr {
-	if m != nil {
-		return m.MonsterAttrs
-	}
-	return nil
-}
-
-type Game_StageBaseDrop struct {
-	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
-	Id               *int32 `protobuf:"varint,2,opt,name=id" json:"id,omitempty"`
-	Count            *int32 `protobuf:"varint,3,opt,name=count" json:"count,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_StageBaseDrop) Reset()         { *m = Game_StageBaseDrop{} }
-func (m *Game_StageBaseDrop) String() string { return proto.CompactTextString(m) }
-func (*Game_StageBaseDrop) ProtoMessage()    {}
-
-func (m *Game_StageBaseDrop) GetType() int32 {
-	if m != nil && m.Type != nil {
-		return *m.Type
-	}
-	return 0
-}
-
-func (m *Game_StageBaseDrop) GetId() int32 {
-	if m != nil && m.Id != nil {
-		return *m.Id
-	}
-	return 0
-}
-
-func (m *Game_StageBaseDrop) GetCount() int32 {
-	if m != nil && m.Count != nil {
-		return *m.Count
-	}
-	return 0
-}
-
-type Game_StageBossDrop struct {
-	Conditions       []int32 `protobuf:"varint,1,rep,name=conditions" json:"conditions,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
-}
-
-func (m *Game_StageBossDrop) Reset()         { *m = Game_StageBossDrop{} }
-func (m *Game_StageBossDrop) String() string { return proto.CompactTextString(m) }
-func (*Game_StageBossDrop) ProtoMessage()    {}
-
-func (m *Game_StageBossDrop) GetConditions() []int32 {
-	if m != nil {
-		return m.Conditions
-	}
-	return nil
-}
-
-type Game_Stage struct {
-	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
-	State            *int32 `protobuf:"varint,2,opt,name=state" json:"state,omitempty"`
-	StageId          *int32 `protobuf:"varint,3,opt,name=stage_id" json:"stage_id,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_Stage) Reset()         { *m = Game_Stage{} }
-func (m *Game_Stage) String() string { return proto.CompactTextString(m) }
-func (*Game_Stage) ProtoMessage()    {}
-
-func (m *Game_Stage) GetType() int32 {
-	if m != nil && m.Type != nil {
-		return *m.Type
-	}
-	return 0
-}
-
-func (m *Game_Stage) GetState() int32 {
-	if m != nil && m.State != nil {
-		return *m.State
-	}
-	return 0
-}
-
-func (m *Game_Stage) GetStageId() int32 {
-	if m != nil && m.StageId != nil {
-		return *m.StageId
-	}
-	return 0
-}
-
 // pid = 1001	客户端发送注册角色信息
-type Game_RegisterRole struct {
+type PlayerBase_RegisterRole struct {
 	PlayerId         *int32  `protobuf:"varint,1,opt,name=player_id" json:"player_id,omitempty"`
 	Nick             *string `protobuf:"bytes,2,opt,name=nick" json:"nick,omitempty"`
 	HeroId           *int32  `protobuf:"varint,3,opt,name=hero_id" json:"hero_id,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *Game_RegisterRole) Reset()         { *m = Game_RegisterRole{} }
-func (m *Game_RegisterRole) String() string { return proto.CompactTextString(m) }
-func (*Game_RegisterRole) ProtoMessage()    {}
+func (m *PlayerBase_RegisterRole) Reset()         { *m = PlayerBase_RegisterRole{} }
+func (m *PlayerBase_RegisterRole) String() string { return proto.CompactTextString(m) }
+func (*PlayerBase_RegisterRole) ProtoMessage()    {}
 
-func (m *Game_RegisterRole) GetPlayerId() int32 {
+func (m *PlayerBase_RegisterRole) GetPlayerId() int32 {
 	if m != nil && m.PlayerId != nil {
 		return *m.PlayerId
 	}
 	return 0
 }
 
-func (m *Game_RegisterRole) GetNick() string {
+func (m *PlayerBase_RegisterRole) GetNick() string {
 	if m != nil && m.Nick != nil {
 		return *m.Nick
 	}
 	return ""
 }
 
-func (m *Game_RegisterRole) GetHeroId() int32 {
+func (m *PlayerBase_RegisterRole) GetHeroId() int32 {
 	if m != nil && m.HeroId != nil {
 		return *m.HeroId
 	}
@@ -806,16 +659,16 @@ func (m *Game_RegisterRole) GetHeroId() int32 {
 }
 
 // pid = 1001 服务器返回 角色注册信息
-type Game_RegisterRoleResult struct {
+type PlayerBase_RegisterRoleResult struct {
 	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_RegisterRoleResult) Reset()         { *m = Game_RegisterRoleResult{} }
-func (m *Game_RegisterRoleResult) String() string { return proto.CompactTextString(m) }
-func (*Game_RegisterRoleResult) ProtoMessage()    {}
+func (m *PlayerBase_RegisterRoleResult) Reset()         { *m = PlayerBase_RegisterRoleResult{} }
+func (m *PlayerBase_RegisterRoleResult) String() string { return proto.CompactTextString(m) }
+func (*PlayerBase_RegisterRoleResult) ProtoMessage()    {}
 
-func (m *Game_RegisterRoleResult) GetResult() int32 {
+func (m *PlayerBase_RegisterRoleResult) GetResult() int32 {
 	if m != nil && m.Result != nil {
 		return *m.Result
 	}
@@ -823,16 +676,16 @@ func (m *Game_RegisterRoleResult) GetResult() int32 {
 }
 
 // pid = 1002 获取角色信息
-type Game_GetRoleInfo struct {
+type PlayerBase_GetRoleInfo struct {
 	PlayerId         *int32 `protobuf:"varint,1,opt,name=player_id" json:"player_id,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_GetRoleInfo) Reset()         { *m = Game_GetRoleInfo{} }
-func (m *Game_GetRoleInfo) String() string { return proto.CompactTextString(m) }
-func (*Game_GetRoleInfo) ProtoMessage()    {}
+func (m *PlayerBase_GetRoleInfo) Reset()         { *m = PlayerBase_GetRoleInfo{} }
+func (m *PlayerBase_GetRoleInfo) String() string { return proto.CompactTextString(m) }
+func (*PlayerBase_GetRoleInfo) ProtoMessage()    {}
 
-func (m *Game_GetRoleInfo) GetPlayerId() int32 {
+func (m *PlayerBase_GetRoleInfo) GetPlayerId() int32 {
 	if m != nil && m.PlayerId != nil {
 		return *m.PlayerId
 	}
@@ -840,815 +693,597 @@ func (m *Game_GetRoleInfo) GetPlayerId() int32 {
 }
 
 // pid = 1002 角色返回
-type Game_RoleInfoResult struct {
-	IsCreate   *bool            `protobuf:"varint,1,opt,name=is_create" json:"is_create,omitempty"`
-	PlayerInfo *Game_PlayerInfo `protobuf:"bytes,2,opt,name=player_info" json:"player_info,omitempty"`
-	// repeated FormationStruct formation_struct = 3;//阵型(发送1023)
-	HeroStruct []*Game_HeroStruct `protobuf:"bytes,4,rep,name=hero_struct" json:"hero_struct,omitempty"`
-	// repeated PropStruct prop_struct = 5;//道具相关
-	// repeated EquipStruct equip_struct = 6;//所有装备列表
-	CopyLevels       []*Game_Stage `protobuf:"bytes,7,rep,name=copy_levels" json:"copy_levels,omitempty"`
-	HangupLevels     []*Game_Stage `protobuf:"bytes,8,rep,name=hangup_levels" json:"hangup_levels,omitempty"`
-	ProfessionId     *int32        `protobuf:"varint,9,opt,name=profession_id" json:"profession_id,omitempty"`
-	XXX_unrecognized []byte        `json:"-"`
+type PlayerBase_RoleInfoResult struct {
+	IsCreate         *bool                  `protobuf:"varint,1,opt,name=is_create" json:"is_create,omitempty"`
+	PlayerInfo       *PlayerBase_PlayerInfo `protobuf:"bytes,2,opt,name=player_info" json:"player_info,omitempty"`
+	Heros            []*FightingAttr        `protobuf:"bytes,3,rep,name=heros" json:"heros,omitempty"`
+	Equips           []*EquipStruct         `protobuf:"bytes,4,rep,name=equips" json:"equips,omitempty"`
+	Props            []*PropStruct          `protobuf:"bytes,5,rep,name=props" json:"props,omitempty"`
+	CopyLevels       []*Stage               `protobuf:"bytes,7,rep,name=copy_levels" json:"copy_levels,omitempty"`
+	HangupLevels     []*Stage               `protobuf:"bytes,8,rep,name=hangup_levels" json:"hangup_levels,omitempty"`
+	ProfessionId     *int32                 `protobuf:"varint,9,opt,name=profession_id" json:"profession_id,omitempty"`
+	XXX_unrecognized []byte                 `json:"-"`
 }
 
-func (m *Game_RoleInfoResult) Reset()         { *m = Game_RoleInfoResult{} }
-func (m *Game_RoleInfoResult) String() string { return proto.CompactTextString(m) }
-func (*Game_RoleInfoResult) ProtoMessage()    {}
+func (m *PlayerBase_RoleInfoResult) Reset()         { *m = PlayerBase_RoleInfoResult{} }
+func (m *PlayerBase_RoleInfoResult) String() string { return proto.CompactTextString(m) }
+func (*PlayerBase_RoleInfoResult) ProtoMessage()    {}
 
-func (m *Game_RoleInfoResult) GetIsCreate() bool {
+func (m *PlayerBase_RoleInfoResult) GetIsCreate() bool {
 	if m != nil && m.IsCreate != nil {
 		return *m.IsCreate
 	}
 	return false
 }
 
-func (m *Game_RoleInfoResult) GetPlayerInfo() *Game_PlayerInfo {
+func (m *PlayerBase_RoleInfoResult) GetPlayerInfo() *PlayerBase_PlayerInfo {
 	if m != nil {
 		return m.PlayerInfo
 	}
 	return nil
 }
 
-func (m *Game_RoleInfoResult) GetHeroStruct() []*Game_HeroStruct {
+func (m *PlayerBase_RoleInfoResult) GetHeros() []*FightingAttr {
 	if m != nil {
-		return m.HeroStruct
+		return m.Heros
 	}
 	return nil
 }
 
-func (m *Game_RoleInfoResult) GetCopyLevels() []*Game_Stage {
+func (m *PlayerBase_RoleInfoResult) GetEquips() []*EquipStruct {
+	if m != nil {
+		return m.Equips
+	}
+	return nil
+}
+
+func (m *PlayerBase_RoleInfoResult) GetProps() []*PropStruct {
+	if m != nil {
+		return m.Props
+	}
+	return nil
+}
+
+func (m *PlayerBase_RoleInfoResult) GetCopyLevels() []*Stage {
 	if m != nil {
 		return m.CopyLevels
 	}
 	return nil
 }
 
-func (m *Game_RoleInfoResult) GetHangupLevels() []*Game_Stage {
+func (m *PlayerBase_RoleInfoResult) GetHangupLevels() []*Stage {
 	if m != nil {
 		return m.HangupLevels
 	}
 	return nil
 }
 
-func (m *Game_RoleInfoResult) GetProfessionId() int32 {
+func (m *PlayerBase_RoleInfoResult) GetProfessionId() int32 {
 	if m != nil && m.ProfessionId != nil {
 		return *m.ProfessionId
 	}
 	return 0
 }
 
-// pid = 1003 关卡挑战
-type Game_WarMapStage struct {
+// pid 1003 客户端通知服务器退出
+type PlayerBase_LoginOut struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *PlayerBase_LoginOut) Reset()         { *m = PlayerBase_LoginOut{} }
+func (m *PlayerBase_LoginOut) String() string { return proto.CompactTextString(m) }
+func (*PlayerBase_LoginOut) ProtoMessage()    {}
+
+// 关卡挂机相关 1101 - 1200
+type StageBase struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *StageBase) Reset()         { *m = StageBase{} }
+func (m *StageBase) String() string { return proto.CompactTextString(m) }
+func (*StageBase) ProtoMessage()    {}
+
+// pid = 1101 关卡挑战
+type StageBase_WarMapStage struct {
 	StageId          *int32 `protobuf:"varint,1,opt,name=stage_id" json:"stage_id,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_WarMapStage) Reset()         { *m = Game_WarMapStage{} }
-func (m *Game_WarMapStage) String() string { return proto.CompactTextString(m) }
-func (*Game_WarMapStage) ProtoMessage()    {}
+func (m *StageBase_WarMapStage) Reset()         { *m = StageBase_WarMapStage{} }
+func (m *StageBase_WarMapStage) String() string { return proto.CompactTextString(m) }
+func (*StageBase_WarMapStage) ProtoMessage()    {}
 
-func (m *Game_WarMapStage) GetStageId() int32 {
+func (m *StageBase_WarMapStage) GetStageId() int32 {
 	if m != nil && m.StageId != nil {
 		return *m.StageId
 	}
 	return 0
 }
 
-// pid = 1003 战斗是否允许 阵容(后期添加) 返回
-type Game_MapStageResult struct {
+// pid = 1101 战斗是否允许 阵容(后期添加) 返回
+type StageBase_MapStageResult struct {
 	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_MapStageResult) Reset()         { *m = Game_MapStageResult{} }
-func (m *Game_MapStageResult) String() string { return proto.CompactTextString(m) }
-func (*Game_MapStageResult) ProtoMessage()    {}
+func (m *StageBase_MapStageResult) Reset()         { *m = StageBase_MapStageResult{} }
+func (m *StageBase_MapStageResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_MapStageResult) ProtoMessage()    {}
 
-func (m *Game_MapStageResult) GetResult() int32 {
+func (m *StageBase_MapStageResult) GetResult() int32 {
 	if m != nil && m.Result != nil {
 		return *m.Result
 	}
 	return 0
 }
 
-type Game_RwardProp struct {
-	PropUid          *int32 `protobuf:"varint,1,opt,name=prop_uid" json:"prop_uid,omitempty"`
-	Num              *int32 `protobuf:"varint,2,opt,name=num" json:"num,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
+type StageBase_Reward struct {
+	PlayerExp        *int32       `protobuf:"varint,1,opt,name=player_exp" json:"player_exp,omitempty"`
+	PlayerGold       *int32       `protobuf:"varint,2,opt,name=player_gold" json:"player_gold,omitempty"`
+	HeroExp          *int32       `protobuf:"varint,3,opt,name=hero_exp" json:"hero_exp,omitempty"`
+	EquipUids        []int32      `protobuf:"varint,4,rep,name=equip_uids" json:"equip_uids,omitempty"`
+	PropUids         []*RwardProp `protobuf:"bytes,5,rep,name=prop_uids" json:"prop_uids,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
-func (m *Game_RwardProp) Reset()         { *m = Game_RwardProp{} }
-func (m *Game_RwardProp) String() string { return proto.CompactTextString(m) }
-func (*Game_RwardProp) ProtoMessage()    {}
+func (m *StageBase_Reward) Reset()         { *m = StageBase_Reward{} }
+func (m *StageBase_Reward) String() string { return proto.CompactTextString(m) }
+func (*StageBase_Reward) ProtoMessage()    {}
 
-func (m *Game_RwardProp) GetPropUid() int32 {
-	if m != nil && m.PropUid != nil {
-		return *m.PropUid
-	}
-	return 0
-}
-
-func (m *Game_RwardProp) GetNum() int32 {
-	if m != nil && m.Num != nil {
-		return *m.Num
-	}
-	return 0
-}
-
-type Game_Reward struct {
-	PlayerExp        *int32            `protobuf:"varint,1,opt,name=player_exp" json:"player_exp,omitempty"`
-	PlayerGold       *int32            `protobuf:"varint,2,opt,name=player_gold" json:"player_gold,omitempty"`
-	HeroExp          *int32            `protobuf:"varint,3,opt,name=hero_exp" json:"hero_exp,omitempty"`
-	EquipUids        []int32           `protobuf:"varint,4,rep,name=equip_uids" json:"equip_uids,omitempty"`
-	PropUids         []*Game_RwardProp `protobuf:"bytes,5,rep,name=prop_uids" json:"prop_uids,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *Game_Reward) Reset()         { *m = Game_Reward{} }
-func (m *Game_Reward) String() string { return proto.CompactTextString(m) }
-func (*Game_Reward) ProtoMessage()    {}
-
-func (m *Game_Reward) GetPlayerExp() int32 {
+func (m *StageBase_Reward) GetPlayerExp() int32 {
 	if m != nil && m.PlayerExp != nil {
 		return *m.PlayerExp
 	}
 	return 0
 }
 
-func (m *Game_Reward) GetPlayerGold() int32 {
+func (m *StageBase_Reward) GetPlayerGold() int32 {
 	if m != nil && m.PlayerGold != nil {
 		return *m.PlayerGold
 	}
 	return 0
 }
 
-func (m *Game_Reward) GetHeroExp() int32 {
+func (m *StageBase_Reward) GetHeroExp() int32 {
 	if m != nil && m.HeroExp != nil {
 		return *m.HeroExp
 	}
 	return 0
 }
 
-func (m *Game_Reward) GetEquipUids() []int32 {
+func (m *StageBase_Reward) GetEquipUids() []int32 {
 	if m != nil {
 		return m.EquipUids
 	}
 	return nil
 }
 
-func (m *Game_Reward) GetPropUids() []*Game_RwardProp {
+func (m *StageBase_Reward) GetPropUids() []*RwardProp {
 	if m != nil {
 		return m.PropUids
 	}
 	return nil
 }
 
-// pid = 1004 战斗结果客户的通知服务器
-type Game_WarMapNoteServer struct {
-	Stage            *Game_Stage `protobuf:"bytes,1,opt,name=stage" json:"stage,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
+// pid = 1102 战斗结果客户的通知服务器
+type StageBase_WarMapNoteServer struct {
+	Stage            *Stage `protobuf:"bytes,1,opt,name=stage" json:"stage,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_WarMapNoteServer) Reset()         { *m = Game_WarMapNoteServer{} }
-func (m *Game_WarMapNoteServer) String() string { return proto.CompactTextString(m) }
-func (*Game_WarMapNoteServer) ProtoMessage()    {}
+func (m *StageBase_WarMapNoteServer) Reset()         { *m = StageBase_WarMapNoteServer{} }
+func (m *StageBase_WarMapNoteServer) String() string { return proto.CompactTextString(m) }
+func (*StageBase_WarMapNoteServer) ProtoMessage()    {}
 
-func (m *Game_WarMapNoteServer) GetStage() *Game_Stage {
+func (m *StageBase_WarMapNoteServer) GetStage() *Stage {
 	if m != nil {
 		return m.Stage
 	}
 	return nil
 }
 
-// pid = 1004 战斗结果客户的通知服务器 result
-type Game_WarMapNoteServerResult struct {
-	Reward           *Game_Reward `protobuf:"bytes,1,opt,name=reward" json:"reward,omitempty"`
-	XXX_unrecognized []byte       `json:"-"`
+// pid = 1102 战斗结果客户的通知服务器 result
+type StageBase_WarMapNoteServerResult struct {
+	Reward           *StageBase_Reward `protobuf:"bytes,1,opt,name=reward" json:"reward,omitempty"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
-func (m *Game_WarMapNoteServerResult) Reset()         { *m = Game_WarMapNoteServerResult{} }
-func (m *Game_WarMapNoteServerResult) String() string { return proto.CompactTextString(m) }
-func (*Game_WarMapNoteServerResult) ProtoMessage()    {}
+func (m *StageBase_WarMapNoteServerResult) Reset()         { *m = StageBase_WarMapNoteServerResult{} }
+func (m *StageBase_WarMapNoteServerResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_WarMapNoteServerResult) ProtoMessage()    {}
 
-func (m *Game_WarMapNoteServerResult) GetReward() *Game_Reward {
+func (m *StageBase_WarMapNoteServerResult) GetReward() *StageBase_Reward {
 	if m != nil {
 		return m.Reward
 	}
 	return nil
 }
 
-// pid = 1005 扫荡
-type Game_SweepMapStage struct {
+// pid = 1103 扫荡
+type StageBase_SweepMapStage struct {
 	StageId          *int32 `protobuf:"varint,1,opt,name=stage_id" json:"stage_id,omitempty"`
 	Count            *int32 `protobuf:"varint,2,opt,name=count" json:"count,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_SweepMapStage) Reset()         { *m = Game_SweepMapStage{} }
-func (m *Game_SweepMapStage) String() string { return proto.CompactTextString(m) }
-func (*Game_SweepMapStage) ProtoMessage()    {}
+func (m *StageBase_SweepMapStage) Reset()         { *m = StageBase_SweepMapStage{} }
+func (m *StageBase_SweepMapStage) String() string { return proto.CompactTextString(m) }
+func (*StageBase_SweepMapStage) ProtoMessage()    {}
 
-func (m *Game_SweepMapStage) GetStageId() int32 {
+func (m *StageBase_SweepMapStage) GetStageId() int32 {
 	if m != nil && m.StageId != nil {
 		return *m.StageId
 	}
 	return 0
 }
 
-func (m *Game_SweepMapStage) GetCount() int32 {
+func (m *StageBase_SweepMapStage) GetCount() int32 {
 	if m != nil && m.Count != nil {
 		return *m.Count
 	}
 	return 0
 }
 
-// pid = 1005 扫荡 result
-type Game_SweepMapStageResult struct {
-	Result           *int32         `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
-	Reward           []*Game_Reward `protobuf:"bytes,2,rep,name=reward" json:"reward,omitempty"`
-	XXX_unrecognized []byte         `json:"-"`
+// pid = 1103 扫荡 result
+type StageBase_SweepMapStageResult struct {
+	Result           *int32              `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	Reward           []*StageBase_Reward `protobuf:"bytes,2,rep,name=reward" json:"reward,omitempty"`
+	XXX_unrecognized []byte              `json:"-"`
 }
 
-func (m *Game_SweepMapStageResult) Reset()         { *m = Game_SweepMapStageResult{} }
-func (m *Game_SweepMapStageResult) String() string { return proto.CompactTextString(m) }
-func (*Game_SweepMapStageResult) ProtoMessage()    {}
+func (m *StageBase_SweepMapStageResult) Reset()         { *m = StageBase_SweepMapStageResult{} }
+func (m *StageBase_SweepMapStageResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_SweepMapStageResult) ProtoMessage()    {}
 
-func (m *Game_SweepMapStageResult) GetResult() int32 {
+func (m *StageBase_SweepMapStageResult) GetResult() int32 {
 	if m != nil && m.Result != nil {
 		return *m.Result
 	}
 	return 0
 }
 
-func (m *Game_SweepMapStageResult) GetReward() []*Game_Reward {
+func (m *StageBase_SweepMapStageResult) GetReward() []*StageBase_Reward {
 	if m != nil {
 		return m.Reward
 	}
 	return nil
 }
 
-// pid = 1006 服务器主动通知客户端 背包中道具变化(such as:掉落时候 )
-type Game_Notice2CProp struct {
-	Type             *int32             `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
-	Prop             []*Game_PropStruct `protobuf:"bytes,2,rep,name=prop" json:"prop,omitempty"`
-	XXX_unrecognized []byte             `json:"-"`
-}
-
-func (m *Game_Notice2CProp) Reset()         { *m = Game_Notice2CProp{} }
-func (m *Game_Notice2CProp) String() string { return proto.CompactTextString(m) }
-func (*Game_Notice2CProp) ProtoMessage()    {}
-
-func (m *Game_Notice2CProp) GetType() int32 {
-	if m != nil && m.Type != nil {
-		return *m.Type
-	}
-	return 0
-}
-
-func (m *Game_Notice2CProp) GetProp() []*Game_PropStruct {
-	if m != nil {
-		return m.Prop
-	}
-	return nil
-}
-
-// pid = 1008 服务器主动背包中装备变化通知客户端(such as:掉落时候 )1006类似
-type Game_Notice2CEquip struct {
-	Type             *int32              `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
-	Equip            []*Game_EquipStruct `protobuf:"bytes,2,rep,name=equip" json:"equip,omitempty"`
-	XXX_unrecognized []byte              `json:"-"`
-}
-
-func (m *Game_Notice2CEquip) Reset()         { *m = Game_Notice2CEquip{} }
-func (m *Game_Notice2CEquip) String() string { return proto.CompactTextString(m) }
-func (*Game_Notice2CEquip) ProtoMessage()    {}
-
-func (m *Game_Notice2CEquip) GetType() int32 {
-	if m != nil && m.Type != nil {
-		return *m.Type
-	}
-	return 0
-}
-
-func (m *Game_Notice2CEquip) GetEquip() []*Game_EquipStruct {
-	if m != nil {
-		return m.Equip
-	}
-	return nil
-}
-
-// pid = 1010 服务器通知客户端玩家基础属性变化
-type Game_Notice2CRoleInfo struct {
-	Level            *int32 `protobuf:"varint,1,opt,name=level" json:"level,omitempty"`
-	Exp              *int32 `protobuf:"varint,2,opt,name=exp" json:"exp,omitempty"`
-	Power            *int32 `protobuf:"varint,3,opt,name=power" json:"power,omitempty"`
-	Hp               *int32 `protobuf:"varint,4,opt,name=hp" json:"hp,omitempty"`
+// pid = 1104 在线挂机收益c2s
+type StageBase_C2SOnlineGuaji struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_Notice2CRoleInfo) Reset()         { *m = Game_Notice2CRoleInfo{} }
-func (m *Game_Notice2CRoleInfo) String() string { return proto.CompactTextString(m) }
-func (*Game_Notice2CRoleInfo) ProtoMessage()    {}
+func (m *StageBase_C2SOnlineGuaji) Reset()         { *m = StageBase_C2SOnlineGuaji{} }
+func (m *StageBase_C2SOnlineGuaji) String() string { return proto.CompactTextString(m) }
+func (*StageBase_C2SOnlineGuaji) ProtoMessage()    {}
 
-func (m *Game_Notice2CRoleInfo) GetLevel() int32 {
-	if m != nil && m.Level != nil {
-		return *m.Level
-	}
-	return 0
+// pid = 1104 在线挂机收益 result
+type StageBase_OnNotice2CGuaji struct {
+	GuajiType        *int32       `protobuf:"varint,1,opt,name=guaji_type" json:"guaji_type,omitempty"`
+	NpcId            *int32       `protobuf:"varint,2,opt,name=npc_id" json:"npc_id,omitempty"`
+	Gold             *int32       `protobuf:"varint,3,opt,name=gold" json:"gold,omitempty"`
+	Exp              *int32       `protobuf:"varint,4,opt,name=exp" json:"exp,omitempty"`
+	EquipUids        []int32      `protobuf:"varint,5,rep,name=equip_uids" json:"equip_uids,omitempty"`
+	PropUids         []*RwardProp `protobuf:"bytes,6,rep,name=prop_uids" json:"prop_uids,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
-func (m *Game_Notice2CRoleInfo) GetExp() int32 {
-	if m != nil && m.Exp != nil {
-		return *m.Exp
-	}
-	return 0
-}
+func (m *StageBase_OnNotice2CGuaji) Reset()         { *m = StageBase_OnNotice2CGuaji{} }
+func (m *StageBase_OnNotice2CGuaji) String() string { return proto.CompactTextString(m) }
+func (*StageBase_OnNotice2CGuaji) ProtoMessage()    {}
 
-func (m *Game_Notice2CRoleInfo) GetPower() int32 {
-	if m != nil && m.Power != nil {
-		return *m.Power
-	}
-	return 0
-}
-
-func (m *Game_Notice2CRoleInfo) GetHp() int32 {
-	if m != nil && m.Hp != nil {
-		return *m.Hp
-	}
-	return 0
-}
-
-// pid = 1011 钱变化
-type Game_Notice2CMoney struct {
-	Gold             *int32 `protobuf:"varint,1,opt,name=gold" json:"gold,omitempty"`
-	Diamond          *int32 `protobuf:"varint,2,opt,name=diamond" json:"diamond,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_Notice2CMoney) Reset()         { *m = Game_Notice2CMoney{} }
-func (m *Game_Notice2CMoney) String() string { return proto.CompactTextString(m) }
-func (*Game_Notice2CMoney) ProtoMessage()    {}
-
-func (m *Game_Notice2CMoney) GetGold() int32 {
-	if m != nil && m.Gold != nil {
-		return *m.Gold
-	}
-	return 0
-}
-
-func (m *Game_Notice2CMoney) GetDiamond() int32 {
-	if m != nil && m.Diamond != nil {
-		return *m.Diamond
-	}
-	return 0
-}
-
-// pid = 1012 体力变化
-type Game_Notice2CEnergy struct {
-	Energy           *int32 `protobuf:"varint,1,opt,name=energy" json:"energy,omitempty"`
-	EnergyMax        *int32 `protobuf:"varint,2,opt,name=energy_max" json:"energy_max,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_Notice2CEnergy) Reset()         { *m = Game_Notice2CEnergy{} }
-func (m *Game_Notice2CEnergy) String() string { return proto.CompactTextString(m) }
-func (*Game_Notice2CEnergy) ProtoMessage()    {}
-
-func (m *Game_Notice2CEnergy) GetEnergy() int32 {
-	if m != nil && m.Energy != nil {
-		return *m.Energy
-	}
-	return 0
-}
-
-func (m *Game_Notice2CEnergy) GetEnergyMax() int32 {
-	if m != nil && m.EnergyMax != nil {
-		return *m.EnergyMax
-	}
-	return 0
-}
-
-// pid = 1013 关卡变化
-type Game_Notice2CheckPoint struct {
-	LatestCheckpoint *Game_Stage `protobuf:"bytes,1,opt,name=latest_checkpoint" json:"latest_checkpoint,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
-}
-
-func (m *Game_Notice2CheckPoint) Reset()         { *m = Game_Notice2CheckPoint{} }
-func (m *Game_Notice2CheckPoint) String() string { return proto.CompactTextString(m) }
-func (*Game_Notice2CheckPoint) ProtoMessage()    {}
-
-func (m *Game_Notice2CheckPoint) GetLatestCheckpoint() *Game_Stage {
-	if m != nil {
-		return m.LatestCheckpoint
-	}
-	return nil
-}
-
-// pid = 1014 离线挂机收益
-type Game_OffNotice2CGuaji struct {
-	PointId          *int32            `protobuf:"varint,1,opt,name=point_id" json:"point_id,omitempty"`
-	Gold             *int32            `protobuf:"varint,2,opt,name=gold" json:"gold,omitempty"`
-	Exp              *int32            `protobuf:"varint,3,opt,name=exp" json:"exp,omitempty"`
-	GuajiTime        *int32            `protobuf:"varint,4,opt,name=guaji_time" json:"guaji_time,omitempty"`
-	KillNpcNum       *int32            `protobuf:"varint,5,opt,name=kill_npc_num" json:"kill_npc_num,omitempty"`
-	EquipUids        []int32           `protobuf:"varint,6,rep,name=equip_uids" json:"equip_uids,omitempty"`
-	PropUids         []*Game_RwardProp `protobuf:"bytes,7,rep,name=prop_uids" json:"prop_uids,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *Game_OffNotice2CGuaji) Reset()         { *m = Game_OffNotice2CGuaji{} }
-func (m *Game_OffNotice2CGuaji) String() string { return proto.CompactTextString(m) }
-func (*Game_OffNotice2CGuaji) ProtoMessage()    {}
-
-func (m *Game_OffNotice2CGuaji) GetPointId() int32 {
-	if m != nil && m.PointId != nil {
-		return *m.PointId
-	}
-	return 0
-}
-
-func (m *Game_OffNotice2CGuaji) GetGold() int32 {
-	if m != nil && m.Gold != nil {
-		return *m.Gold
-	}
-	return 0
-}
-
-func (m *Game_OffNotice2CGuaji) GetExp() int32 {
-	if m != nil && m.Exp != nil {
-		return *m.Exp
-	}
-	return 0
-}
-
-func (m *Game_OffNotice2CGuaji) GetGuajiTime() int32 {
-	if m != nil && m.GuajiTime != nil {
-		return *m.GuajiTime
-	}
-	return 0
-}
-
-func (m *Game_OffNotice2CGuaji) GetKillNpcNum() int32 {
-	if m != nil && m.KillNpcNum != nil {
-		return *m.KillNpcNum
-	}
-	return 0
-}
-
-func (m *Game_OffNotice2CGuaji) GetEquipUids() []int32 {
-	if m != nil {
-		return m.EquipUids
-	}
-	return nil
-}
-
-func (m *Game_OffNotice2CGuaji) GetPropUids() []*Game_RwardProp {
-	if m != nil {
-		return m.PropUids
-	}
-	return nil
-}
-
-// pid = 1015 在线挂机收益c2s
-type Game_C2SOnlineGuaji struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_C2SOnlineGuaji) Reset()         { *m = Game_C2SOnlineGuaji{} }
-func (m *Game_C2SOnlineGuaji) String() string { return proto.CompactTextString(m) }
-func (*Game_C2SOnlineGuaji) ProtoMessage()    {}
-
-// pid = 1015 在线挂机收益 result
-type Game_OnNotice2CGuaji struct {
-	GuajiType        *int32            `protobuf:"varint,1,opt,name=guaji_type" json:"guaji_type,omitempty"`
-	NpcId            *int32            `protobuf:"varint,2,opt,name=npc_id" json:"npc_id,omitempty"`
-	Gold             *int32            `protobuf:"varint,3,opt,name=gold" json:"gold,omitempty"`
-	Exp              *int32            `protobuf:"varint,4,opt,name=exp" json:"exp,omitempty"`
-	EquipUids        []int32           `protobuf:"varint,5,rep,name=equip_uids" json:"equip_uids,omitempty"`
-	PropUids         []*Game_RwardProp `protobuf:"bytes,6,rep,name=prop_uids" json:"prop_uids,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
-}
-
-func (m *Game_OnNotice2CGuaji) Reset()         { *m = Game_OnNotice2CGuaji{} }
-func (m *Game_OnNotice2CGuaji) String() string { return proto.CompactTextString(m) }
-func (*Game_OnNotice2CGuaji) ProtoMessage()    {}
-
-func (m *Game_OnNotice2CGuaji) GetGuajiType() int32 {
+func (m *StageBase_OnNotice2CGuaji) GetGuajiType() int32 {
 	if m != nil && m.GuajiType != nil {
 		return *m.GuajiType
 	}
 	return 0
 }
 
-func (m *Game_OnNotice2CGuaji) GetNpcId() int32 {
+func (m *StageBase_OnNotice2CGuaji) GetNpcId() int32 {
 	if m != nil && m.NpcId != nil {
 		return *m.NpcId
 	}
 	return 0
 }
 
-func (m *Game_OnNotice2CGuaji) GetGold() int32 {
+func (m *StageBase_OnNotice2CGuaji) GetGold() int32 {
 	if m != nil && m.Gold != nil {
 		return *m.Gold
 	}
 	return 0
 }
 
-func (m *Game_OnNotice2CGuaji) GetExp() int32 {
+func (m *StageBase_OnNotice2CGuaji) GetExp() int32 {
 	if m != nil && m.Exp != nil {
 		return *m.Exp
 	}
 	return 0
 }
 
-func (m *Game_OnNotice2CGuaji) GetEquipUids() []int32 {
+func (m *StageBase_OnNotice2CGuaji) GetEquipUids() []int32 {
 	if m != nil {
 		return m.EquipUids
 	}
 	return nil
 }
 
-func (m *Game_OnNotice2CGuaji) GetPropUids() []*Game_RwardProp {
+func (m *StageBase_OnNotice2CGuaji) GetPropUids() []*RwardProp {
 	if m != nil {
 		return m.PropUids
 	}
 	return nil
 }
 
-type Game_Conditions struct {
+type StageBase_Conditions struct {
 	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
 	Count            *int32 `protobuf:"varint,2,opt,name=count" json:"count,omitempty"`
 	CurCount         *int32 `protobuf:"varint,3,opt,name=cur_count" json:"cur_count,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_Conditions) Reset()         { *m = Game_Conditions{} }
-func (m *Game_Conditions) String() string { return proto.CompactTextString(m) }
-func (*Game_Conditions) ProtoMessage()    {}
+func (m *StageBase_Conditions) Reset()         { *m = StageBase_Conditions{} }
+func (m *StageBase_Conditions) String() string { return proto.CompactTextString(m) }
+func (*StageBase_Conditions) ProtoMessage()    {}
 
-func (m *Game_Conditions) GetType() int32 {
+func (m *StageBase_Conditions) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
 	return 0
 }
 
-func (m *Game_Conditions) GetCount() int32 {
+func (m *StageBase_Conditions) GetCount() int32 {
 	if m != nil && m.Count != nil {
 		return *m.Count
 	}
 	return 0
 }
 
-func (m *Game_Conditions) GetCurCount() int32 {
+func (m *StageBase_Conditions) GetCurCount() int32 {
 	if m != nil && m.CurCount != nil {
 		return *m.CurCount
 	}
 	return 0
 }
 
-// pid = 1016 C2S 请求挂机信息
-type GameGetGuajiInfo struct {
+// pid = 1105 C2S 请求挂机信息
+type StageBaseGetGuajiInfo struct {
 	Id               *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *GameGetGuajiInfo) Reset()         { *m = GameGetGuajiInfo{} }
-func (m *GameGetGuajiInfo) String() string { return proto.CompactTextString(m) }
-func (*GameGetGuajiInfo) ProtoMessage()    {}
+func (m *StageBaseGetGuajiInfo) Reset()         { *m = StageBaseGetGuajiInfo{} }
+func (m *StageBaseGetGuajiInfo) String() string { return proto.CompactTextString(m) }
+func (*StageBaseGetGuajiInfo) ProtoMessage()    {}
 
-func (m *GameGetGuajiInfo) GetId() int32 {
+func (m *StageBaseGetGuajiInfo) GetId() int32 {
 	if m != nil && m.Id != nil {
 		return *m.Id
 	}
 	return 0
 }
 
-// pid = 1016 请求挂机 返回
-type Game_GuajiInfoResult struct {
-	Conditions       []*Game_Conditions `protobuf:"bytes,1,rep,name=conditions" json:"conditions,omitempty"`
-	XXX_unrecognized []byte             `json:"-"`
+// pid = 1105 请求挂机 返回
+type StageBase_GuajiInfoResult struct {
+	Conditions       []*StageBase_Conditions `protobuf:"bytes,1,rep,name=conditions" json:"conditions,omitempty"`
+	XXX_unrecognized []byte                  `json:"-"`
 }
 
-func (m *Game_GuajiInfoResult) Reset()         { *m = Game_GuajiInfoResult{} }
-func (m *Game_GuajiInfoResult) String() string { return proto.CompactTextString(m) }
-func (*Game_GuajiInfoResult) ProtoMessage()    {}
+func (m *StageBase_GuajiInfoResult) Reset()         { *m = StageBase_GuajiInfoResult{} }
+func (m *StageBase_GuajiInfoResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_GuajiInfoResult) ProtoMessage()    {}
 
-func (m *Game_GuajiInfoResult) GetConditions() []*Game_Conditions {
+func (m *StageBase_GuajiInfoResult) GetConditions() []*StageBase_Conditions {
 	if m != nil {
 		return m.Conditions
 	}
 	return nil
 }
 
-// pid = 1017 C2S boss挑战 队伍请求
-type Game_ChallengeBoss struct {
+// pid = 1106 C2S boss挑战 队伍请求
+type StageBase_ChallengeBoss struct {
 	Id               *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_ChallengeBoss) Reset()         { *m = Game_ChallengeBoss{} }
-func (m *Game_ChallengeBoss) String() string { return proto.CompactTextString(m) }
-func (*Game_ChallengeBoss) ProtoMessage()    {}
+func (m *StageBase_ChallengeBoss) Reset()         { *m = StageBase_ChallengeBoss{} }
+func (m *StageBase_ChallengeBoss) String() string { return proto.CompactTextString(m) }
+func (*StageBase_ChallengeBoss) ProtoMessage()    {}
 
-func (m *Game_ChallengeBoss) GetId() int32 {
+func (m *StageBase_ChallengeBoss) GetId() int32 {
 	if m != nil && m.Id != nil {
 		return *m.Id
 	}
 	return 0
 }
 
-// pid = 1017 挑战 队伍请求 返回
-type Game_ChallengeBossResult struct {
-	IsCanChange *bool `protobuf:"varint,1,opt,name=is_can_change" json:"is_can_change,omitempty"`
-	// repeated HeroStruct team_1 = 2;//队一(自己)
-	Team_2           *Game_MonsterCombatTeam `protobuf:"bytes,3,opt,name=team_2" json:"team_2,omitempty"`
-	XXX_unrecognized []byte                  `json:"-"`
+// pid = 1106 挑战 boss 返回
+type StageBase_ChallengeBossResult struct {
+	IsCanChange      *bool           `protobuf:"varint,1,opt,name=is_can_change" json:"is_can_change,omitempty"`
+	Team_1           []*FightingAttr `protobuf:"bytes,3,rep,name=team_1" json:"team_1,omitempty"`
+	Team_2           []*FightingAttr `protobuf:"bytes,4,rep,name=team_2" json:"team_2,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
 }
 
-func (m *Game_ChallengeBossResult) Reset()         { *m = Game_ChallengeBossResult{} }
-func (m *Game_ChallengeBossResult) String() string { return proto.CompactTextString(m) }
-func (*Game_ChallengeBossResult) ProtoMessage()    {}
+func (m *StageBase_ChallengeBossResult) Reset()         { *m = StageBase_ChallengeBossResult{} }
+func (m *StageBase_ChallengeBossResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_ChallengeBossResult) ProtoMessage()    {}
 
-func (m *Game_ChallengeBossResult) GetIsCanChange() bool {
+func (m *StageBase_ChallengeBossResult) GetIsCanChange() bool {
 	if m != nil && m.IsCanChange != nil {
 		return *m.IsCanChange
 	}
 	return false
 }
 
-func (m *Game_ChallengeBossResult) GetTeam_2() *Game_MonsterCombatTeam {
+func (m *StageBase_ChallengeBossResult) GetTeam_1() []*FightingAttr {
+	if m != nil {
+		return m.Team_1
+	}
+	return nil
+}
+
+func (m *StageBase_ChallengeBossResult) GetTeam_2() []*FightingAttr {
 	if m != nil {
 		return m.Team_2
 	}
 	return nil
 }
 
-// pid = 1018 客户端通知服务器boss挑战结果
-type Game_C2SChallenge struct {
-	Stage            *Game_Stage `protobuf:"bytes,1,opt,name=stage" json:"stage,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
+// pid = 1107 客户端通知服务器boss挑战结果
+type StageBase_C2SChallenge struct {
+	Stage            *Stage `protobuf:"bytes,1,opt,name=stage" json:"stage,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_C2SChallenge) Reset()         { *m = Game_C2SChallenge{} }
-func (m *Game_C2SChallenge) String() string { return proto.CompactTextString(m) }
-func (*Game_C2SChallenge) ProtoMessage()    {}
+func (m *StageBase_C2SChallenge) Reset()         { *m = StageBase_C2SChallenge{} }
+func (m *StageBase_C2SChallenge) String() string { return proto.CompactTextString(m) }
+func (*StageBase_C2SChallenge) ProtoMessage()    {}
 
-func (m *Game_C2SChallenge) GetStage() *Game_Stage {
+func (m *StageBase_C2SChallenge) GetStage() *Stage {
 	if m != nil {
 		return m.Stage
 	}
 	return nil
 }
 
-// pid = 1018 服务器返回boss 奖励
-type Game_C2SChallengeResult struct {
-	EquipUids        []int32           `protobuf:"varint,1,rep,name=equip_uids" json:"equip_uids,omitempty"`
-	PropUids         []*Game_RwardProp `protobuf:"bytes,2,rep,name=prop_uids" json:"prop_uids,omitempty"`
-	HeroExp          *int32            `protobuf:"varint,3,opt,name=hero_exp" json:"hero_exp,omitempty"`
-	RoleExp          *int32            `protobuf:"varint,4,opt,name=role_exp" json:"role_exp,omitempty"`
-	Gold             *int32            `protobuf:"varint,5,opt,name=gold" json:"gold,omitempty"`
-	XXX_unrecognized []byte            `json:"-"`
+// pid = 1107 服务器返回boss 奖励
+type StageBase_C2SChallengeResult struct {
+	EquipUids        []int32      `protobuf:"varint,1,rep,name=equip_uids" json:"equip_uids,omitempty"`
+	PropUids         []*RwardProp `protobuf:"bytes,2,rep,name=prop_uids" json:"prop_uids,omitempty"`
+	HeroExp          *int32       `protobuf:"varint,3,opt,name=hero_exp" json:"hero_exp,omitempty"`
+	RoleExp          *int32       `protobuf:"varint,4,opt,name=role_exp" json:"role_exp,omitempty"`
+	Gold             *int32       `protobuf:"varint,5,opt,name=gold" json:"gold,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
 }
 
-func (m *Game_C2SChallengeResult) Reset()         { *m = Game_C2SChallengeResult{} }
-func (m *Game_C2SChallengeResult) String() string { return proto.CompactTextString(m) }
-func (*Game_C2SChallengeResult) ProtoMessage()    {}
+func (m *StageBase_C2SChallengeResult) Reset()         { *m = StageBase_C2SChallengeResult{} }
+func (m *StageBase_C2SChallengeResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_C2SChallengeResult) ProtoMessage()    {}
 
-func (m *Game_C2SChallengeResult) GetEquipUids() []int32 {
+func (m *StageBase_C2SChallengeResult) GetEquipUids() []int32 {
 	if m != nil {
 		return m.EquipUids
 	}
 	return nil
 }
 
-func (m *Game_C2SChallengeResult) GetPropUids() []*Game_RwardProp {
+func (m *StageBase_C2SChallengeResult) GetPropUids() []*RwardProp {
 	if m != nil {
 		return m.PropUids
 	}
 	return nil
 }
 
-func (m *Game_C2SChallengeResult) GetHeroExp() int32 {
+func (m *StageBase_C2SChallengeResult) GetHeroExp() int32 {
 	if m != nil && m.HeroExp != nil {
 		return *m.HeroExp
 	}
 	return 0
 }
 
-func (m *Game_C2SChallengeResult) GetRoleExp() int32 {
+func (m *StageBase_C2SChallengeResult) GetRoleExp() int32 {
 	if m != nil && m.RoleExp != nil {
 		return *m.RoleExp
 	}
 	return 0
 }
 
-func (m *Game_C2SChallengeResult) GetGold() int32 {
+func (m *StageBase_C2SChallengeResult) GetGold() int32 {
 	if m != nil && m.Gold != nil {
 		return *m.Gold
 	}
 	return 0
 }
 
-// pid 1019 客户端通知服务器退出
-type Game_LoginOut struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_LoginOut) Reset()         { *m = Game_LoginOut{} }
-func (m *Game_LoginOut) String() string { return proto.CompactTextString(m) }
-func (*Game_LoginOut) ProtoMessage()    {}
-
-// pid = 1020 C2S 切换关卡
-type Game_ChangeGuajiInfo struct {
+// pid = 1108 C2S 切换关卡
+type StageBase_ChangeGuajiInfo struct {
 	Id               *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_ChangeGuajiInfo) Reset()         { *m = Game_ChangeGuajiInfo{} }
-func (m *Game_ChangeGuajiInfo) String() string { return proto.CompactTextString(m) }
-func (*Game_ChangeGuajiInfo) ProtoMessage()    {}
+func (m *StageBase_ChangeGuajiInfo) Reset()         { *m = StageBase_ChangeGuajiInfo{} }
+func (m *StageBase_ChangeGuajiInfo) String() string { return proto.CompactTextString(m) }
+func (*StageBase_ChangeGuajiInfo) ProtoMessage()    {}
 
-func (m *Game_ChangeGuajiInfo) GetId() int32 {
+func (m *StageBase_ChangeGuajiInfo) GetId() int32 {
 	if m != nil && m.Id != nil {
 		return *m.Id
 	}
 	return 0
 }
 
-// pid = 1020 C2S 切换关卡 result
-type Game_ChangeGuajiInfoResult struct {
+// pid = 1108 C2S 切换关卡 result
+type StageBase_ChangeGuajiInfoResult struct {
 	IsOk             *bool  `protobuf:"varint,1,opt,name=is_ok" json:"is_ok,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_ChangeGuajiInfoResult) Reset()         { *m = Game_ChangeGuajiInfoResult{} }
-func (m *Game_ChangeGuajiInfoResult) String() string { return proto.CompactTextString(m) }
-func (*Game_ChangeGuajiInfoResult) ProtoMessage()    {}
+func (m *StageBase_ChangeGuajiInfoResult) Reset()         { *m = StageBase_ChangeGuajiInfoResult{} }
+func (m *StageBase_ChangeGuajiInfoResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_ChangeGuajiInfoResult) ProtoMessage()    {}
 
-func (m *Game_ChangeGuajiInfoResult) GetIsOk() bool {
+func (m *StageBase_ChangeGuajiInfoResult) GetIsOk() bool {
 	if m != nil && m.IsOk != nil {
 		return *m.IsOk
 	}
 	return false
 }
 
-// pid = 1021 快速战斗
-type Game_FastWar struct {
-	Stage            *Game_Stage `protobuf:"bytes,1,opt,name=stage" json:"stage,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
+// pid = 1109 快速战斗
+type StageBase_FastWar struct {
+	Stage            *Stage `protobuf:"bytes,1,opt,name=stage" json:"stage,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_FastWar) Reset()         { *m = Game_FastWar{} }
-func (m *Game_FastWar) String() string { return proto.CompactTextString(m) }
-func (*Game_FastWar) ProtoMessage()    {}
+func (m *StageBase_FastWar) Reset()         { *m = StageBase_FastWar{} }
+func (m *StageBase_FastWar) String() string { return proto.CompactTextString(m) }
+func (*StageBase_FastWar) ProtoMessage()    {}
 
-func (m *Game_FastWar) GetStage() *Game_Stage {
+func (m *StageBase_FastWar) GetStage() *Stage {
 	if m != nil {
 		return m.Stage
 	}
 	return nil
 }
 
-// pid = 1021 快速战斗 result
-type Game_FastWarResult struct {
-	Result           *int32       `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
-	Reward           *Game_Reward `protobuf:"bytes,2,opt,name=reward" json:"reward,omitempty"`
-	XXX_unrecognized []byte       `json:"-"`
+// pid = 1109 快速战斗 result
+type StageBase_FastWarResult struct {
+	Result           *int32            `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	Reward           *StageBase_Reward `protobuf:"bytes,2,opt,name=reward" json:"reward,omitempty"`
+	XXX_unrecognized []byte            `json:"-"`
 }
 
-func (m *Game_FastWarResult) Reset()         { *m = Game_FastWarResult{} }
-func (m *Game_FastWarResult) String() string { return proto.CompactTextString(m) }
-func (*Game_FastWarResult) ProtoMessage()    {}
+func (m *StageBase_FastWarResult) Reset()         { *m = StageBase_FastWarResult{} }
+func (m *StageBase_FastWarResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_FastWarResult) ProtoMessage()    {}
 
-func (m *Game_FastWarResult) GetResult() int32 {
+func (m *StageBase_FastWarResult) GetResult() int32 {
 	if m != nil && m.Result != nil {
 		return *m.Result
 	}
 	return 0
 }
 
-func (m *Game_FastWarResult) GetReward() *Game_Reward {
+func (m *StageBase_FastWarResult) GetReward() *StageBase_Reward {
 	if m != nil {
 		return m.Reward
 	}
 	return nil
 }
 
-// pid = 1022 获取玩家当前挂机列表
-type Game_GetGuajiRoleList struct {
+// pid = 1110 获取玩家当前挂机列表
+type StageBase_GetGuajiRoleList struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_GetGuajiRoleList) Reset()         { *m = Game_GetGuajiRoleList{} }
-func (m *Game_GetGuajiRoleList) String() string { return proto.CompactTextString(m) }
-func (*Game_GetGuajiRoleList) ProtoMessage()    {}
+func (m *StageBase_GetGuajiRoleList) Reset()         { *m = StageBase_GetGuajiRoleList{} }
+func (m *StageBase_GetGuajiRoleList) String() string { return proto.CompactTextString(m) }
+func (*StageBase_GetGuajiRoleList) ProtoMessage()    {}
 
 // 挂机玩家消息
-type Game_GuajiRoleInfo struct {
+type StageBase_GuajiRoleInfo struct {
 	PkType           *int32  `protobuf:"varint,1,opt,name=pk_type" json:"pk_type,omitempty"`
 	ProtectTime      *int32  `protobuf:"varint,2,opt,name=protect_time" json:"protect_time,omitempty"`
 	LastPkNum        *int32  `protobuf:"varint,3,opt,name=last_pk_num" json:"last_pk_num,omitempty"`
@@ -1661,150 +1296,731 @@ type Game_GuajiRoleInfo struct {
 	XXX_unrecognized []byte  `json:"-"`
 }
 
-func (m *Game_GuajiRoleInfo) Reset()         { *m = Game_GuajiRoleInfo{} }
-func (m *Game_GuajiRoleInfo) String() string { return proto.CompactTextString(m) }
-func (*Game_GuajiRoleInfo) ProtoMessage()    {}
+func (m *StageBase_GuajiRoleInfo) Reset()         { *m = StageBase_GuajiRoleInfo{} }
+func (m *StageBase_GuajiRoleInfo) String() string { return proto.CompactTextString(m) }
+func (*StageBase_GuajiRoleInfo) ProtoMessage()    {}
 
-func (m *Game_GuajiRoleInfo) GetPkType() int32 {
+func (m *StageBase_GuajiRoleInfo) GetPkType() int32 {
 	if m != nil && m.PkType != nil {
 		return *m.PkType
 	}
 	return 0
 }
 
-func (m *Game_GuajiRoleInfo) GetProtectTime() int32 {
+func (m *StageBase_GuajiRoleInfo) GetProtectTime() int32 {
 	if m != nil && m.ProtectTime != nil {
 		return *m.ProtectTime
 	}
 	return 0
 }
 
-func (m *Game_GuajiRoleInfo) GetLastPkNum() int32 {
+func (m *StageBase_GuajiRoleInfo) GetLastPkNum() int32 {
 	if m != nil && m.LastPkNum != nil {
 		return *m.LastPkNum
 	}
 	return 0
 }
 
-func (m *Game_GuajiRoleInfo) GetKillNum() int32 {
+func (m *StageBase_GuajiRoleInfo) GetKillNum() int32 {
 	if m != nil && m.KillNum != nil {
 		return *m.KillNum
 	}
 	return 0
 }
 
-func (m *Game_GuajiRoleInfo) GetRoleId() int64 {
+func (m *StageBase_GuajiRoleInfo) GetRoleId() int64 {
 	if m != nil && m.RoleId != nil {
 		return *m.RoleId
 	}
 	return 0
 }
 
-func (m *Game_GuajiRoleInfo) GetProfessionId() int32 {
+func (m *StageBase_GuajiRoleInfo) GetProfessionId() int32 {
 	if m != nil && m.ProfessionId != nil {
 		return *m.ProfessionId
 	}
 	return 0
 }
 
-func (m *Game_GuajiRoleInfo) GetLevel() int32 {
+func (m *StageBase_GuajiRoleInfo) GetLevel() int32 {
 	if m != nil && m.Level != nil {
 		return *m.Level
 	}
 	return 0
 }
 
-func (m *Game_GuajiRoleInfo) GetPower() int32 {
+func (m *StageBase_GuajiRoleInfo) GetPower() int32 {
 	if m != nil && m.Power != nil {
 		return *m.Power
 	}
 	return 0
 }
 
-func (m *Game_GuajiRoleInfo) GetNick() string {
+func (m *StageBase_GuajiRoleInfo) GetNick() string {
 	if m != nil && m.Nick != nil {
 		return *m.Nick
 	}
 	return ""
 }
 
-// 1022 挂机玩家列表 返回
-type Game_GetGuajiRoleListResult struct {
-	GuajiRoleInfos   []*Game_GuajiRoleInfo `protobuf:"bytes,1,rep,name=guaji_role_infos" json:"guaji_role_infos,omitempty"`
-	XXX_unrecognized []byte                `json:"-"`
+// 1110 挂机玩家列表 返回
+type StageBase_GetGuajiRoleListResult struct {
+	GuajiRoleInfos   []*StageBase_GuajiRoleInfo `protobuf:"bytes,1,rep,name=guaji_role_infos" json:"guaji_role_infos,omitempty"`
+	XXX_unrecognized []byte                     `json:"-"`
 }
 
-func (m *Game_GetGuajiRoleListResult) Reset()         { *m = Game_GetGuajiRoleListResult{} }
-func (m *Game_GetGuajiRoleListResult) String() string { return proto.CompactTextString(m) }
-func (*Game_GetGuajiRoleListResult) ProtoMessage()    {}
+func (m *StageBase_GetGuajiRoleListResult) Reset()         { *m = StageBase_GetGuajiRoleListResult{} }
+func (m *StageBase_GetGuajiRoleListResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_GetGuajiRoleListResult) ProtoMessage()    {}
 
-func (m *Game_GetGuajiRoleListResult) GetGuajiRoleInfos() []*Game_GuajiRoleInfo {
+func (m *StageBase_GetGuajiRoleListResult) GetGuajiRoleInfos() []*StageBase_GuajiRoleInfo {
 	if m != nil {
 		return m.GuajiRoleInfos
 	}
 	return nil
 }
 
-// 1023 请求对应角色阵型
-type Game_GetGuajiRoleFormation struct {
-	RoleId           *int64 `protobuf:"varint,1,opt,name=role_id" json:"role_id,omitempty"`
-	Type             *int32 `protobuf:"varint,2,opt,name=type" json:"type,omitempty"`
+// pid = 1111 C2S 挑战其他玩家
+type StageBase_ChallengePlayer struct {
+	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	RoleId           *int64 `protobuf:"varint,2,opt,name=role_id" json:"role_id,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_GetGuajiRoleFormation) Reset()         { *m = Game_GetGuajiRoleFormation{} }
-func (m *Game_GetGuajiRoleFormation) String() string { return proto.CompactTextString(m) }
-func (*Game_GetGuajiRoleFormation) ProtoMessage()    {}
+func (m *StageBase_ChallengePlayer) Reset()         { *m = StageBase_ChallengePlayer{} }
+func (m *StageBase_ChallengePlayer) String() string { return proto.CompactTextString(m) }
+func (*StageBase_ChallengePlayer) ProtoMessage()    {}
 
-func (m *Game_GetGuajiRoleFormation) GetRoleId() int64 {
+func (m *StageBase_ChallengePlayer) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
+
+func (m *StageBase_ChallengePlayer) GetRoleId() int64 {
 	if m != nil && m.RoleId != nil {
 		return *m.RoleId
 	}
 	return 0
 }
 
-func (m *Game_GetGuajiRoleFormation) GetType() int32 {
+// pid = 1111 挑战其他玩家 返回
+type StageBase_ChallengePlayerResult struct {
+	IsCanChange      *bool           `protobuf:"varint,1,opt,name=is_can_change" json:"is_can_change,omitempty"`
+	Team_1           []*FightingAttr `protobuf:"bytes,2,rep,name=team_1" json:"team_1,omitempty"`
+	Team_2           []*FightingAttr `protobuf:"bytes,3,rep,name=team_2" json:"team_2,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
+}
+
+func (m *StageBase_ChallengePlayerResult) Reset()         { *m = StageBase_ChallengePlayerResult{} }
+func (m *StageBase_ChallengePlayerResult) String() string { return proto.CompactTextString(m) }
+func (*StageBase_ChallengePlayerResult) ProtoMessage()    {}
+
+func (m *StageBase_ChallengePlayerResult) GetIsCanChange() bool {
+	if m != nil && m.IsCanChange != nil {
+		return *m.IsCanChange
+	}
+	return false
+}
+
+func (m *StageBase_ChallengePlayerResult) GetTeam_1() []*FightingAttr {
+	if m != nil {
+		return m.Team_1
+	}
+	return nil
+}
+
+func (m *StageBase_ChallengePlayerResult) GetTeam_2() []*FightingAttr {
+	if m != nil {
+		return m.Team_2
+	}
+	return nil
+}
+
+// 推送变化  1201- 1300
+type NoticeMsg struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *NoticeMsg) Reset()         { *m = NoticeMsg{} }
+func (m *NoticeMsg) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg) ProtoMessage()    {}
+
+// pid = 1201 服务器主动通知客户端 背包中道具变化(such as:掉落时候 )
+type NoticeMsg_Notice2CProp struct {
+	Prop             []*PropStruct `protobuf:"bytes,1,rep,name=prop" json:"prop,omitempty"`
+	XXX_unrecognized []byte        `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CProp) Reset()         { *m = NoticeMsg_Notice2CProp{} }
+func (m *NoticeMsg_Notice2CProp) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CProp) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CProp) GetProp() []*PropStruct {
+	if m != nil {
+		return m.Prop
+	}
+	return nil
+}
+
+// pid = 1202服务器主动背包中装备变化通知客户端(such as:掉落时候 )
+type NoticeMsg_Notice2CEquip struct {
+	Equip            []*EquipStruct `protobuf:"bytes,1,rep,name=equip" json:"equip,omitempty"`
+	XXX_unrecognized []byte         `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CEquip) Reset()         { *m = NoticeMsg_Notice2CEquip{} }
+func (m *NoticeMsg_Notice2CEquip) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CEquip) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CEquip) GetEquip() []*EquipStruct {
+	if m != nil {
+		return m.Equip
+	}
+	return nil
+}
+
+// pid = 1203 服务器通知客户端玩家基础属性变化
+type NoticeMsg_Notice2CRoleInfo struct {
+	Level            *int32 `protobuf:"varint,1,opt,name=level" json:"level,omitempty"`
+	Exp              *int32 `protobuf:"varint,2,opt,name=exp" json:"exp,omitempty"`
+	Power            *int32 `protobuf:"varint,3,opt,name=power" json:"power,omitempty"`
+	Hp               *int32 `protobuf:"varint,4,opt,name=hp" json:"hp,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CRoleInfo) Reset()         { *m = NoticeMsg_Notice2CRoleInfo{} }
+func (m *NoticeMsg_Notice2CRoleInfo) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CRoleInfo) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CRoleInfo) GetLevel() int32 {
+	if m != nil && m.Level != nil {
+		return *m.Level
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CRoleInfo) GetExp() int32 {
+	if m != nil && m.Exp != nil {
+		return *m.Exp
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CRoleInfo) GetPower() int32 {
+	if m != nil && m.Power != nil {
+		return *m.Power
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CRoleInfo) GetHp() int32 {
+	if m != nil && m.Hp != nil {
+		return *m.Hp
+	}
+	return 0
+}
+
+// pid = 1204 钱变化
+type NoticeMsg_Notice2CMoney struct {
+	Gold             *int32 `protobuf:"varint,1,opt,name=gold" json:"gold,omitempty"`
+	Diamond          *int32 `protobuf:"varint,2,opt,name=diamond" json:"diamond,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CMoney) Reset()         { *m = NoticeMsg_Notice2CMoney{} }
+func (m *NoticeMsg_Notice2CMoney) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CMoney) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CMoney) GetGold() int32 {
+	if m != nil && m.Gold != nil {
+		return *m.Gold
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CMoney) GetDiamond() int32 {
+	if m != nil && m.Diamond != nil {
+		return *m.Diamond
+	}
+	return 0
+}
+
+// pid = 1205 体力变化
+type NoticeMsg_Notice2CEnergy struct {
+	Energy           *int32 `protobuf:"varint,1,opt,name=energy" json:"energy,omitempty"`
+	EnergyMax        *int32 `protobuf:"varint,2,opt,name=energy_max" json:"energy_max,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CEnergy) Reset()         { *m = NoticeMsg_Notice2CEnergy{} }
+func (m *NoticeMsg_Notice2CEnergy) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CEnergy) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CEnergy) GetEnergy() int32 {
+	if m != nil && m.Energy != nil {
+		return *m.Energy
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CEnergy) GetEnergyMax() int32 {
+	if m != nil && m.EnergyMax != nil {
+		return *m.EnergyMax
+	}
+	return 0
+}
+
+// pid = 1206 关卡变化
+type NoticeMsg_Notice2CheckPoint struct {
+	LatestCheckpoint *Stage `protobuf:"bytes,1,opt,name=latest_checkpoint" json:"latest_checkpoint,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CheckPoint) Reset()         { *m = NoticeMsg_Notice2CheckPoint{} }
+func (m *NoticeMsg_Notice2CheckPoint) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CheckPoint) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CheckPoint) GetLatestCheckpoint() *Stage {
+	if m != nil {
+		return m.LatestCheckpoint
+	}
+	return nil
+}
+
+// pid = 1207 离线挂机收益
+type NoticeMsg_OffNotice2CGuaji struct {
+	PointId          *int32       `protobuf:"varint,1,opt,name=point_id" json:"point_id,omitempty"`
+	Gold             *int32       `protobuf:"varint,2,opt,name=gold" json:"gold,omitempty"`
+	Exp              *int32       `protobuf:"varint,3,opt,name=exp" json:"exp,omitempty"`
+	GuajiTime        *int32       `protobuf:"varint,4,opt,name=guaji_time" json:"guaji_time,omitempty"`
+	KillNpcNum       *int32       `protobuf:"varint,5,opt,name=kill_npc_num" json:"kill_npc_num,omitempty"`
+	EquipUids        []int32      `protobuf:"varint,6,rep,name=equip_uids" json:"equip_uids,omitempty"`
+	PropUids         []*RwardProp `protobuf:"bytes,7,rep,name=prop_uids" json:"prop_uids,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *NoticeMsg_OffNotice2CGuaji) Reset()         { *m = NoticeMsg_OffNotice2CGuaji{} }
+func (m *NoticeMsg_OffNotice2CGuaji) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_OffNotice2CGuaji) ProtoMessage()    {}
+
+func (m *NoticeMsg_OffNotice2CGuaji) GetPointId() int32 {
+	if m != nil && m.PointId != nil {
+		return *m.PointId
+	}
+	return 0
+}
+
+func (m *NoticeMsg_OffNotice2CGuaji) GetGold() int32 {
+	if m != nil && m.Gold != nil {
+		return *m.Gold
+	}
+	return 0
+}
+
+func (m *NoticeMsg_OffNotice2CGuaji) GetExp() int32 {
+	if m != nil && m.Exp != nil {
+		return *m.Exp
+	}
+	return 0
+}
+
+func (m *NoticeMsg_OffNotice2CGuaji) GetGuajiTime() int32 {
+	if m != nil && m.GuajiTime != nil {
+		return *m.GuajiTime
+	}
+	return 0
+}
+
+func (m *NoticeMsg_OffNotice2CGuaji) GetKillNpcNum() int32 {
+	if m != nil && m.KillNpcNum != nil {
+		return *m.KillNpcNum
+	}
+	return 0
+}
+
+func (m *NoticeMsg_OffNotice2CGuaji) GetEquipUids() []int32 {
+	if m != nil {
+		return m.EquipUids
+	}
+	return nil
+}
+
+func (m *NoticeMsg_OffNotice2CGuaji) GetPropUids() []*RwardProp {
+	if m != nil {
+		return m.PropUids
+	}
+	return nil
+}
+
+// pid = 1208 服务器通知客户端消息
+type NoticeMsg_Notice2CMsg struct {
+	Msg              *int32 `protobuf:"varint,1,opt,name=msg" json:"msg,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CMsg) Reset()         { *m = NoticeMsg_Notice2CMsg{} }
+func (m *NoticeMsg_Notice2CMsg) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CMsg) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CMsg) GetMsg() int32 {
+	if m != nil && m.Msg != nil {
+		return *m.Msg
+	}
+	return 0
+}
+
+// pid = 1209  英雄对应属性改变 推送
+type NoticeMsg_Notice2CHero struct {
+	HeroUid          *int32       `protobuf:"varint,1,opt,name=hero_uid" json:"hero_uid,omitempty"`
+	StepLevel        *int32       `protobuf:"varint,2,opt,name=step_level" json:"step_level,omitempty"`
+	StarLevel        *int32       `protobuf:"varint,3,opt,name=star_level" json:"star_level,omitempty"`
+	Level            *int32       `protobuf:"varint,4,opt,name=level" json:"level,omitempty"`
+	Exp              *int32       `protobuf:"varint,5,opt,name=exp" json:"exp,omitempty"`
+	HeroAttr         []*Attribute `protobuf:"bytes,6,rep,name=hero_attr" json:"hero_attr,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CHero) Reset()         { *m = NoticeMsg_Notice2CHero{} }
+func (m *NoticeMsg_Notice2CHero) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CHero) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CHero) GetHeroUid() int32 {
+	if m != nil && m.HeroUid != nil {
+		return *m.HeroUid
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CHero) GetStepLevel() int32 {
+	if m != nil && m.StepLevel != nil {
+		return *m.StepLevel
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CHero) GetStarLevel() int32 {
+	if m != nil && m.StarLevel != nil {
+		return *m.StarLevel
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CHero) GetLevel() int32 {
+	if m != nil && m.Level != nil {
+		return *m.Level
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CHero) GetExp() int32 {
+	if m != nil && m.Exp != nil {
+		return *m.Exp
+	}
+	return 0
+}
+
+func (m *NoticeMsg_Notice2CHero) GetHeroAttr() []*Attribute {
+	if m != nil {
+		return m.HeroAttr
+	}
+	return nil
+}
+
+// pid = 1210   移除推送
+type NoticeMsg_Notice2CRemove struct {
+	Type             *int32  `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Uid              []int32 `protobuf:"varint,2,rep,name=uid" json:"uid,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CRemove) Reset()         { *m = NoticeMsg_Notice2CRemove{} }
+func (m *NoticeMsg_Notice2CRemove) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CRemove) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CRemove) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
 	return 0
 }
 
-// 1023 请求对应role阵型 返回
-type Game_GetGuajiRoleFormationResult struct {
-	Type             *int32                  `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
-	Result           *int32                  `protobuf:"varint,2,opt,name=result" json:"result,omitempty"`
-	Formations       []*Game_FormationStruct `protobuf:"bytes,3,rep,name=formations" json:"formations,omitempty"`
-	XXX_unrecognized []byte                  `json:"-"`
+func (m *NoticeMsg_Notice2CRemove) GetUid() []int32 {
+	if m != nil {
+		return m.Uid
+	}
+	return nil
 }
 
-func (m *Game_GetGuajiRoleFormationResult) Reset()         { *m = Game_GetGuajiRoleFormationResult{} }
-func (m *Game_GetGuajiRoleFormationResult) String() string { return proto.CompactTextString(m) }
-func (*Game_GetGuajiRoleFormationResult) ProtoMessage()    {}
+// pid = 1212 推送新英雄
+type NoticeMsg_NoticeGetHeros struct {
+	Heros            []*FightingAttr `protobuf:"bytes,1,rep,name=heros" json:"heros,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
+}
 
-func (m *Game_GetGuajiRoleFormationResult) GetType() int32 {
+func (m *NoticeMsg_NoticeGetHeros) Reset()         { *m = NoticeMsg_NoticeGetHeros{} }
+func (m *NoticeMsg_NoticeGetHeros) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_NoticeGetHeros) ProtoMessage()    {}
+
+func (m *NoticeMsg_NoticeGetHeros) GetHeros() []*FightingAttr {
+	if m != nil {
+		return m.Heros
+	}
+	return nil
+}
+
+// pid 1214 推送新任务
+type NoticeMsg_Notice2CNewTask struct {
+	Task             *TaskInfo `protobuf:"bytes,1,opt,name=task" json:"task,omitempty"`
+	XXX_unrecognized []byte    `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CNewTask) Reset()         { *m = NoticeMsg_Notice2CNewTask{} }
+func (m *NoticeMsg_Notice2CNewTask) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CNewTask) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CNewTask) GetTask() *TaskInfo {
+	if m != nil {
+		return m.Task
+	}
+	return nil
+}
+
+// pid = 1215 推送当前可以接受的手动接取任务id
+type NoticeMsg_Notice2CCanAccept struct {
+	CanAcceptTasks   []*TaskType `protobuf:"bytes,1,rep,name=can_accept_tasks" json:"can_accept_tasks,omitempty"`
+	XXX_unrecognized []byte      `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CCanAccept) Reset()         { *m = NoticeMsg_Notice2CCanAccept{} }
+func (m *NoticeMsg_Notice2CCanAccept) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CCanAccept) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CCanAccept) GetCanAcceptTasks() []*TaskType {
+	if m != nil {
+		return m.CanAcceptTasks
+	}
+	return nil
+}
+
+// pid 1216 当前任务变化(用来更新任务进度)
+type NoticeMsg_Notice2CUpdateProgress struct {
+	TypeInfo         *TaskType `protobuf:"bytes,1,opt,name=type_info" json:"type_info,omitempty"`
+	Subitem          *SubItem  `protobuf:"bytes,2,opt,name=subitem" json:"subitem,omitempty"`
+	XXX_unrecognized []byte    `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CUpdateProgress) Reset()         { *m = NoticeMsg_Notice2CUpdateProgress{} }
+func (m *NoticeMsg_Notice2CUpdateProgress) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CUpdateProgress) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CUpdateProgress) GetTypeInfo() *TaskType {
+	if m != nil {
+		return m.TypeInfo
+	}
+	return nil
+}
+
+func (m *NoticeMsg_Notice2CUpdateProgress) GetSubitem() *SubItem {
+	if m != nil {
+		return m.Subitem
+	}
+	return nil
+}
+
+// pid 1217 推送自动提交任务所获取的奖励
+type NoticeMsg_SubmitTask struct {
+	TypeInfo         *TaskType    `protobuf:"bytes,1,opt,name=type_info" json:"type_info,omitempty"`
+	Gold             *int32       `protobuf:"varint,2,opt,name=gold" json:"gold,omitempty"`
+	RoleExp          *int32       `protobuf:"varint,3,opt,name=role_exp" json:"role_exp,omitempty"`
+	Props            []*RwardProp `protobuf:"bytes,4,rep,name=props" json:"props,omitempty"`
+	EquipUids        []int32      `protobuf:"varint,5,rep,name=equip_uids" json:"equip_uids,omitempty"`
+	HeroUids         []int32      `protobuf:"varint,6,rep,name=hero_uids" json:"hero_uids,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *NoticeMsg_SubmitTask) Reset()         { *m = NoticeMsg_SubmitTask{} }
+func (m *NoticeMsg_SubmitTask) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_SubmitTask) ProtoMessage()    {}
+
+func (m *NoticeMsg_SubmitTask) GetTypeInfo() *TaskType {
+	if m != nil {
+		return m.TypeInfo
+	}
+	return nil
+}
+
+func (m *NoticeMsg_SubmitTask) GetGold() int32 {
+	if m != nil && m.Gold != nil {
+		return *m.Gold
+	}
+	return 0
+}
+
+func (m *NoticeMsg_SubmitTask) GetRoleExp() int32 {
+	if m != nil && m.RoleExp != nil {
+		return *m.RoleExp
+	}
+	return 0
+}
+
+func (m *NoticeMsg_SubmitTask) GetProps() []*RwardProp {
+	if m != nil {
+		return m.Props
+	}
+	return nil
+}
+
+func (m *NoticeMsg_SubmitTask) GetEquipUids() []int32 {
+	if m != nil {
+		return m.EquipUids
+	}
+	return nil
+}
+
+func (m *NoticeMsg_SubmitTask) GetHeroUids() []int32 {
+	if m != nil {
+		return m.HeroUids
+	}
+	return nil
+}
+
+// pid 1218 推送非自动提交 已完成任务,客户端需手动提交任务获取奖励
+type NoticeMsg_Notice2CHandleTask struct {
+	TypeInfo         *TaskType `protobuf:"bytes,1,opt,name=type_info" json:"type_info,omitempty"`
+	XXX_unrecognized []byte    `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CHandleTask) Reset()         { *m = NoticeMsg_Notice2CHandleTask{} }
+func (m *NoticeMsg_Notice2CHandleTask) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CHandleTask) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CHandleTask) GetTypeInfo() *TaskType {
+	if m != nil {
+		return m.TypeInfo
+	}
+	return nil
+}
+
+// pid 1219 成就进度变化
+type NoticeMsg_Notice2CAchievementChange struct {
+	Infos            []*AchievementInfo `protobuf:"bytes,1,rep,name=infos" json:"infos,omitempty"`
+	XXX_unrecognized []byte             `json:"-"`
+}
+
+func (m *NoticeMsg_Notice2CAchievementChange) Reset()         { *m = NoticeMsg_Notice2CAchievementChange{} }
+func (m *NoticeMsg_Notice2CAchievementChange) String() string { return proto.CompactTextString(m) }
+func (*NoticeMsg_Notice2CAchievementChange) ProtoMessage()    {}
+
+func (m *NoticeMsg_Notice2CAchievementChange) GetInfos() []*AchievementInfo {
+	if m != nil {
+		return m.Infos
+	}
+	return nil
+}
+
+// 阵型相关 1301-1400
+type Formation struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Formation) Reset()         { *m = Formation{} }
+func (m *Formation) String() string { return proto.CompactTextString(m) }
+func (*Formation) ProtoMessage()    {}
+
+type Formation_FormationStruct struct {
+	HeroId           *int32 `protobuf:"varint,1,opt,name=hero_id" json:"hero_id,omitempty"`
+	HeroUid          *int32 `protobuf:"varint,2,opt,name=hero_uid" json:"hero_uid,omitempty"`
+	Pos              *int32 `protobuf:"varint,3,opt,name=pos" json:"pos,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Formation_FormationStruct) Reset()         { *m = Formation_FormationStruct{} }
+func (m *Formation_FormationStruct) String() string { return proto.CompactTextString(m) }
+func (*Formation_FormationStruct) ProtoMessage()    {}
+
+func (m *Formation_FormationStruct) GetHeroId() int32 {
+	if m != nil && m.HeroId != nil {
+		return *m.HeroId
+	}
+	return 0
+}
+
+func (m *Formation_FormationStruct) GetHeroUid() int32 {
+	if m != nil && m.HeroUid != nil {
+		return *m.HeroUid
+	}
+	return 0
+}
+
+func (m *Formation_FormationStruct) GetPos() int32 {
+	if m != nil && m.Pos != nil {
+		return *m.Pos
+	}
+	return 0
+}
+
+// 1301 请求对应角色阵型
+type Formation_GetGuajiRoleFormation struct {
+	RoleId           *int64 `protobuf:"varint,1,opt,name=role_id" json:"role_id,omitempty"`
+	Type             *int32 `protobuf:"varint,2,opt,name=type" json:"type,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Formation_GetGuajiRoleFormation) Reset()         { *m = Formation_GetGuajiRoleFormation{} }
+func (m *Formation_GetGuajiRoleFormation) String() string { return proto.CompactTextString(m) }
+func (*Formation_GetGuajiRoleFormation) ProtoMessage()    {}
+
+func (m *Formation_GetGuajiRoleFormation) GetRoleId() int64 {
+	if m != nil && m.RoleId != nil {
+		return *m.RoleId
+	}
+	return 0
+}
+
+func (m *Formation_GetGuajiRoleFormation) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
 	return 0
 }
 
-func (m *Game_GetGuajiRoleFormationResult) GetResult() int32 {
+// 1301 请求对应role阵型 返回
+type Formation_GetGuajiRoleFormationResult struct {
+	Type             *int32                       `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	Result           *int32                       `protobuf:"varint,2,opt,name=result" json:"result,omitempty"`
+	Formations       []*Formation_FormationStruct `protobuf:"bytes,3,rep,name=formations" json:"formations,omitempty"`
+	XXX_unrecognized []byte                       `json:"-"`
+}
+
+func (m *Formation_GetGuajiRoleFormationResult) Reset()         { *m = Formation_GetGuajiRoleFormationResult{} }
+func (m *Formation_GetGuajiRoleFormationResult) String() string { return proto.CompactTextString(m) }
+func (*Formation_GetGuajiRoleFormationResult) ProtoMessage()    {}
+
+func (m *Formation_GetGuajiRoleFormationResult) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
+
+func (m *Formation_GetGuajiRoleFormationResult) GetResult() int32 {
 	if m != nil && m.Result != nil {
 		return *m.Result
 	}
 	return 0
 }
 
-func (m *Game_GetGuajiRoleFormationResult) GetFormations() []*Game_FormationStruct {
+func (m *Formation_GetGuajiRoleFormationResult) GetFormations() []*Formation_FormationStruct {
 	if m != nil {
 		return m.Formations
 	}
 	return nil
 }
 
-// 1024 英雄上阵 下阵
-type Game_HerosFormation struct {
+// 1302 英雄上阵 下阵
+type Formation_HerosFormation struct {
 	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
 	IsOn             *bool  `protobuf:"varint,2,opt,name=is_on" json:"is_on,omitempty"`
 	PosId            *int32 `protobuf:"varint,3,opt,name=pos_id" json:"pos_id,omitempty"`
@@ -1812,263 +2028,1045 @@ type Game_HerosFormation struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_HerosFormation) Reset()         { *m = Game_HerosFormation{} }
-func (m *Game_HerosFormation) String() string { return proto.CompactTextString(m) }
-func (*Game_HerosFormation) ProtoMessage()    {}
+func (m *Formation_HerosFormation) Reset()         { *m = Formation_HerosFormation{} }
+func (m *Formation_HerosFormation) String() string { return proto.CompactTextString(m) }
+func (*Formation_HerosFormation) ProtoMessage()    {}
 
-func (m *Game_HerosFormation) GetType() int32 {
+func (m *Formation_HerosFormation) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
 	return 0
 }
 
-func (m *Game_HerosFormation) GetIsOn() bool {
+func (m *Formation_HerosFormation) GetIsOn() bool {
 	if m != nil && m.IsOn != nil {
 		return *m.IsOn
 	}
 	return false
 }
 
-func (m *Game_HerosFormation) GetPosId() int32 {
+func (m *Formation_HerosFormation) GetPosId() int32 {
 	if m != nil && m.PosId != nil {
 		return *m.PosId
 	}
 	return 0
 }
 
-func (m *Game_HerosFormation) GetHeroUid() int32 {
+func (m *Formation_HerosFormation) GetHeroUid() int32 {
 	if m != nil && m.HeroUid != nil {
 		return *m.HeroUid
 	}
 	return 0
 }
 
-// 1024 英雄上阵 下阵 返回
-type Game_HerosFormationResult struct {
+// 1302 英雄上阵 下阵 返回
+type Formation_HerosFormationResult struct {
 	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_HerosFormationResult) Reset()         { *m = Game_HerosFormationResult{} }
-func (m *Game_HerosFormationResult) String() string { return proto.CompactTextString(m) }
-func (*Game_HerosFormationResult) ProtoMessage()    {}
+func (m *Formation_HerosFormationResult) Reset()         { *m = Formation_HerosFormationResult{} }
+func (m *Formation_HerosFormationResult) String() string { return proto.CompactTextString(m) }
+func (*Formation_HerosFormationResult) ProtoMessage()    {}
 
-func (m *Game_HerosFormationResult) GetResult() int32 {
+func (m *Formation_HerosFormationResult) GetResult() int32 {
 	if m != nil && m.Result != nil {
 		return *m.Result
 	}
 	return 0
 }
 
-// 1025 位置交换
-type Game_ChangeHerosFormation struct {
+// 1303 位置交换
+type Formation_ChangeHerosFormation struct {
 	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
 	PosId_1          *int32 `protobuf:"varint,2,opt,name=pos_id_1" json:"pos_id_1,omitempty"`
 	PosId_2          *int32 `protobuf:"varint,3,opt,name=pos_id_2" json:"pos_id_2,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_ChangeHerosFormation) Reset()         { *m = Game_ChangeHerosFormation{} }
-func (m *Game_ChangeHerosFormation) String() string { return proto.CompactTextString(m) }
-func (*Game_ChangeHerosFormation) ProtoMessage()    {}
+func (m *Formation_ChangeHerosFormation) Reset()         { *m = Formation_ChangeHerosFormation{} }
+func (m *Formation_ChangeHerosFormation) String() string { return proto.CompactTextString(m) }
+func (*Formation_ChangeHerosFormation) ProtoMessage()    {}
 
-func (m *Game_ChangeHerosFormation) GetType() int32 {
+func (m *Formation_ChangeHerosFormation) GetType() int32 {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
 	return 0
 }
 
-func (m *Game_ChangeHerosFormation) GetPosId_1() int32 {
+func (m *Formation_ChangeHerosFormation) GetPosId_1() int32 {
 	if m != nil && m.PosId_1 != nil {
 		return *m.PosId_1
 	}
 	return 0
 }
 
-func (m *Game_ChangeHerosFormation) GetPosId_2() int32 {
+func (m *Formation_ChangeHerosFormation) GetPosId_2() int32 {
 	if m != nil && m.PosId_2 != nil {
 		return *m.PosId_2
 	}
 	return 0
 }
 
-// 1025 位置交换 返回
-type Game_ChangeHerosFormationResult struct {
+// 1303 位置交换 返回
+type Formation_ChangeHerosFormationResult struct {
 	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_ChangeHerosFormationResult) Reset()         { *m = Game_ChangeHerosFormationResult{} }
-func (m *Game_ChangeHerosFormationResult) String() string { return proto.CompactTextString(m) }
-func (*Game_ChangeHerosFormationResult) ProtoMessage()    {}
+func (m *Formation_ChangeHerosFormationResult) Reset()         { *m = Formation_ChangeHerosFormationResult{} }
+func (m *Formation_ChangeHerosFormationResult) String() string { return proto.CompactTextString(m) }
+func (*Formation_ChangeHerosFormationResult) ProtoMessage()    {}
 
-func (m *Game_ChangeHerosFormationResult) GetResult() int32 {
+func (m *Formation_ChangeHerosFormationResult) GetResult() int32 {
 	if m != nil && m.Result != nil {
 		return *m.Result
 	}
 	return 0
 }
 
-// pid = 1026 C2S 挑战其他玩家
-type Game_ChallengePlayer struct {
-	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
-	RoleId           *int64 `protobuf:"varint,2,opt,name=role_id" json:"role_id,omitempty"`
+// 英雄1401-1500
+type Hero struct {
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_ChallengePlayer) Reset()         { *m = Game_ChallengePlayer{} }
-func (m *Game_ChallengePlayer) String() string { return proto.CompactTextString(m) }
-func (*Game_ChallengePlayer) ProtoMessage()    {}
+func (m *Hero) Reset()         { *m = Hero{} }
+func (m *Hero) String() string { return proto.CompactTextString(m) }
+func (*Hero) ProtoMessage()    {}
 
-func (m *Game_ChallengePlayer) GetType() int32 {
-	if m != nil && m.Type != nil {
-		return *m.Type
-	}
-	return 0
+// pid = 1401 获取角色的英雄相关信息
+type Hero_GetHeros struct {
+	RoleId           *int64 `protobuf:"varint,1,opt,name=role_id" json:"role_id,omitempty"`
+	Type             *int32 `protobuf:"varint,2,opt,name=type" json:"type,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_ChallengePlayer) GetRoleId() int64 {
+func (m *Hero_GetHeros) Reset()         { *m = Hero_GetHeros{} }
+func (m *Hero_GetHeros) String() string { return proto.CompactTextString(m) }
+func (*Hero_GetHeros) ProtoMessage()    {}
+
+func (m *Hero_GetHeros) GetRoleId() int64 {
 	if m != nil && m.RoleId != nil {
 		return *m.RoleId
 	}
 	return 0
 }
 
-// pid = 1026 挑战其他玩家 返回
-type Game_ChallengePlayerResult struct {
-	IsCanChange *bool `protobuf:"varint,1,opt,name=is_can_change" json:"is_can_change,omitempty"`
-	// repeated HeroStruct team_1 = 2;//队一(自己)
-	Team_2           []*Game_HeroStruct `protobuf:"bytes,3,rep,name=team_2" json:"team_2,omitempty"`
-	XXX_unrecognized []byte             `json:"-"`
-}
-
-func (m *Game_ChallengePlayerResult) Reset()         { *m = Game_ChallengePlayerResult{} }
-func (m *Game_ChallengePlayerResult) String() string { return proto.CompactTextString(m) }
-func (*Game_ChallengePlayerResult) ProtoMessage()    {}
-
-func (m *Game_ChallengePlayerResult) GetIsCanChange() bool {
-	if m != nil && m.IsCanChange != nil {
-		return *m.IsCanChange
-	}
-	return false
-}
-
-func (m *Game_ChallengePlayerResult) GetTeam_2() []*Game_HeroStruct {
-	if m != nil {
-		return m.Team_2
-	}
-	return nil
-}
-
-// pid = 1027 使用某道具
-type Game_UseProp struct {
-	Uid              *int32 `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
-	Count            *int32 `protobuf:"varint,2,opt,name=count" json:"count,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_UseProp) Reset()         { *m = Game_UseProp{} }
-func (m *Game_UseProp) String() string { return proto.CompactTextString(m) }
-func (*Game_UseProp) ProtoMessage()    {}
-
-func (m *Game_UseProp) GetUid() int32 {
-	if m != nil && m.Uid != nil {
-		return *m.Uid
+func (m *Hero_GetHeros) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
 	}
 	return 0
 }
 
-func (m *Game_UseProp) GetCount() int32 {
-	if m != nil && m.Count != nil {
-		return *m.Count
-	}
-	return 0
+// pid = 1401 获取角色的英雄相关信息
+type Hero_GetHerosResult struct {
+	Result           *int32          `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	Heros            []*FightingAttr `protobuf:"bytes,2,rep,name=heros" json:"heros,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
 }
 
-// pid = 1027 使用某道具 返回
-type Game_UsePropResult struct {
-	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
+func (m *Hero_GetHerosResult) Reset()         { *m = Hero_GetHerosResult{} }
+func (m *Hero_GetHerosResult) String() string { return proto.CompactTextString(m) }
+func (*Hero_GetHerosResult) ProtoMessage()    {}
 
-func (m *Game_UsePropResult) Reset()         { *m = Game_UsePropResult{} }
-func (m *Game_UsePropResult) String() string { return proto.CompactTextString(m) }
-func (*Game_UsePropResult) ProtoMessage()    {}
-
-func (m *Game_UsePropResult) GetResult() int32 {
+func (m *Hero_GetHerosResult) GetResult() int32 {
 	if m != nil && m.Result != nil {
 		return *m.Result
 	}
 	return 0
 }
 
-// pid = 1028 服务器通知客户端消息
-type Game_Notice2CMsg struct {
-	Msg              *int32 `protobuf:"varint,1,opt,name=msg" json:"msg,omitempty"`
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_Notice2CMsg) Reset()         { *m = Game_Notice2CMsg{} }
-func (m *Game_Notice2CMsg) String() string { return proto.CompactTextString(m) }
-func (*Game_Notice2CMsg) ProtoMessage()    {}
-
-func (m *Game_Notice2CMsg) GetMsg() int32 {
-	if m != nil && m.Msg != nil {
-		return *m.Msg
-	}
-	return 0
-}
-
-// pid = 1029 查看道具背包
-type Game_CheckPropBag struct {
-	XXX_unrecognized []byte `json:"-"`
-}
-
-func (m *Game_CheckPropBag) Reset()         { *m = Game_CheckPropBag{} }
-func (m *Game_CheckPropBag) String() string { return proto.CompactTextString(m) }
-func (*Game_CheckPropBag) ProtoMessage()    {}
-
-// pid = 1029 查看道具背包 返回
-type Game_CheckPropBagResult struct {
-	PropStruct       []*Game_PropStruct `protobuf:"bytes,1,rep,name=prop_struct" json:"prop_struct,omitempty"`
-	XXX_unrecognized []byte             `json:"-"`
-}
-
-func (m *Game_CheckPropBagResult) Reset()         { *m = Game_CheckPropBagResult{} }
-func (m *Game_CheckPropBagResult) String() string { return proto.CompactTextString(m) }
-func (*Game_CheckPropBagResult) ProtoMessage()    {}
-
-func (m *Game_CheckPropBagResult) GetPropStruct() []*Game_PropStruct {
+func (m *Hero_GetHerosResult) GetHeros() []*FightingAttr {
 	if m != nil {
-		return m.PropStruct
+		return m.Heros
 	}
 	return nil
 }
 
-// pid = 1030 查看道具背包
-type Game_CheckEquipBag struct {
+// pid = 1402 英雄升阶请求
+type Hero_StepHero struct {
+	HeroUid          *int32 `protobuf:"varint,1,opt,name=hero_uid" json:"hero_uid,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
 }
 
-func (m *Game_CheckEquipBag) Reset()         { *m = Game_CheckEquipBag{} }
-func (m *Game_CheckEquipBag) String() string { return proto.CompactTextString(m) }
-func (*Game_CheckEquipBag) ProtoMessage()    {}
+func (m *Hero_StepHero) Reset()         { *m = Hero_StepHero{} }
+func (m *Hero_StepHero) String() string { return proto.CompactTextString(m) }
+func (*Hero_StepHero) ProtoMessage()    {}
 
-// pid = 1030 查看道具背包 返回
-type Game_CheckEquipBagResult struct {
-	EquipStruct      []*Game_EquipStruct `protobuf:"bytes,1,rep,name=equip_struct" json:"equip_struct,omitempty"`
-	XXX_unrecognized []byte              `json:"-"`
+func (m *Hero_StepHero) GetHeroUid() int32 {
+	if m != nil && m.HeroUid != nil {
+		return *m.HeroUid
+	}
+	return 0
 }
 
-func (m *Game_CheckEquipBagResult) Reset()         { *m = Game_CheckEquipBagResult{} }
-func (m *Game_CheckEquipBagResult) String() string { return proto.CompactTextString(m) }
-func (*Game_CheckEquipBagResult) ProtoMessage()    {}
+// pid = 1402  英雄升阶请求 返回
+type Hero_StepHeroResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
 
-func (m *Game_CheckEquipBagResult) GetEquipStruct() []*Game_EquipStruct {
+func (m *Hero_StepHeroResult) Reset()         { *m = Hero_StepHeroResult{} }
+func (m *Hero_StepHeroResult) String() string { return proto.CompactTextString(m) }
+func (*Hero_StepHeroResult) ProtoMessage()    {}
+
+func (m *Hero_StepHeroResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid = 1403 升星
+type Hero_StarHero struct {
+	HeroUid          *int32 `protobuf:"varint,1,opt,name=hero_uid" json:"hero_uid,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Hero_StarHero) Reset()         { *m = Hero_StarHero{} }
+func (m *Hero_StarHero) String() string { return proto.CompactTextString(m) }
+func (*Hero_StarHero) ProtoMessage()    {}
+
+func (m *Hero_StarHero) GetHeroUid() int32 {
+	if m != nil && m.HeroUid != nil {
+		return *m.HeroUid
+	}
+	return 0
+}
+
+// pid = 1403  升星 返回
+type Hero_StarHeroResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Hero_StarHeroResult) Reset()         { *m = Hero_StarHeroResult{} }
+func (m *Hero_StarHeroResult) String() string { return proto.CompactTextString(m) }
+func (*Hero_StarHeroResult) ProtoMessage()    {}
+
+func (m *Hero_StarHeroResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid = 1404 天赋开启id
+type Hero_OpenHeroGift struct {
+	HeroUid          *int32  `protobuf:"varint,1,opt,name=hero_uid" json:"hero_uid,omitempty"`
+	Id               []int32 `protobuf:"varint,2,rep,name=id" json:"id,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *Hero_OpenHeroGift) Reset()         { *m = Hero_OpenHeroGift{} }
+func (m *Hero_OpenHeroGift) String() string { return proto.CompactTextString(m) }
+func (*Hero_OpenHeroGift) ProtoMessage()    {}
+
+func (m *Hero_OpenHeroGift) GetHeroUid() int32 {
+	if m != nil && m.HeroUid != nil {
+		return *m.HeroUid
+	}
+	return 0
+}
+
+func (m *Hero_OpenHeroGift) GetId() []int32 {
 	if m != nil {
-		return m.EquipStruct
+		return m.Id
+	}
+	return nil
+}
+
+// pid = 1404  天赋开启 返回
+type Hero_OpenHeroGiftResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Hero_OpenHeroGiftResult) Reset()         { *m = Hero_OpenHeroGiftResult{} }
+func (m *Hero_OpenHeroGiftResult) String() string { return proto.CompactTextString(m) }
+func (*Hero_OpenHeroGiftResult) ProtoMessage()    {}
+
+func (m *Hero_OpenHeroGiftResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid = 1405 英雄升级
+type Hero_HeroLevelUp struct {
+	HeroUid          *int32 `protobuf:"varint,1,opt,name=hero_uid" json:"hero_uid,omitempty"`
+	PropId           *int32 `protobuf:"varint,2,opt,name=prop_id" json:"prop_id,omitempty"`
+	Count            *int32 `protobuf:"varint,3,opt,name=count" json:"count,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Hero_HeroLevelUp) Reset()         { *m = Hero_HeroLevelUp{} }
+func (m *Hero_HeroLevelUp) String() string { return proto.CompactTextString(m) }
+func (*Hero_HeroLevelUp) ProtoMessage()    {}
+
+func (m *Hero_HeroLevelUp) GetHeroUid() int32 {
+	if m != nil && m.HeroUid != nil {
+		return *m.HeroUid
+	}
+	return 0
+}
+
+func (m *Hero_HeroLevelUp) GetPropId() int32 {
+	if m != nil && m.PropId != nil {
+		return *m.PropId
+	}
+	return 0
+}
+
+func (m *Hero_HeroLevelUp) GetCount() int32 {
+	if m != nil && m.Count != nil {
+		return *m.Count
+	}
+	return 0
+}
+
+// pid = 1405 英雄升级 返回
+type Hero_HeroLevelUpResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Hero_HeroLevelUpResult) Reset()         { *m = Hero_HeroLevelUpResult{} }
+func (m *Hero_HeroLevelUpResult) String() string { return proto.CompactTextString(m) }
+func (*Hero_HeroLevelUpResult) ProtoMessage()    {}
+
+func (m *Hero_HeroLevelUpResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// 道具 装备相关 1501-1600
+type Goods struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods) Reset()         { *m = Goods{} }
+func (m *Goods) String() string { return proto.CompactTextString(m) }
+func (*Goods) ProtoMessage()    {}
+
+// pid = 1501 使用某道具
+type Goods_UseProp struct {
+	Uid              *int32 `protobuf:"varint,1,opt,name=uid" json:"uid,omitempty"`
+	Count            *int32 `protobuf:"varint,2,opt,name=count" json:"count,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_UseProp) Reset()         { *m = Goods_UseProp{} }
+func (m *Goods_UseProp) String() string { return proto.CompactTextString(m) }
+func (*Goods_UseProp) ProtoMessage()    {}
+
+func (m *Goods_UseProp) GetUid() int32 {
+	if m != nil && m.Uid != nil {
+		return *m.Uid
+	}
+	return 0
+}
+
+func (m *Goods_UseProp) GetCount() int32 {
+	if m != nil && m.Count != nil {
+		return *m.Count
+	}
+	return 0
+}
+
+// pid = 1501 使用某道具 返回
+type Goods_UsePropResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_UsePropResult) Reset()         { *m = Goods_UsePropResult{} }
+func (m *Goods_UsePropResult) String() string { return proto.CompactTextString(m) }
+func (*Goods_UsePropResult) ProtoMessage()    {}
+
+func (m *Goods_UsePropResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid = 1502 穿戴 或 卸载某装备
+type Goods_UseEquip struct {
+	EquipUid         *int32 `protobuf:"varint,1,opt,name=equip_uid" json:"equip_uid,omitempty"`
+	Pos              *int32 `protobuf:"varint,2,opt,name=pos" json:"pos,omitempty"`
+	Type             *int32 `protobuf:"varint,3,opt,name=type" json:"type,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_UseEquip) Reset()         { *m = Goods_UseEquip{} }
+func (m *Goods_UseEquip) String() string { return proto.CompactTextString(m) }
+func (*Goods_UseEquip) ProtoMessage()    {}
+
+func (m *Goods_UseEquip) GetEquipUid() int32 {
+	if m != nil && m.EquipUid != nil {
+		return *m.EquipUid
+	}
+	return 0
+}
+
+func (m *Goods_UseEquip) GetPos() int32 {
+	if m != nil && m.Pos != nil {
+		return *m.Pos
+	}
+	return 0
+}
+
+func (m *Goods_UseEquip) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
+
+// pid = 1502 穿戴 或 卸载某装备 返回
+type Goods_UseEquipResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_UseEquipResult) Reset()         { *m = Goods_UseEquipResult{} }
+func (m *Goods_UseEquipResult) String() string { return proto.CompactTextString(m) }
+func (*Goods_UseEquipResult) ProtoMessage()    {}
+
+func (m *Goods_UseEquipResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid = 1503 //装备强化
+type Goods_EquipStrengthen struct {
+	EquipUid         *int32 `protobuf:"varint,1,opt,name=equip_uid" json:"equip_uid,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_EquipStrengthen) Reset()         { *m = Goods_EquipStrengthen{} }
+func (m *Goods_EquipStrengthen) String() string { return proto.CompactTextString(m) }
+func (*Goods_EquipStrengthen) ProtoMessage()    {}
+
+func (m *Goods_EquipStrengthen) GetEquipUid() int32 {
+	if m != nil && m.EquipUid != nil {
+		return *m.EquipUid
+	}
+	return 0
+}
+
+// pid = 1503 //装备强化 返回
+type Goods_EquipStrengthenResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_EquipStrengthenResult) Reset()         { *m = Goods_EquipStrengthenResult{} }
+func (m *Goods_EquipStrengthenResult) String() string { return proto.CompactTextString(m) }
+func (*Goods_EquipStrengthenResult) ProtoMessage()    {}
+
+func (m *Goods_EquipStrengthenResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid = 1504 //装备精炼
+type Goods_EquipRefine struct {
+	EquipUid         *int32 `protobuf:"varint,1,opt,name=equip_uid" json:"equip_uid,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_EquipRefine) Reset()         { *m = Goods_EquipRefine{} }
+func (m *Goods_EquipRefine) String() string { return proto.CompactTextString(m) }
+func (*Goods_EquipRefine) ProtoMessage()    {}
+
+func (m *Goods_EquipRefine) GetEquipUid() int32 {
+	if m != nil && m.EquipUid != nil {
+		return *m.EquipUid
+	}
+	return 0
+}
+
+// pid = 1504 //装备精炼 返回
+type Goods_EquipRefineResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_EquipRefineResult) Reset()         { *m = Goods_EquipRefineResult{} }
+func (m *Goods_EquipRefineResult) String() string { return proto.CompactTextString(m) }
+func (*Goods_EquipRefineResult) ProtoMessage()    {}
+
+func (m *Goods_EquipRefineResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid = 1505 //装备分解
+type Goods_EquipDecompose struct {
+	EquipUids        []int32 `protobuf:"varint,1,rep,name=equip_uids" json:"equip_uids,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *Goods_EquipDecompose) Reset()         { *m = Goods_EquipDecompose{} }
+func (m *Goods_EquipDecompose) String() string { return proto.CompactTextString(m) }
+func (*Goods_EquipDecompose) ProtoMessage()    {}
+
+func (m *Goods_EquipDecompose) GetEquipUids() []int32 {
+	if m != nil {
+		return m.EquipUids
+	}
+	return nil
+}
+
+// pid = 1505 //装备分解 返回
+type Goods_EquipDecomposeResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_EquipDecomposeResult) Reset()         { *m = Goods_EquipDecomposeResult{} }
+func (m *Goods_EquipDecomposeResult) String() string { return proto.CompactTextString(m) }
+func (*Goods_EquipDecomposeResult) ProtoMessage()    {}
+
+func (m *Goods_EquipDecomposeResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid = 1506 道具出售
+type Goods_SaleProp struct {
+	PropUid          *int32 `protobuf:"varint,1,opt,name=prop_uid" json:"prop_uid,omitempty"`
+	Count            *int32 `protobuf:"varint,2,opt,name=count" json:"count,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_SaleProp) Reset()         { *m = Goods_SaleProp{} }
+func (m *Goods_SaleProp) String() string { return proto.CompactTextString(m) }
+func (*Goods_SaleProp) ProtoMessage()    {}
+
+func (m *Goods_SaleProp) GetPropUid() int32 {
+	if m != nil && m.PropUid != nil {
+		return *m.PropUid
+	}
+	return 0
+}
+
+func (m *Goods_SaleProp) GetCount() int32 {
+	if m != nil && m.Count != nil {
+		return *m.Count
+	}
+	return 0
+}
+
+// pid = 1506 道具出售 Result
+type Goods_SalePropResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Goods_SalePropResult) Reset()         { *m = Goods_SalePropResult{} }
+func (m *Goods_SalePropResult) String() string { return proto.CompactTextString(m) }
+func (*Goods_SalePropResult) ProtoMessage()    {}
+
+func (m *Goods_SalePropResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// GM 1601-1700 xxx:数量 id:对应类型id
+// gold xxx
+// diamond xxx
+// energy xxx
+// exp xxx
+// prop id xxx
+// equip id xxx
+// hero id
+type GM struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *GM) Reset()         { *m = GM{} }
+func (m *GM) String() string { return proto.CompactTextString(m) }
+func (*GM) ProtoMessage()    {}
+
+// pid = 1601
+type GM_Msg struct {
+	Msg              *string `protobuf:"bytes,1,opt,name=msg" json:"msg,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *GM_Msg) Reset()         { *m = GM_Msg{} }
+func (m *GM_Msg) String() string { return proto.CompactTextString(m) }
+func (*GM_Msg) ProtoMessage()    {}
+
+func (m *GM_Msg) GetMsg() string {
+	if m != nil && m.Msg != nil {
+		return *m.Msg
+	}
+	return ""
+}
+
+// pid = 1601
+type GM_MsgResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *GM_MsgResult) Reset()         { *m = GM_MsgResult{} }
+func (m *GM_MsgResult) String() string { return proto.CompactTextString(m) }
+func (*GM_MsgResult) ProtoMessage()    {}
+
+func (m *GM_MsgResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// 活动 1701-1800
+type Activity struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Activity) Reset()         { *m = Activity{} }
+func (m *Activity) String() string { return proto.CompactTextString(m) }
+func (*Activity) ProtoMessage()    {}
+
+// pid = 1701 扭蛋
+type Activity_NiuDan struct {
+	Type             *int32 `protobuf:"varint,1,opt,name=type" json:"type,omitempty"`
+	TypeGroup        *int32 `protobuf:"varint,2,opt,name=type_group" json:"type_group,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Activity_NiuDan) Reset()         { *m = Activity_NiuDan{} }
+func (m *Activity_NiuDan) String() string { return proto.CompactTextString(m) }
+func (*Activity_NiuDan) ProtoMessage()    {}
+
+func (m *Activity_NiuDan) GetType() int32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
+
+func (m *Activity_NiuDan) GetTypeGroup() int32 {
+	if m != nil && m.TypeGroup != nil {
+		return *m.TypeGroup
+	}
+	return 0
+}
+
+// pid = 1701 扭蛋 返回
+type Activity_NiuDanResult struct {
+	Result           *int32        `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	Props            []*PropStruct `protobuf:"bytes,2,rep,name=props" json:"props,omitempty"`
+	Gold             []int32       `protobuf:"varint,3,rep,name=gold" json:"gold,omitempty"`
+	HeroUids         []int32       `protobuf:"varint,4,rep,name=hero_uids" json:"hero_uids,omitempty"`
+	XXX_unrecognized []byte        `json:"-"`
+}
+
+func (m *Activity_NiuDanResult) Reset()         { *m = Activity_NiuDanResult{} }
+func (m *Activity_NiuDanResult) String() string { return proto.CompactTextString(m) }
+func (*Activity_NiuDanResult) ProtoMessage()    {}
+
+func (m *Activity_NiuDanResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+func (m *Activity_NiuDanResult) GetProps() []*PropStruct {
+	if m != nil {
+		return m.Props
+	}
+	return nil
+}
+
+func (m *Activity_NiuDanResult) GetGold() []int32 {
+	if m != nil {
+		return m.Gold
+	}
+	return nil
+}
+
+func (m *Activity_NiuDanResult) GetHeroUids() []int32 {
+	if m != nil {
+		return m.HeroUids
+	}
+	return nil
+}
+
+// pid = 1702 免费刷新请求
+type Activity_FreeRefresh struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Activity_FreeRefresh) Reset()         { *m = Activity_FreeRefresh{} }
+func (m *Activity_FreeRefresh) String() string { return proto.CompactTextString(m) }
+func (*Activity_FreeRefresh) ProtoMessage()    {}
+
+// pid = 1702 免费刷新请求 Result
+type Activity_FreeRefreshResult struct {
+	OneFreeLast1     *int32 `protobuf:"varint,1,opt,name=one_free_last1" json:"one_free_last1,omitempty"`
+	TenFreeLast1     *int32 `protobuf:"varint,2,opt,name=ten_free_last1" json:"ten_free_last1,omitempty"`
+	OneFreeLast2     *int32 `protobuf:"varint,3,opt,name=one_free_last2" json:"one_free_last2,omitempty"`
+	TenFreeLast2     *int32 `protobuf:"varint,4,opt,name=ten_free_last2" json:"ten_free_last2,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Activity_FreeRefreshResult) Reset()         { *m = Activity_FreeRefreshResult{} }
+func (m *Activity_FreeRefreshResult) String() string { return proto.CompactTextString(m) }
+func (*Activity_FreeRefreshResult) ProtoMessage()    {}
+
+func (m *Activity_FreeRefreshResult) GetOneFreeLast1() int32 {
+	if m != nil && m.OneFreeLast1 != nil {
+		return *m.OneFreeLast1
+	}
+	return 0
+}
+
+func (m *Activity_FreeRefreshResult) GetTenFreeLast1() int32 {
+	if m != nil && m.TenFreeLast1 != nil {
+		return *m.TenFreeLast1
+	}
+	return 0
+}
+
+func (m *Activity_FreeRefreshResult) GetOneFreeLast2() int32 {
+	if m != nil && m.OneFreeLast2 != nil {
+		return *m.OneFreeLast2
+	}
+	return 0
+}
+
+func (m *Activity_FreeRefreshResult) GetTenFreeLast2() int32 {
+	if m != nil && m.TenFreeLast2 != nil {
+		return *m.TenFreeLast2
+	}
+	return 0
+}
+
+// 任务系统 1801-1900
+type Task struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task) Reset()         { *m = Task{} }
+func (m *Task) String() string { return proto.CompactTextString(m) }
+func (*Task) ProtoMessage()    {}
+
+// pid = 1801 当前所有满足任务
+type Task_AllTask struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_AllTask) Reset()         { *m = Task_AllTask{} }
+func (m *Task_AllTask) String() string { return proto.CompactTextString(m) }
+func (*Task_AllTask) ProtoMessage()    {}
+
+// pid = 1801 当前所有满足任务
+type Task_AllTaskResult struct {
+	Tasks            []*TaskInfo `protobuf:"bytes,1,rep,name=tasks" json:"tasks,omitempty"`
+	XXX_unrecognized []byte      `json:"-"`
+}
+
+func (m *Task_AllTaskResult) Reset()         { *m = Task_AllTaskResult{} }
+func (m *Task_AllTaskResult) String() string { return proto.CompactTextString(m) }
+func (*Task_AllTaskResult) ProtoMessage()    {}
+
+func (m *Task_AllTaskResult) GetTasks() []*TaskInfo {
+	if m != nil {
+		return m.Tasks
+	}
+	return nil
+}
+
+// pid 1802 c2s手动接受任务
+type Task_AcceptTask struct {
+	TaskInfo         *TaskType `protobuf:"bytes,1,opt,name=task_info" json:"task_info,omitempty"`
+	XXX_unrecognized []byte    `json:"-"`
+}
+
+func (m *Task_AcceptTask) Reset()         { *m = Task_AcceptTask{} }
+func (m *Task_AcceptTask) String() string { return proto.CompactTextString(m) }
+func (*Task_AcceptTask) ProtoMessage()    {}
+
+func (m *Task_AcceptTask) GetTaskInfo() *TaskType {
+	if m != nil {
+		return m.TaskInfo
+	}
+	return nil
+}
+
+// pid 1802 c2s手动接受任务 返回
+type Task_AcceptTaskResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_AcceptTaskResult) Reset()         { *m = Task_AcceptTaskResult{} }
+func (m *Task_AcceptTaskResult) String() string { return proto.CompactTextString(m) }
+func (*Task_AcceptTaskResult) ProtoMessage()    {}
+
+func (m *Task_AcceptTaskResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid 1803 c2s 手动提交任务获取奖励
+type Task_SubmitTask struct {
+	TaskInfo         *TaskType `protobuf:"bytes,1,opt,name=task_info" json:"task_info,omitempty"`
+	XXX_unrecognized []byte    `json:"-"`
+}
+
+func (m *Task_SubmitTask) Reset()         { *m = Task_SubmitTask{} }
+func (m *Task_SubmitTask) String() string { return proto.CompactTextString(m) }
+func (*Task_SubmitTask) ProtoMessage()    {}
+
+func (m *Task_SubmitTask) GetTaskInfo() *TaskType {
+	if m != nil {
+		return m.TaskInfo
+	}
+	return nil
+}
+
+// pid 1803 c2s 手动提交任务获取奖励 返回
+type Task_SubmitTaskResult struct {
+	Result           *int32       `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	Gold             *int32       `protobuf:"varint,2,opt,name=gold" json:"gold,omitempty"`
+	RoleExp          *int32       `protobuf:"varint,3,opt,name=role_exp" json:"role_exp,omitempty"`
+	Props            []*RwardProp `protobuf:"bytes,4,rep,name=props" json:"props,omitempty"`
+	EquipUids        []int32      `protobuf:"varint,5,rep,name=equip_uids" json:"equip_uids,omitempty"`
+	HeroUids         []int32      `protobuf:"varint,6,rep,name=hero_uids" json:"hero_uids,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *Task_SubmitTaskResult) Reset()         { *m = Task_SubmitTaskResult{} }
+func (m *Task_SubmitTaskResult) String() string { return proto.CompactTextString(m) }
+func (*Task_SubmitTaskResult) ProtoMessage()    {}
+
+func (m *Task_SubmitTaskResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+func (m *Task_SubmitTaskResult) GetGold() int32 {
+	if m != nil && m.Gold != nil {
+		return *m.Gold
+	}
+	return 0
+}
+
+func (m *Task_SubmitTaskResult) GetRoleExp() int32 {
+	if m != nil && m.RoleExp != nil {
+		return *m.RoleExp
+	}
+	return 0
+}
+
+func (m *Task_SubmitTaskResult) GetProps() []*RwardProp {
+	if m != nil {
+		return m.Props
+	}
+	return nil
+}
+
+func (m *Task_SubmitTaskResult) GetEquipUids() []int32 {
+	if m != nil {
+		return m.EquipUids
+	}
+	return nil
+}
+
+func (m *Task_SubmitTaskResult) GetHeroUids() []int32 {
+	if m != nil {
+		return m.HeroUids
+	}
+	return nil
+}
+
+// pid 1821 c2s 获取悬赏任务相关
+type Task_GetXuanShangInfo struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_GetXuanShangInfo) Reset()         { *m = Task_GetXuanShangInfo{} }
+func (m *Task_GetXuanShangInfo) String() string { return proto.CompactTextString(m) }
+func (*Task_GetXuanShangInfo) ProtoMessage()    {}
+
+// pid 1821 c2s 获取悬赏任务相关 Result
+type Task_GetXuanShangInfoResult struct {
+	LastNum          *int32 `protobuf:"varint,1,opt,name=last_num" json:"last_num,omitempty"`
+	FreeLastTime     *int32 `protobuf:"varint,2,opt,name=free_last_time" json:"free_last_time,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_GetXuanShangInfoResult) Reset()         { *m = Task_GetXuanShangInfoResult{} }
+func (m *Task_GetXuanShangInfoResult) String() string { return proto.CompactTextString(m) }
+func (*Task_GetXuanShangInfoResult) ProtoMessage()    {}
+
+func (m *Task_GetXuanShangInfoResult) GetLastNum() int32 {
+	if m != nil && m.LastNum != nil {
+		return *m.LastNum
+	}
+	return 0
+}
+
+func (m *Task_GetXuanShangInfoResult) GetFreeLastTime() int32 {
+	if m != nil && m.FreeLastTime != nil {
+		return *m.FreeLastTime
+	}
+	return 0
+}
+
+// pid 1822 悬赏元宝刷新请求
+type Task_XuanShangDiamondRef struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_XuanShangDiamondRef) Reset()         { *m = Task_XuanShangDiamondRef{} }
+func (m *Task_XuanShangDiamondRef) String() string { return proto.CompactTextString(m) }
+func (*Task_XuanShangDiamondRef) ProtoMessage()    {}
+
+// pid 1822 c2s 悬赏元宝刷新请求 Result
+type Task_XuanShangDiamondRefResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_XuanShangDiamondRefResult) Reset()         { *m = Task_XuanShangDiamondRefResult{} }
+func (m *Task_XuanShangDiamondRefResult) String() string { return proto.CompactTextString(m) }
+func (*Task_XuanShangDiamondRefResult) ProtoMessage()    {}
+
+func (m *Task_XuanShangDiamondRefResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid 1824 任务放弃
+type Task_GiveUpTask struct {
+	Task             *TaskType `protobuf:"bytes,1,opt,name=task" json:"task,omitempty"`
+	XXX_unrecognized []byte    `json:"-"`
+}
+
+func (m *Task_GiveUpTask) Reset()         { *m = Task_GiveUpTask{} }
+func (m *Task_GiveUpTask) String() string { return proto.CompactTextString(m) }
+func (*Task_GiveUpTask) ProtoMessage()    {}
+
+func (m *Task_GiveUpTask) GetTask() *TaskType {
+	if m != nil {
+		return m.Task
+	}
+	return nil
+}
+
+// pid 1824 任务放弃 返回
+type Task_GiveUpTaskResult struct {
+	Result           *int32 `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_GiveUpTaskResult) Reset()         { *m = Task_GiveUpTaskResult{} }
+func (m *Task_GiveUpTaskResult) String() string { return proto.CompactTextString(m) }
+func (*Task_GiveUpTaskResult) ProtoMessage()    {}
+
+func (m *Task_GiveUpTaskResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+// pid 1851 请求获取成就列表
+type Task_GetAchievement struct {
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_GetAchievement) Reset()         { *m = Task_GetAchievement{} }
+func (m *Task_GetAchievement) String() string { return proto.CompactTextString(m) }
+func (*Task_GetAchievement) ProtoMessage()    {}
+
+// pid 1851 请求获取成就完成列表 Result
+type Task_GetAchievementResult struct {
+	Infos            []*AchievementInfo `protobuf:"bytes,1,rep,name=infos" json:"infos,omitempty"`
+	XXX_unrecognized []byte             `json:"-"`
+}
+
+func (m *Task_GetAchievementResult) Reset()         { *m = Task_GetAchievementResult{} }
+func (m *Task_GetAchievementResult) String() string { return proto.CompactTextString(m) }
+func (*Task_GetAchievementResult) ProtoMessage()    {}
+
+func (m *Task_GetAchievementResult) GetInfos() []*AchievementInfo {
+	if m != nil {
+		return m.Infos
+	}
+	return nil
+}
+
+// pid 1852 请求领取成就奖励
+type Task_GetAchievementReward struct {
+	Id               *int32 `protobuf:"varint,1,opt,name=id" json:"id,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
+}
+
+func (m *Task_GetAchievementReward) Reset()         { *m = Task_GetAchievementReward{} }
+func (m *Task_GetAchievementReward) String() string { return proto.CompactTextString(m) }
+func (*Task_GetAchievementReward) ProtoMessage()    {}
+
+func (m *Task_GetAchievementReward) GetId() int32 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
+}
+
+// pid 1852 请求领取成就奖励 Result
+type Task_GetAchievementRewardResult struct {
+	Result           *int32       `protobuf:"varint,1,opt,name=result" json:"result,omitempty"`
+	Props            []*RwardProp `protobuf:"bytes,4,rep,name=props" json:"props,omitempty"`
+	XXX_unrecognized []byte       `json:"-"`
+}
+
+func (m *Task_GetAchievementRewardResult) Reset()         { *m = Task_GetAchievementRewardResult{} }
+func (m *Task_GetAchievementRewardResult) String() string { return proto.CompactTextString(m) }
+func (*Task_GetAchievementRewardResult) ProtoMessage()    {}
+
+func (m *Task_GetAchievementRewardResult) GetResult() int32 {
+	if m != nil && m.Result != nil {
+		return *m.Result
+	}
+	return 0
+}
+
+func (m *Task_GetAchievementRewardResult) GetProps() []*RwardProp {
+	if m != nil {
+		return m.Props
 	}
 	return nil
 }

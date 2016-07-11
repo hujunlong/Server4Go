@@ -1,41 +1,64 @@
 package main
 
 import (
-	"server/share/global"
 	"server/share/protocol"
 
-	"github.com/game_engine/logs"
 	"github.com/golang/protobuf/proto"
 )
 
 import (
+	"bufio"
 	"bytes"
 	"encoding/binary"
 	"fmt"
+	"io/ioutil"
 	"net"
+	"os"
+	"strconv"
+	"strings"
 	"time"
 )
 
-var nick string = "ttt"
-var pwd string = "ttt"
-
-var log *logs.BeeLogger
-
+//初始化
 func init() {
-	log = logs.NewLogger(100000) //日志
-	log.EnableFuncCallDepth(true)
-	log.SetLogger("file", `{"filename":"log/testLoginServer.log"}`)
+
 }
 
+//字符串转int32
+func Str2Int32(str string) int32 {
+	str = strings.TrimSpace(str)
+	data_int, error := strconv.Atoi(str)
+	if error != nil {
+		return 0
+	}
+	return int32(data_int)
+}
+
+//错误检查
 func CheckError(err error) bool {
 	if err != nil {
-		fmt.Println("err:", err)
+		fmt.Println("错误消息:", err)
 		return false
 	}
 	return true
 }
 
-func SendPackage(conn *net.Conn, pid int, body []byte) {
+func Str2int32(str string) int32 {
+	str = strings.TrimSpace(str)
+
+	if len(str) <= 0 {
+		return 0
+	}
+
+	a2_i, err := strconv.Atoi(str)
+	if err != nil {
+		return 0
+	}
+	return int32(a2_i)
+}
+
+//数据发包
+func SendPackage(conn net.Conn, pid int, body []byte) {
 	var pid_32 int32 = int32(pid)
 
 	len := 8 + len(body)
@@ -49,10 +72,11 @@ func SendPackage(conn *net.Conn, pid int, body []byte) {
 
 	msg := append(len_buf.Bytes(), pid_buf.Bytes()...)
 	msg2 := append(msg, body...)
-	(*conn).Write(msg2)
-	fmt.Println(msg2)
+	conn.Write(msg2)
+	fmt.Println("发送数据 pid=", pid)
 }
 
+//获取包头
 func GetHead(buf []byte) (int32, int32) {
 	if len(buf) < 8 {
 		return 0, 0
@@ -67,84 +91,61 @@ func GetHead(buf []byte) (int32, int32) {
 
 	return head_len, head_pid
 }
-func SendMsgRegister(conn net.Conn, nick string, pwd string) {
-	register := &protocol.Account_RegisterPlayer{
-		Playername: proto.String(nick),
-		Passworld:  proto.String(pwd),
-	}
 
-	encObj, err := proto.Marshal(register)
-	is_ok := CheckError(err)
-	if is_ok {
-		SendPackage(&conn, 1, encObj)
-	}
-}
-
-func SendServerList(conn net.Conn) {
-	serverList := &protocol.Account_ServerListResult{}
-	encObj, err := proto.Marshal(serverList)
-	is_ok := CheckError(err)
-	if is_ok {
-		SendPackage(&conn, 3, encObj)
-	}
-}
-
-func SenMsgLogin(conn net.Conn) {
-	//登陆相关
-	loginInfo := &protocol.Account_LoginInfo{
-		Playername: proto.String(nick),
-		Passworld:  proto.String(pwd),
-	}
-
-	encObj, err := proto.Marshal(loginInfo)
-	is_ok := CheckError(err)
-	if is_ok {
-		SendPackage(&conn, 2, encObj)
-	}
-}
-
-func ReciveResult(conn net.Conn) {
+//账号服务器接收消息
+func ReciveAccountResult(conn net.Conn) {
 	const MAXLEN = 1024
 	buf := make([]byte, MAXLEN)
 
 	for true {
-		n, _ := conn.Read(buf) //接收具体消息
+		n, _ := conn.Read(buf)
 		_, head_pid := GetHead(buf)
 
+		if n > MAXLEN || n < 8 {
+			//fmt.Println("recive error n> MAXLEN")
+			return
+		}
+
 		switch head_pid {
-		case 2:
-			result := new(protocol.Account_LoginResult)
-			if err := proto.Unmarshal(buf[8:n], result); err == nil {
-				switch result.GetResult() {
-				case global.LOGINSUCCESS:
-					log.Info("login sucessfull and player id=%d gameserver = %s", result.GetPlayerId(), result.GetGameserver())
-				default:
-					log.Error("login error")
-				}
-				conn.Close()
-				return
-			} else {
-				fmt.Println(err)
-			}
 		case 1:
 			result := new(protocol.Account_RegisterResult)
 			if err := proto.Unmarshal(buf[8:n], result); err == nil {
 				switch result.GetResult() {
-				case global.REGISTERSUCCESS:
-					log.Trace("register sccessfull!")
+				case 0:
+					fmt.Println("注册成功\n")
+				case 1:
+					fmt.Println("注册失败\n")
+				case 4:
+					fmt.Println("注册名被占用\n")
 				default:
-					log.Error("register error")
 				}
-				//注册后登陆
-				SenMsgLogin(conn)
-			} else {
-				fmt.Println("err:", err)
+			}
+
+		case 2:
+			result := new(protocol.Account_LoginResult)
+			//fmt.Println("buf:", buf, "n:", n)
+			if err := proto.Unmarshal(buf[8:n], result); err == nil {
+				switch result.GetResult() {
+				case 5:
+					fmt.Println("登录成功\t", "player id:", result.GetPlayerId(), "游戏地址服务器:", result.GetGameserver(), "\n")
+					result.GetPlayerId()
+					fout, _ := os.Create("account.txt")
+					defer fout.Close()
+					fout.WriteString(strconv.Itoa(int(result.GetPlayerId())))
+					conn.Close()
+				case 2:
+					fmt.Println("登录失败\n")
+				case 6:
+					fmt.Println("禁止登录\n")
+				default:
+				}
+
 			}
 
 		case 3:
 			result := new(protocol.Account_ServerListResult)
 			if err := proto.Unmarshal(buf[8:n], result); err == nil {
-				fmt.Println("server list:", len(result.ServerInfo))
+				fmt.Println("服务器列表", result.GetServerInfo())
 			}
 		}
 
@@ -152,25 +153,14 @@ func ReciveResult(conn net.Conn) {
 	}
 }
 
-type ConnStruct struct {
-	conn net.Conn
-}
-
-//测试账号服务器
-func testAccount(nick string, pwd string, conn net.Conn) {
-	go ReciveResult(conn)
-	SendServerList(conn)             //获取服务器列表
-	SendMsgRegister(conn, nick, pwd) //注册登录
-}
-
+//游戏服务器接收数据消息
 func ReciveResult4Game(conn *net.Conn) {
-	const MAXLEN = 2048
+	const MAXLEN = 20480
 	buff := make([]byte, MAXLEN)
 
 	for true {
-		n, _ := (*conn).Read(buff) //接收具体消息
+		n, _ := (*conn).Read(buff)
 
-		fmt.Println("receve:", buff[0:n], "n:", n)
 		if n < 8 {
 			return
 		}
@@ -181,356 +171,193 @@ func ReciveResult4Game(conn *net.Conn) {
 			buff = buff[body_len:]
 			n = n - int(body_len)
 
+			fmt.Println("接收消息id=", head_pid)
 			switch head_pid {
 			case 1001:
-				result := new(protocol.Game_RegisterRoleResult)
+				result := new(protocol.PlayerBase_RegisterRoleResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("result:", result.GetResult())
+					if result.GetResult() == 100 {
+						fmt.Println("result 1001 角色注册成功\n")
+					} else {
+						fmt.Println("result 1001 角色注册失败:", result.GetResult(), "\n")
+					}
 				}
 
 			case 1002:
-				result := new(protocol.Game_RoleInfoResult)
+				result := new(protocol.PlayerBase_RoleInfoResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("result.HangupLevels:", result.HangupLevels, "copy_levels:", result.CopyLevels, "result.GetIsCreate():", result.GetIsCreate())
-					if !result.GetIsCreate() {
-						testRegisterGame(conn)
-					} else {
-						/*
-								var id int32 = 10101 //副本关卡
-								base := new(protocol.Game_WarMapStage)
-								base.StageId = &id
-								encObj, _ := proto.Marshal(base)
-								SendPackage(conn, 1003, encObj)
-
-							//发送扫荡
-							var stage_id int32 = 10101
-							var count int32 = 10
-
-							base := new(protocol.Game_SweepMapStage)
-							base.StageId = &stage_id
-							base.Count = &count
-
-							encObj, err := proto.Marshal(base)
-							is_ok := CheckError(err)
-							if is_ok {
-								fmt.Println("send 战斗结果")
-								SendPackage(conn, 1005, encObj)
-							}*/
-
-						//发送请求挂机
-						/*
-							var id int32 = 20101
-							base := new(protocol.GameGetGuajiInfo)
-							base.Id = &id
-							encObj, _ := proto.Marshal(base)
-							SendPackage(conn, 1016, encObj)
-						*/
-
-						//挑战boss
-						var id int32 = 20101
-						base := new(protocol.Game_ChallengeBoss)
-						base.Id = &id
-						encObj, _ := proto.Marshal(base)
-						SendPackage(conn, 1017, encObj)
-
-						/*
-							var id int32 = 20101
-							var state int32 = 1
-							var type_ int32 = 2
-
-							stage := new(protocol.Game_Stage)
-							stage.Type = &type_
-							stage.State = &state
-							stage.StageId = &id
-
-							base := new(protocol.Game_C2SChallenge)
-							base.Stage = stage
-							encObj, _ := proto.Marshal(base)
-							fmt.Println(encObj)
-							SendPackage(conn, 1018, encObj)
-						*/
-
-						/*
-							//切换关卡
-							var id int32 = 20102
-							base := new(protocol.Game_ChangeGuajiInfo)
-							base.Id = &id
-							encObj, _ := proto.Marshal(base)
-							SendPackage(conn, 1020, encObj)
-						*/
-						/*
-									//快速战斗
-									var type_ int32 = 2
-									var state int32 = 1
-									var stage_id int32 = 20102
-
-									stage := new(protocol.Game_Stage)
-									stage.Type = &type_
-									stage.State = &state
-									stage.StageId = &stage_id
-
-									base := new(protocol.Game_FastWar)
-									base.Stage = stage
-									encObj, _ := proto.Marshal(base)
-									SendPackage(conn, 1021, encObj)
-
-
-								//发送扫荡
-
-								var stage_id int32 = 10101
-								var count int32 = 10
-
-								base := new(protocol.Game_SweepMapStage)
-								base.StageId = &stage_id
-								base.Count = &count
-
-								encObj, err := proto.Marshal(base)
-								is_ok := CheckError(err)
-								if is_ok {
-									fmt.Println("send 战斗结果")
-									SendPackage(conn, 1005, encObj)
-								}
-								/*
-									//获取该关卡的挂机列表
-									base := new(protocol.Game_GetGuajiRoleList)
-									encObj, _ := proto.Marshal(base)
-									SendPackage(conn, 1022, encObj)
-
-									//请求阵型
-									base := new(protocol.Game_GetGuajiRoleFormation)
-									var role_id int64 = 1000003
-									var type_ int32 = 2
-									base.RoleId = &role_id
-									base.Type = &type_
-
-									encObj, _ := proto.Marshal(base)
-									SendPackage(conn, 1023, encObj)
-									/*
-											//上下阵
-											base := new(protocol.Game_HerosFormation)
-											var type_ int32 = 2
-											var is_on bool = true
-											var pos_id int32 = 1
-											var hero_uid int32 = 301648466
-
-											base.Type = &type_
-											base.IsOn = &is_on
-											base.PosId = &pos_id
-											base.HeroUid = &hero_uid
-
-											encObj, _ := proto.Marshal(base)
-											SendPackage(conn, 1024, encObj)
-
-										//交换阵型
-										base := new(protocol.Game_ChangeHerosFormation)
-										var type_ int32 = 2
-										var pos_id_1 int32 = 1
-										var pos_id_2 int32 = 2
-
-										base.Type = &type_
-										base.PosId_1 = &pos_id_1
-										base.PosId_2 = &pos_id_2
-
-										encObj, _ := proto.Marshal(base)
-										SendPackage(conn, 1025, encObj)
-
-							var uid int32 = 578459847
-							var count int32 = 21
-							base := new(protocol.Game_UseProp)
-							base.Uid = &uid
-							base.Count = &count
-							encObj, _ := proto.Marshal(base)
-							SendPackage(conn, 1027, encObj)
-
-							//查看道具背包
-							base2 := new(protocol.Game_CheckPropBag)
-							encObj2, _ := proto.Marshal(base2)
-							SendPackage(conn, 1029, encObj2)
-
-							//在线收益
-							/*base := new(protocol.Game_C2SOnlineGuaji)
-							encObj, _ := proto.Marshal(base)
-							SendPackage(conn, 1015, encObj)
-						*/
-
-						/*
-							base := new(protocol.Game_CheckEquipBag)
-							encObj, _ := proto.Marshal(base)
-							SendPackage(conn, 1030, encObj)
-						*/
-					}
+					fmt.Println("是否创建角色", result.GetIsCreate(), "\n基础信息:", result.GetPlayerInfo(), "\n英雄列表:", result.GetHeros(), "\n装备列表:", result.GetEquips(), "\n道具列表:", result.GetProps(), "\n副本列表:", result.GetCopyLevels(), "\n挂机列表:", result.GetHangupLevels(), "\n职业id", result.GetProfessionId())
 				}
-			case 1003:
-				result := new(protocol.Game_MapStageResult)
+
+			case 1203:
+				result := new(protocol.NoticeMsg_Notice2CRoleInfo)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1003:", result.GetResult())
-					if result.GetResult() == 0 { //允许通关
-
-						var id int32 = 10101
-						var state int32 = 1
-						var type_ int32 = 1
-
-						stage := new(protocol.Game_Stage)
-						stage.StageId = &id
-						stage.Type = &type_
-						stage.State = &state
-
-						base := new(protocol.Game_WarMapNoteServer)
-						base.Stage = stage
-						encObj, _ := proto.Marshal(base)
-						SendPackage(conn, 1004, encObj) //发送战斗结构
-
-					}
-				}
-			case 1004: //战斗结果
-				result := new(protocol.Game_WarMapNoteServerResult)
-				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1004", result.GetReward().GetPlayerGold(), result.GetReward().GetHeroExp(), result.GetReward().GetEquipUids(), result.GetReward().GetPropUids())
+					fmt.Println("玩家基础属性变化 level:", result.GetLevel(), "exp:", result.GetExp(), "power:", result.GetPower(), "hp:", result.GetHp())
 				}
 
-				//发送扫荡
-				var stage_id int32 = 10101
-				var count int32 = 1
-
-				base := new(protocol.Game_SweepMapStage)
-				base.StageId = &stage_id
-				base.Count = &count
-
-				encObj, err := proto.Marshal(base)
-				is_ok := CheckError(err)
-				if is_ok {
-					fmt.Println("send 战斗结果")
-					SendPackage(conn, 1005, encObj)
-				}
-
-			case 1005: //扫荡结果
-				result := new(protocol.Game_SweepMapStageResult)
+			case 1204:
+				result := new(protocol.NoticeMsg_Notice2CMoney)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1005", result.GetResult(), result.GetReward())
+					fmt.Println("钱变化 gold:", result.GetGold(), " diamond:", result.GetDiamond())
 				}
-
-			case 1006: //道具变化
-				result := new(protocol.Game_Notice2CProp)
+			case 1205:
+				result := new(protocol.NoticeMsg_Notice2CEnergy)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1006", result.GetType(), result.GetProp())
+					fmt.Println("体力变化 energy:", result.GetEnergy(), " EnergyMax:", result.GetEnergyMax())
 				}
-			case 1008: //装备
-				result := new(protocol.Game_Notice2CEquip)
+			case 1506: //道具出售
+				result := new(protocol.Goods_SalePropResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1008", result.GetType(), result.GetEquip())
+					fmt.Println("道具出售:", result.GetResult())
 				}
-			case 1010: //得到的物品
-				result := new(protocol.Game_Notice2CRoleInfo)
+			case 1601:
+				result := new(protocol.GM_MsgResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1010", result.GetLevel(), result.GetHp(), result.GetPower(), result.GetHp())
+					fmt.Println("GM返回:", result.GetResult())
 				}
-
-			case 1011: //得到的物品
-				result := new(protocol.Game_Notice2CMoney)
+			case 1701:
+				result := new(protocol.Activity_NiuDanResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1011", result.GetGold(), result.GetDiamond())
+					fmt.Println("抽卡返回:", result.GetResult(), result.GetProps(), result.GetGold(), result.GetHeroUids())
 				}
-
-			case 1012: //体力变化
-				result := new(protocol.Game_Notice2CEnergy)
+			case 1212: //推送新添加英雄
+				result := new(protocol.NoticeMsg_NoticeGetHeros)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1012", result.GetEnergy(), result.GetEnergyMax())
+					fmt.Println("收到推送新英雄:", result.GetHeros())
 				}
-
-			case 1013: //关卡变化
-				result := new(protocol.Game_Notice2CheckPoint)
+			case 1801: //当前满足任务
+				result := new(protocol.Task_AllTaskResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1013", result.GetLatestCheckpoint().GetType(), result.GetLatestCheckpoint().GetState(), result.GetLatestCheckpoint().GetStageId())
+					fmt.Println("当前所有满足任务:", result.GetTasks())
 				}
-
-			case 1014: //离线收益
-				result := new(protocol.Game_OffNotice2CGuaji)
+			case 1214: //推送新任务
+				result := new(protocol.NoticeMsg_Notice2CNewTask)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1014", result.GetPointId(), result.GetGold(), result.GetExp(), result.GetGuajiTime(), result.GetKillNpcNum())
+					fmt.Println("推送新任务:", result.GetTask())
 				}
-
-			case 1015: //在线收益
-				result := new(protocol.Game_OnNotice2CGuaji)
+			case 1215: //推送当前可以接受的手动接取任务id
+				result := new(protocol.NoticeMsg_Notice2CCanAccept)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1015", result.GetGuajiType(), result.GetNpcId(), result.GetGold(), result.GetExp())
+					fmt.Println("推送当前可以接受的手动接取任务id:", result.GetCanAcceptTasks())
 				}
-
-			case 1016: //请求挂机返回
-				result := new(protocol.Game_GuajiInfoResult)
+			case 1216: //当前任务变化(用来更新任务进度)
+				result := new(protocol.NoticeMsg_Notice2CUpdateProgress)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1016", result.GetConditions())
+					fmt.Println("当前任务变化(用来更新任务进度):", result.GetTypeInfo(), result.GetSubitem())
 				}
-			case 1017: //可否挑战boss返回
-				result := new(protocol.Game_ChallengeBossResult)
+			case 1217:
+				result := new(protocol.NoticeMsg_SubmitTask)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1017", result.GetIsCanChange(), result.GetTeam_2())
+					fmt.Println("推送自动提交任务所获取的奖励:", result.GetTypeInfo(), result.GetGold(), result.GetRoleExp(), result.GetProps(), result.GetEquipUids())
 				}
-			case 1018: //挑战挂机boss
-				result := new(protocol.Game_C2SChallengeResult)
+			case 1218:
+				result := new(protocol.NoticeMsg_Notice2CHandleTask)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1018", result.GetEquipUids(), result.GetPropUids())
+					fmt.Println("客户端需手动提交任务获取奖励:", result.GetTypeInfo())
 				}
-			case 1020: //关卡切换
-				result := new(protocol.Game_ChangeGuajiInfoResult)
+			case 1219:
+				result := new(protocol.NoticeMsg_Notice2CAchievementChange)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1020", result.GetIsOk())
+					fmt.Println("成就进度变化:", result.GetInfos())
 				}
 
-			case 1021: //快速战斗
-				result := new(protocol.Game_FastWarResult)
+			case 1803:
+				result := new(protocol.Task_SubmitTaskResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1021", result.GetResult(), result.GetReward().GetPlayerGold())
+					fmt.Println("手动提交任务获取奖励:", result.GetResult(), result.GetGold(), result.GetRoleExp(), result.GetProps(), result.GetEquipUids(), result.GetHeroUids())
 				}
-			case 1022: //挂机列表返回
-				result := new(protocol.Game_GetGuajiRoleListResult)
+			case 1821:
+				result := new(protocol.Task_GetXuanShangInfoResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1022", result.GetGuajiRoleInfos())
+					fmt.Println("获取悬赏任务相关:", result.GetLastNum(), result.GetFreeLastTime())
 				}
-
-			case 1023: //获取某玩家阵型
-				result := new(protocol.Game_GetGuajiRoleFormationResult)
+			case 1822:
+				result := new(protocol.Task_XuanShangDiamondRefResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1023", result.GetResult(), result.GetFormations())
+					fmt.Println("获取悬赏任务相关:", result.GetResult())
 				}
-			case 1024: //英雄上下阵
-				result := new(protocol.Game_HerosFormationResult)
+			case 1824:
+				result := new(protocol.Task_GiveUpTaskResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1024", result.GetResult())
+					fmt.Println("任务放弃:", result.GetResult())
 				}
-			case 1025: //交换阵型
-				result := new(protocol.Game_ChangeHerosFormationResult)
+			case 1851: //成就
+				result := new(protocol.Task_GetAchievementResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1025", result.GetResult())
+					fmt.Println("成就:", result.GetInfos())
 				}
-			case 1027: //使用某个道具
-				result := new(protocol.Game_UsePropResult)
+			case 1852: //请求领取成就奖励
+				result := new(protocol.Task_GetAchievementRewardResult)
 				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1027", result.GetResult())
+					fmt.Println("成就奖励:", result.GetResult(), result.GetProps())
 				}
-			case 1029: //查看道具背包
-				result := new(protocol.Game_CheckPropBagResult)
-				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1029", result.GetPropStruct())
-				}
-			case 1030: //查看装备背包
-				result := new(protocol.Game_CheckEquipBagResult)
-				if err := proto.Unmarshal(buf[8:body_len], result); err == nil {
-					fmt.Println("1030", result.GetEquipStruct())
-				}
-			default:
 			}
-			time.Sleep(5 * time.Millisecond)
 		}
 	}
 }
 
-func testRegisterGame(conn *net.Conn) {
+//账号注册消息
+func SendMsgRegister(nick string, pwd string, conn net.Conn) {
+	register := &protocol.Account_RegisterPlayer{
+		Playername: proto.String(nick),
+		Passworld:  proto.String(pwd),
+	}
 
-	var player_id int32 = 1
+	encObj, err := proto.Marshal(register)
+	is_ok := CheckError(err)
+	if is_ok {
+		SendPackage(conn, 1, encObj)
+	}
+}
+
+//账号登录
+func SenMsgLogin(nick string, pwd string, conn net.Conn) {
+	loginInfo := &protocol.Account_LoginInfo{
+		Playername: proto.String(nick),
+		Passworld:  proto.String(pwd),
+	}
+
+	encObj, err := proto.Marshal(loginInfo)
+	is_ok := CheckError(err)
+	if is_ok {
+		SendPackage(conn, 2, encObj)
+	}
+}
+
+//服务器列表
+func GetGameServerList(conn net.Conn) {
+	loginInfo := &protocol.Account_GetServerList{}
+	encObj, err := proto.Marshal(loginInfo)
+	is_ok := CheckError(err)
+	if is_ok {
+		SendPackage(conn, 3, encObj)
+	}
+}
+
+func read(path string) (int32, error) {
+	fi, err := os.Open(path)
+	if err != nil {
+		return 0, err
+	}
+
+	defer fi.Close()
+	fd, err := ioutil.ReadAll(fi)
+	str := string(fd)
+	data, _ := strconv.Atoi(str)
+	return int32(data), nil
+}
+
+//游戏服务器注册
+func RegisterGame(conn *net.Conn) {
+
+	player_id, err := read("account.txt")
+	if err != nil {
+		fmt.Println("游戏注册失败 player id 没有写入account.txt文件中\n")
+	}
 	var hero_id int32 = 901
 	var nick string = "ttt"
 
-	base := new(protocol.Game_RegisterRole)
+	base := new(protocol.PlayerBase_RegisterRole)
 	base.PlayerId = &player_id
 	base.Nick = &nick
 	base.HeroId = &hero_id
@@ -538,39 +365,220 @@ func testRegisterGame(conn *net.Conn) {
 	encObj, err := proto.Marshal(base)
 	is_ok := CheckError(err)
 	if is_ok {
-		fmt.Println("send RegisterGame")
-		SendPackage(conn, 1001, encObj)
+		SendPackage(*conn, 1001, encObj)
 	}
 }
 
-func testGetInfoGame(conn net.Conn) {
-	go ReciveResult4Game(&conn)
-
-	role_info := new(protocol.Game_GetRoleInfo)
-	var playerid int32 = 1
-	role_info.PlayerId = &playerid
-	encObj, err := proto.Marshal(role_info)
-	fmt.Println(encObj)
+//游戏服务器登录
+func LoginGameServer(conn *net.Conn) {
+	player_id, err := read("account.txt")
+	if err != nil {
+		fmt.Println("player id 未知,不能登录\n")
+	}
+	base := new(protocol.PlayerBase_GetRoleInfo)
+	base.PlayerId = &player_id
+	encObj, err := proto.Marshal(base)
 	is_ok := CheckError(err)
 	if is_ok {
-		SendPackage(&conn, 1002, encObj)
+		SendPackage(*conn, 1002, encObj)
 	}
+}
+
+//GM命令
+func GMmessge(str string, conn *net.Conn) {
+	base := new(protocol.GM_Msg)
+	base.Msg = &str
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1601, encObj)
+}
+
+//扭蛋
+func NiuDan(type_ int32, type_group int32, conn *net.Conn) {
+	base := new(protocol.Activity_NiuDan)
+	base.Type = &type_
+	base.TypeGroup = &type_group
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1701, encObj)
+}
+
+//获取所有任务列表
+func AllTask(conn *net.Conn) {
+	base := new(protocol.Task_AllTask)
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1801, encObj)
+}
+
+//手动获取奖励
+func SubmitTask(type_id int32, id int32, conn *net.Conn) {
+	taskInfo := new(protocol.TaskType)
+	taskInfo.Type = &type_id
+	taskInfo.Id = &id
+
+	base := new(protocol.Task_SubmitTask)
+	base.TaskInfo = taskInfo
+
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1803, encObj)
+}
+
+//获取悬赏任务相关
+func GetXuanShangInfo(conn *net.Conn) {
+	base := new(protocol.Task_GetXuanShangInfo)
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1821, encObj)
+}
+
+//获取悬赏任务相关
+func XuanShangDiamondRef(conn *net.Conn) {
+	base := new(protocol.Task_XuanShangDiamondRef)
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1822, encObj)
+}
+
+//手动接取任务
+func AcceptTask(num1 int32, num2 int32, conn *net.Conn) {
+	taskInfo := new(protocol.TaskType)
+	taskInfo.Type = &num1
+	taskInfo.Id = &num2
+
+	base := new(protocol.Task_AcceptTask)
+	base.TaskInfo = taskInfo
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1802, encObj)
+}
+
+//任务放弃
+func GiveUpTask(num1 int32, num2 int32, conn *net.Conn) {
+	taskInfo := new(protocol.TaskType)
+	taskInfo.Type = &num1
+	taskInfo.Id = &num2
+
+	base := new(protocol.Task_GiveUpTask)
+	base.Task = taskInfo
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1824, encObj)
+}
+
+//请求获取成就列表
+func GetAchievement(conn *net.Conn) {
+	base := new(protocol.Task_GetAchievement)
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1851, encObj)
+}
+
+//请求领取成就奖励
+func GetAchievementReward(id int32, conn *net.Conn) {
+	base := new(protocol.Task_GetAchievementReward)
+	base.Id = &id
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1852, encObj)
+}
+
+//道具出售
+func SaleProp(uid int32, count int32, conn *net.Conn) {
+	base := new(protocol.Goods_SaleProp)
+	base.PropUid = &uid
+	base.Count = &count
+	encObj, _ := proto.Marshal(base)
+	SendPackage(*conn, 1506, encObj)
 }
 
 func main() {
-	/*
-		conn, err := net.Dial("tcp", "127.0.0.1:8080") //121.52.235.141:8080
-		if err != nil {
-			fmt.Println(err)
-		}
-		go testAccount(nick, pwd, conn)
-	*/
 
-	conn, err := net.Dial("tcp", "127.0.0.1:8082")
-	if err != nil {
-		fmt.Println(err)
+	var cmd string = ""
+
+	//账号服务器
+	conn1, err1 := net.Dial("tcp", "127.0.0.1:8080") //
+	if err1 != nil {
+		fmt.Println("账号服务器连接错误:", err1)
 	}
-	testGetInfoGame(conn)
+	go ReciveAccountResult(conn1)
 
-	time.Sleep(1000000 * time.Millisecond)
+	//游戏服务器
+	conn2, err2 := net.Dial("tcp", "127.0.0.1:8082") //121.52.235.141
+	if err2 != nil {
+		fmt.Println("游戏服务器连接错误:", err2)
+	}
+	go ReciveResult4Game(&conn2)
+
+	inputReader := bufio.NewReader(os.Stdin)
+	for {
+		cmd, _ = inputReader.ReadString('\n')
+		cmd = strings.TrimSpace(cmd)
+
+		cmd_id := Str2int32(cmd)
+
+		switch cmd_id {
+		case 1: //注册账号
+			fmt.Println("请输入用注册户名,密码\n")
+			cmd, _ = inputReader.ReadString('\n')
+			strs := strings.Split(cmd, " ")
+			SendMsgRegister(strs[0], strs[1], conn1)
+		case 2: //登录
+			fmt.Println("请输入用登录户名,密码\n")
+			cmd, _ = inputReader.ReadString('\n')
+			strs := strings.Split(cmd, " ")
+			SenMsgLogin(strs[0], strs[1], conn1)
+		case 3: //服务器列表
+			GetGameServerList(conn1)
+		case 1001: //游戏服务器注册
+			RegisterGame(&conn2)
+		case 1002: //登录
+			LoginGameServer(&conn2)
+		case 1506: //道具出售
+			fmt.Println("请输入道具uid 与 count")
+			cmd, _ = inputReader.ReadString('\n')
+			strs := strings.Split(cmd, " ")
+			num1 := Str2Int32(strs[0])
+			num2 := Str2Int32(strs[1])
+			SaleProp(num1, num2, &conn2)
+		case 1601: //GM命令
+			fmt.Println("请输入GM命令\n")
+			cmd, _ = inputReader.ReadString('\n')
+			GMmessge(cmd, &conn2)
+		case 1701: //活动抽卡
+			fmt.Println("活动抽卡 参数1（1:单抽 2:10连抽) 参数2(抽卡类型)看配置\n")
+			cmd, _ = inputReader.ReadString('\n')
+			strs := strings.Split(cmd, " ")
+			num1 := Str2Int32(strs[0])
+			num2 := Str2Int32(strs[1])
+			NiuDan(num1, num2, &conn2)
+		case 1801:
+			AllTask(&conn2)
+		case 1803: //手动获取奖励
+			fmt.Println("请输入任务类型(1:主线 2:悬赏) id(csv中的配置)\n")
+			cmd, _ = inputReader.ReadString('\n')
+			strs := strings.Split(cmd, " ")
+			num1 := Str2Int32(strs[0])
+			num2 := Str2Int32(strs[1])
+			SubmitTask(num1, num2, &conn2)
+		case 1821: //获取悬赏任务相关
+			GetXuanShangInfo(&conn2)
+		case 1822: //悬赏元宝刷新请求
+			XuanShangDiamondRef(&conn2)
+		case 1802: //手动接受任务
+			fmt.Println("请输入手动接取 任务类型与任务id")
+			cmd, _ = inputReader.ReadString('\n')
+			strs := strings.Split(cmd, " ")
+			num1 := Str2Int32(strs[0])
+			num2 := Str2Int32(strs[1])
+			AcceptTask(num1, num2, &conn2)
+		case 1824: //放弃任务
+			fmt.Println("放弃任务 任务类型与任务id")
+			cmd, _ = inputReader.ReadString('\n')
+			strs := strings.Split(cmd, " ")
+			num1 := Str2Int32(strs[0])
+			num2 := Str2Int32(strs[1])
+			GiveUpTask(num1, num2, &conn2)
+		case 1851: //请求获取成就列表
+			GetAchievement(&conn2)
+		case 1852: //成就领取奖励
+			fmt.Println("输入成就id")
+			cmd, _ = inputReader.ReadString('\n')
+			num := Str2Int32(cmd)
+			GetAchievementReward(num, &conn2)
+
+		default:
+		}
+	}
 }

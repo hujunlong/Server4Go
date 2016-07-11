@@ -44,7 +44,6 @@ func (this *SysConfig) setLog() {
 func (this *SysConfig) readConfig() {
 	err := il8n.GetInit("config/game_cfg.ini")
 	if err == nil {
-
 		int_gameid, _ := strconv.Atoi(il8n.Data["game_id"].(string))
 		this.GameId = int32(int_gameid)
 		this.account_log_max, _ = strconv.ParseInt(il8n.Data["account_log_max"].(string), 10, 64)

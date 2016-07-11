@@ -10,6 +10,7 @@ import (
 	"server/share/global"
 	"server/share/protocol"
 
+	"github.com/game_engine/cache/redis"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -34,7 +35,7 @@ func (this *Deal4C) Deal4Client(listener net.Listener) {
 
 func (this *Deal4C) getNewAddress() (int32, string, error) {
 	var address string = ""
-	var max_count int32 = 99999
+	var max_count int32 = 999999
 	var address_id int32 = 0
 
 	if len(config.NewServerAddress) == 0 {
@@ -53,6 +54,7 @@ func (this *Deal4C) getNewAddress() (int32, string, error) {
 }
 
 func (this *Deal4C) NoteGame(player_id int32, game_id int32) error {
+	fmt.Println("发送通知游戏服务器 函数进入")
 	result4G := &protocol.Account_NoteGame{
 		PlayerId: proto.Int32(int32(player_id)),
 	}
@@ -60,7 +62,7 @@ func (this *Deal4C) NoteGame(player_id int32, game_id int32) error {
 	encObj, _ := proto.Marshal(result4G)
 	if _, ok := deal_4g.GameConnects[game_id]; ok {
 		SendPackage(deal_4g.GameConnects[game_id].Conn, 102, encObj)
-		fmt.Println("send to game", encObj)
+		fmt.Println("通知游戏服务器send to game", encObj)
 		return nil
 	}
 	return errors.New("game connect error")
@@ -71,13 +73,18 @@ func (this *Deal4C) Handler4C(conn net.Conn) {
 	const MAXLEN = 2048
 	buf := make([]byte, MAXLEN)
 
+	defer func() {
+		fmt.Println("socket is close")
+		conn.Close()
+	}()
+
 	for {
 		n, err := conn.Read(buf) //接收具体消息
 		if err != nil {
 			return
 		}
 
-		if n > MAXLEN && n < 8 {
+		if n > MAXLEN || n < 8 {
 			account.Log.Error("recive error n> MAXLEN")
 			return
 		}
@@ -94,11 +101,14 @@ func (this *Deal4C) Handler4C(conn net.Conn) {
 		switch head_pid {
 
 		case 1:
+			var db_count_max int32 = 0
+			redis.Find("PlayerCount", db_count_max)
+			fmt.Println("获取playerCount:", db_count_max)
 			//注册
 			register := new(protocol.Account_RegisterPlayer)
 			if err := proto.Unmarshal(buf[8:n], register); err == nil {
 				game_id, _, _ := this.getNewAddress()
-				fmt.Println(register.GetPlayername(), register.GetPassworld())
+				fmt.Println("注册:", register.GetPlayername(), register.GetPassworld(), game_id)
 				result, player_id := this.account_info.Register(register.GetPlayername(), register.GetPassworld(), game_id)
 
 				result4C := &protocol.Account_RegisterResult{
@@ -116,7 +126,6 @@ func (this *Deal4C) Handler4C(conn net.Conn) {
 					}
 					account.Log.Info("player_id = %d game_id=%d", player_id, game_id)
 				}
-
 			}
 
 		case 2:
@@ -133,7 +142,11 @@ func (this *Deal4C) Handler4C(conn net.Conn) {
 
 				encObj, _ := proto.Marshal(result4C)
 				SendPackage(conn, 2, encObj)
-				conn.Close()
+
+				if result == global.LOGINSUCCESS { //登录成功断开连接
+					conn.Close()
+				}
+
 			} else {
 				fmt.Println(err)
 			}

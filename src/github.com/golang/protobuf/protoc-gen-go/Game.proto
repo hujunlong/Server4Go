@@ -1,7 +1,102 @@
 package protocol;
 
-message Game {
+/*
+基础属性 	 1001-1100
+关卡挂机相关 1101-1200
+推送变化     1201-1300 
+英雄阵型相关 1301-1400
+英雄相关     1401-1500
+道具装备相关 1501-1600
+GM 			 1601-1700
+活动		 1701-1800
+任务成就系统 1801-1900
+*/
+
+//公共
+message Attribute {//属性
+	optional int32 group = 1; 
+	optional int32 key = 2;
+	optional float value = 3;
+}
+
+//英雄 属性 group=0总和 group=1基础属性 group=2升星 group=3升阶
+//装备 额外属性 group = 0总值 group=1基础  group=2精炼 group=3强化 group=4品质
+
+message FightingAttr  {//战斗 属性
+	optional int32 id = 1; //role 
+	optional int32 uid = 2; //uid	
+	optional int32 pos = 5;//位置
+	optional int32 level = 6;//等级
+	optional int32 exp = 7;//经验
+	optional int32 power = 8;//战力
+	optional int32 star_level = 10;//星级
+	optional int32 step_level = 11;//阶级
+	repeated int32 skill  =20; //技能id
+	repeated Attribute attribute = 21;//额外属性
+}
+
+message Stage { 
+	optional int32 type = 1;//状态 1副本 2挂机	
+	optional int32 state = 2;//状态 (-1 未通关  0解锁未通关 1 一星级通关 2二星通关 3三星通关)	
+	optional int32 stage_id = 3;//关卡id
+}
+
+message RwardProp {
+	optional int32 prop_uid = 1;
+	optional int32 num = 2;
+}
+
+message PropStruct {//道具
+	 optional int32 prop_id = 1;//道具id
+	 optional int32 prop_uid = 2;//道具唯一标识
+	 optional int32 prop_count = 3;//道具数量
+}
+
+
+message EquipInfo {
+	optional int32 id = 1;//装备
+	optional int32 uid = 2;//装备唯一id
+	optional int32 equip_level = 3;//装备等级
+	optional int32 strengthen_count = 4;//强化次数
+	optional int32 refine_count = 5;//当前精炼等级对应已精炼次数
+	optional int32 pos = 6;//位置(-1表示空)
+	optional int32 quality = 7;//品质
+	optional int32 refine_level = 8;//精炼等级
+}
 	
+message EquipStruct{
+	optional EquipInfo equip_info = 1;//装备基础
+	repeated Attribute attribute = 2;//动态属性(强化 品质)
+}
+
+message TaskType {
+	optional int32 type = 1;//1:主线 2:悬赏任务 3:奇遇
+	optional int32 id = 2;//当前id (quest.csv 中101项)
+	optional int32 quality_ref  = 3; //刷新品质
+}
+
+message SubItem {
+	optional int32 task_id = 1;//当前任务id
+	optional int32 complete_progress = 2;//完成进度(如果该任务不需要则为0)
+	optional int32 complete_total= 3;//总进度
+}
+
+message TaskInfo {//任务相关
+	optional TaskType type_info = 1;
+	repeated SubItem subitems = 2;
+}
+
+message AchievementInfo {
+	optional int32 id = 1;//成就id
+	optional int32 progress = 2;//进度
+	optional bool is_complete = 3;//是否完成任务
+	optional bool is_reward = 4;//是否已经领取了奖励
+	optional int32 complete_total= 5;//总进度
+}
+	
+//基础属性 1001 - 1100
+message PlayerBase {
+
 	message PlayerInfo { //主角基础属性
 		optional int32 level = 1;//等级
 		optional int32 exp = 2;//经验
@@ -19,107 +114,6 @@ message Game {
 		optional int32 achievement_points = 14;//成就点数(待定)
 		optional int32 task_points = 15;//任务点数
 		optional int64 role_id = 16;//主角id
-	}
-	
-	message HeroAttr  {//英雄 属性
-		optional int32 id = 1; //role 
-		optional int32 uid = 2; //uid	
-		optional int32 type = 3;//英雄 1：英雄 100主角
-		optional int32 sex = 4;//性别
-		optional int32 pos = 5;//位置
-		optional int32 level = 6;//等级
-		optional int32 exp = 7;//经验
-		optional int32 hp = 8;//血量
-		optional int32 star_level = 10;//星级
-		optional int32 step_level = 11;//阶级
-		optional int32 speed = 12;//速度
-		optional int32 zodiac = 13;//属相 金木水火土
-		optional string feature = 14;//特征
-		optional string name = 15;//名称
-		optional int32 physical_attack = 16;//物理攻击
-		optional int32 magic_attack = 17;//魔法攻击
-		optional int32 physical_defense = 18;//物理防御
-		optional int32 magic_defense = 19;//魔法防御
-		repeated int32 skill  =20; //技能
-		repeated Attribute attribute = 21;
-	}
-	
-	message Attribute {//属性
-		optional int32 key = 1;
-		optional float value = 2;
-	}
-	
-	message HeroStruct {//英雄
-		 optional HeroAttr hero_info = 1;//基础信息
-		 repeated Attribute attribute = 2;//属性 (装备 buff vip 成就)
-	}
-	
-	message PropStruct {//道具
-		 optional int32 prop_id = 1;//道具id
-		 optional int32 prop_uid = 2;//道具唯一标识
-		 optional int32 prop_count = 3;//道具数量
-	}
-		
-	message FormationStruct {//阵型
-		optional int32 hero_id = 1;//英雄id
-		optional int32 hero_uid = 2;//英雄唯一标识
-		optional int32 pos = 3;//位置
-	}
-	 
-	message EquipInfo{
-		optional int32 id = 1;//装备
-		optional int32 uid = 2;//装备唯一id
-		optional int32 equip_level = 3;//装备等级
-		optional int32 strengthen_count = 4;//强化次数
-		optional int32 refine_count = 5;//精炼次数
-		optional int32 pos = 6;//位置(-1表示空)
-		optional int32 quality = 7;//品质
-	}
-	
-	message EquipStruct{
-		optional EquipInfo equip_info = 1;//装备基础
-		repeated Attribute attribute = 2;//动态属性(强化 品质)
-	}
-	
-	message MonsterAttr  {//怪物属性
-		optional int32 id = 1; //怪物 id
-		optional int32 uid = 2; //怪物 id
-		optional int32 pos = 3;//位置
-		optional int32 level = 4;//等级
-		optional int32 hp = 5;//血量
-		optional float physical_attack = 6;//物理攻击
-		optional float magic_attack = 7;//魔法攻击
-		optional float physical_defense = 8;//物理防御
-		optional float magic_defense = 9;//魔法防御
-		optional int32 speed = 10;//速度
-		optional int32 step_level = 11;//怪物阶数
-		optional int32 star_level = 12;//怪物星级
-		optional string name = 13;//名字
-		optional string feature = 14;//特征
-		optional int32 zodiac = 15;//属相 金木水火土
-		optional int32 sex = 16;//性别
-		repeated Attribute attribute = 17;//key=1 暴击值 key=2 暴伤 key=3 连击值 key=4 抵抗值 key=5 物理吸血百分比 key=6 法术吸血百分比 key=7 物理免疫 key=8 法术免疫 key=9 霸体
-	}
-	
-	message MonsterCombatTeam {//怪物战斗阵容
-		repeated MonsterAttr monster_attrs = 1;
-	}
-	
-	message StageBaseDrop {
-		optional int32 type = 1;//1主角经验  2金币 3装备 4道具 5奇遇 
-		optional int32 id = 2;//对应id (1主角经验  2金币 id为0)
-		optional int32 count = 3;//数量 
-	}
-	
-	message StageBossDrop {
-		repeated int32 conditions = 1;//条件（击杀XX个怪物 修炼XX小时/分钟 修炼中获得XX铜钱 修炼中获得XX经验）
-		
-	}
-	
-	message Stage { 
-		optional int32 type = 1;//状态 1副本 2挂机	
-		optional int32 state = 2;//状态 (-1 未通关  0解锁未通关 1 一星级通关 2二星通关 3三星通关)	
-		optional int32 stage_id = 3;//关卡id
 	}
 	
 	//pid = 1001	客户端发送注册角色信息
@@ -142,121 +136,69 @@ message Game {
 	//pid = 1002 角色返回
 	message RoleInfoResult {
 		optional bool is_create = 1; //是否已经创建 如果false 客户的不需要读取下面数据
-		optional PlayerInfo player_info = 2;//角色相关结构	
+		optional PlayerInfo player_info = 2;//角色相关结构
+		repeated FightingAttr heros = 3;//英雄列表
+		repeated EquipStruct equips = 4;//所有装备列表
+		repeated PropStruct props = 5;//道具相关		
 		repeated Stage copy_levels = 7;//副本开启的所有状态	
 		repeated Stage hangup_levels = 8;//挂机开启的所有状态
 		optional int32 profession_id = 9;//职业id
 	}
 	
-	//pid = 1003 关卡挑战
+	//pid 1003 客户端通知服务器退出
+	message LoginOut {
+	}
+}
+
+//关卡挂机相关 1101 - 1200
+message StageBase {
+
+	//pid = 1101 关卡挑战
 	message WarMapStage {
 		optional int32 stage_id = 1;//关卡
 	}
 	
-	//pid = 1003 战斗是否允许 阵容(后期添加) 返回
+	//pid = 1101 战斗是否允许 阵容(后期添加) 返回
 	message MapStageResult {
 		optional int32 result = 1;//(0：允许 1：前置地图未完成 2：体力不够)
-	}
-	
-	message RwardProp {
-		optional int32 prop_uid = 1;
-		optional int32 num = 2;
 	}
 	
 	message Reward { //奖励 
 		optional int32 player_exp = 1;                  //角色经验
 		optional int32 player_gold = 2;                 //战斗金币
 		optional int32 hero_exp = 3;                    //战斗英雄经验
-		repeated int32 equip_uids = 4;//随机掉落的装备
-		repeated RwardProp prop_uids = 5;//随机掉落的道具
-	
+		repeated int32 equip_uids = 4;					//随机掉落的装备
+		repeated RwardProp prop_uids = 5;				//随机掉落的道具
 	}
 	
-	//pid = 1004 战斗结果客户的通知服务器
+	//pid = 1102 战斗结果客户的通知服务器
 	message WarMapNoteServer {
 		optional Stage stage = 1;//关卡
 	}
 	
-	//pid = 1004 战斗结果客户的通知服务器 result
+	//pid = 1102 战斗结果客户的通知服务器 result
 	message WarMapNoteServerResult{ 
 		optional Reward reward = 1;//战斗奖励结果 
 	}
 	
-	//pid = 1005 扫荡
+	//pid = 1103 扫荡
 	message SweepMapStage {
 		optional int32 stage_id = 1;//关卡
 		optional int32 count = 2;//扫荡次数
 	}
 	
-	//pid = 1005 扫荡 result
+	//pid = 1103 扫荡 result
 	message SweepMapStageResult {
 		optional int32 result = 1;//(0：允许 1：未解锁 2：体力不够)
 		repeated Reward reward = 2;//战斗奖励结果
 	}
 	
-	
-	//pid = 1006 服务器主动通知客户端 背包中道具变化(such as:掉落时候 )
-	message Notice2CProp
-	{
-		optional int32 type = 1;//(1:添加 2:删除)
-		repeated PropStruct prop = 2;//道具
-	}
-	
-	//pid = 1008 服务器主动背包中装备变化通知客户端(such as:掉落时候 )1006类似
-	message Notice2CEquip
-	{
-		optional int32 type = 1;//(1:添加 2:删除)
-		repeated EquipStruct equip = 2;//道具
-	}
-	
-
-	//pid = 1010 服务器通知客户端玩家基础属性变化 
-	message Notice2CRoleInfo
-	{
-		optional int32 level = 1;//等级
-		optional int32 exp = 2;//经验
-		optional int32 power = 3;//战力
-		optional int32 hp = 4;//血量
-	}
-	
-	//pid = 1011 钱变化
-	message Notice2CMoney {
-		optional int32 gold = 1;//金币
-		optional int32 diamond = 2;//元宝
-	}
-	
-	//pid = 1012 体力变化
-	message Notice2CEnergy {
-		optional int32 energy = 1;//当前体力 
-		optional int32 energy_max = 2;//体力上线 
-	}
-	
-	
-	//pid = 1013 关卡变化
-	message Notice2CheckPoint
-	{
-		optional Stage latest_checkpoint = 1;//最新关卡
-	}
-	
-	
-	//pid = 1014 离线挂机收益
-	message OffNotice2CGuaji 
-	{
-		optional int32 point_id = 1;//挂机关卡id
-		optional int32 gold = 2;//获取的金币
-		optional int32 exp = 3;//获取的经验
-		optional int32 guaji_time = 4;//挂机时间(秒)
-		optional int32 kill_npc_num = 5;//击杀XX个怪物
-		repeated int32 equip_uids = 6;//随机掉落的装备
-		repeated RwardProp prop_uids = 7;//随机掉落的道具
-	}
-	
-	//pid = 1015 在线挂机收益c2s
+	//pid = 1104 在线挂机收益c2s
 	message C2SOnlineGuaji 
 	{	
 	}
 	
-	//pid = 1015 在线挂机收益 result
+	//pid = 1104 在线挂机收益 result
 	message OnNotice2CGuaji 
 	{
 		optional int32 guaji_type = 1;//type (1 怪物事件 2开宝箱事件 3装备事件)
@@ -265,46 +207,45 @@ message Game {
 		optional int32 exp = 4;//获取的经验
 		repeated int32 equip_uids = 5;//随机掉落的装备
 		repeated RwardProp prop_uids = 6;//随机掉落的道具
-		
 	}
 	
-	
-	message Conditions { //挂机事件
+	message Conditions //挂机事件
+	{ 
 		optional int32 type = 1;//101 击杀XX个怪物 102修炼XX小时/分钟 103 修炼中获得XX铜钱 104 修炼中获得XX经验
 		optional int32 count = 2; //对应数量
 		optional int32 cur_count = 3; //当前对应数量
 	}
 
 	
-	//pid = 1016 C2S 请求挂机信息
+	//pid = 1105 C2S 请求挂机信息
 	message getGuajiInfo {
 		optional int32 id = 1;//关卡id
 	}
 	
-	//pid = 1016 请求挂机 返回
+	//pid = 1105 请求挂机 返回
 	message GuajiInfoResult {
 		repeated Conditions conditions = 1;//挂机对应事件
 	}
 	
 	
-	//pid = 1017 C2S boss挑战 队伍请求
+	//pid = 1106 C2S boss挑战 队伍请求
 	message ChallengeBoss {
 		optional int32 id = 1;//关卡id
 	}
 	
-	//pid = 1017 挑战 队伍请求 返回
+	//pid = 1106 挑战 boss 返回
 	message ChallengeBossResult {
 		optional bool is_can_change = 1;//是否可以挑战
-		//repeated HeroStruct team_1 = 2;//队一(自己)
-		optional MonsterCombatTeam team_2 = 3;//队二(其他)
+		repeated FightingAttr team_1 = 3;//队一(自己)
+		repeated FightingAttr team_2 = 4;//队二(其他)
 	}
 	
-	//pid = 1018 客户端通知服务器boss挑战结果
+	//pid = 1107 客户端通知服务器boss挑战结果
 	message C2SChallenge {
 		optional Stage stage = 1;//是否挑战成功boss
 	}
 	
-	//pid = 1018 服务器返回boss 奖励
+	//pid = 1107 服务器返回boss 奖励
 	message C2SChallengeResult {
 		repeated int32 equip_uids = 1;//随机掉落的装备
 		repeated RwardProp prop_uids = 2;//随机掉落的道具
@@ -312,34 +253,31 @@ message Game {
 		optional int32 role_exp = 4;//主角经验
 		optional int32 gold = 5;//金币
 	}
+
 	
-	//pid 1019 客户端通知服务器退出
-	message LoginOut {
-	}
-	
-	//pid = 1020 C2S 切换关卡
+	//pid = 1108 C2S 切换关卡
 	message ChangeGuajiInfo {
 		optional int32 id = 1;//关卡id
 	}
 	
-	//pid = 1020 C2S 切换关卡 result
+	//pid = 1108 C2S 切换关卡 result
 	message ChangeGuajiInfoResult {
 		optional bool is_ok = 1;
 	}
 	
-	//pid = 1021 快速战斗
+	//pid = 1109 快速战斗
 	message FastWar {
 		optional Stage stage = 1;//关卡
 	}
 	
-	//pid = 1021 快速战斗 result
+	//pid = 1109 快速战斗 result
 	message FastWarResult{ 
 		optional int32 result = 1;//能否快速战斗 0：可以快速战斗 1：该关卡不能快速战斗 2：快速战斗用完
 		optional Reward reward = 2;//战斗奖励结果 
 	}
 	
 	
-	//pid = 1022 获取玩家当前挂机列表
+	//pid = 1110 获取玩家当前挂机列表
 	message GetGuajiRoleList{ 
 	}
 	
@@ -354,29 +292,175 @@ message Game {
 		optional int32 level = 7;//等级
 		optional int32 power = 8;//战力
 		optional string nick = 9;//nick
-		
 	}
 	
-	//1022 挂机玩家列表 返回
+	//1110 挂机玩家列表 返回
 	message GetGuajiRoleListResult {
 		repeated GuajiRoleInfo guaji_role_infos = 1;
 	}
 	
-	//1023 请求对应角色阵型
+	//pid = 1111 C2S 挑战其他玩家
+	message ChallengePlayer{
+		optional int32 type = 1;//1:挂机挑战其他玩家
+		optional int64 role_id = 2;//其他玩家role_id
+	}
+	
+	//pid = 1111 挑战其他玩家 返回
+	message ChallengePlayerResult {
+		optional bool is_can_change = 1;//是否可以挑战
+		repeated FightingAttr team_1 = 2;//队伍1
+		repeated FightingAttr team_2 = 3;//队二(其他)
+	}
+}
+
+//推送变化  1201- 1300 
+message NoticeMsg {
+	
+	//pid = 1201 服务器主动通知客户端 背包中道具变化(such as:掉落时候 )
+	message Notice2CProp
+	{
+		repeated PropStruct prop = 1;//道具
+	}
+	
+	//pid = 1202服务器主动背包中装备变化通知客户端(such as:掉落时候 ) 
+	message Notice2CEquip
+	{
+		repeated EquipStruct equip = 1;//装备 添加与更新
+	}	
+
+	//pid = 1203 服务器通知客户端玩家基础属性变化 
+	message Notice2CRoleInfo
+	{
+		optional int32 level = 1;//等级
+		optional int32 exp = 2;//经验
+		optional int32 power = 3;//战力
+		optional int32 hp = 4;//血量
+	}
+	
+	//pid = 1204 钱变化
+	message Notice2CMoney {
+		optional int32 gold = 1;//金币
+		optional int32 diamond = 2;//元宝
+	}
+	
+	//pid = 1205 体力变化
+	message Notice2CEnergy {
+		optional int32 energy = 1;//当前体力 
+		optional int32 energy_max = 2;//体力上线 
+	}
+	
+	//pid = 1206 关卡变化
+	message Notice2CheckPoint
+	{
+		optional Stage latest_checkpoint = 1;//最新关卡
+	}
+	
+	
+	//pid = 1207 离线挂机收益
+	message OffNotice2CGuaji 
+	{
+		optional int32 point_id = 1;//挂机关卡id
+		optional int32 gold = 2;//获取的金币
+		optional int32 exp = 3;//获取的经验
+		optional int32 guaji_time = 4;//挂机时间(秒)
+		optional int32 kill_npc_num = 5;//击杀XX个怪物
+		repeated int32 equip_uids = 6;//随机掉落的装备
+		repeated RwardProp prop_uids = 7;//随机掉落的道具
+	}
+	
+	//pid = 1208 服务器通知客户端消息
+	message Notice2CMsg {
+		optional int32 msg = 1;//(1:装备背包满 2：道具背包满)
+	}
+	
+	//pid = 1209  英雄对应属性改变 推送
+	message Notice2CHero
+	{
+		optional int32 hero_uid = 1;
+	    optional int32 step_level = 2;//阶变化
+		optional int32 star_level = 3;//星级变化
+		optional int32 level = 4;//等级
+		optional int32 exp = 5;//经验
+		repeated Attribute hero_attr = 6;//属性 group=0总和 group=1基础属性 group=2升星 group=3升阶
+	}
+	
+	//pid = 1210   移除推送
+	message Notice2CRemove
+	{
+		optional int32 type = 1;//1装备分解 2英雄分解
+		repeated int32 uid  = 2;
+	}
+	
+	//pid = 1212 推送新英雄
+	message NoticeGetHeros {
+		repeated FightingAttr heros = 1;//获取英雄推送
+	}
+	
+	//pid 1214 推送新任务
+	message Notice2CNewTask
+	{
+		optional TaskInfo task  = 1;
+	}
+	
+	//pid = 1215 推送当前可以接受的手动接取任务id
+	message Notice2CCanAccept {
+		repeated TaskType can_accept_tasks = 1;//可以手动接取的任务
+	}
+	
+	
+	//pid 1216 当前任务变化(用来更新任务进度)
+	message Notice2CUpdateProgress
+	{
+		optional TaskType type_info = 1;
+		optional SubItem subitem = 2;
+	}
+	
+
+	//pid 1217 推送自动提交任务所获取的奖励
+	message SubmitTask {
+		optional TaskType type_info = 1;//类型
+		optional int32 gold = 2;//铜钱
+		optional int32 role_exp = 3;//主角exp
+		repeated RwardProp props = 4;//所获道具
+		repeated int32 equip_uids = 5;//装备uid
+		repeated int32 hero_uids = 6;//英雄
+	}
+
+	//pid 1218 推送非自动提交 已完成任务,客户端需手动提交任务获取奖励
+	message Notice2CHandleTask {
+		optional TaskType type_info = 1;//类型
+	}
+ 
+	//pid 1219 成就进度变化
+	message Notice2CAchievementChange {
+		repeated AchievementInfo infos = 1;//成就变化
+	}
+}
+
+
+//阵型相关 1301-1400
+message Formation {
+
+	message FormationStruct {//阵型
+		optional int32 hero_id = 1;//英雄id
+		optional int32 hero_uid = 2;//英雄唯一标识
+		optional int32 pos = 3;//位置
+	}
+	
+	//1301 请求对应角色阵型
 	message GetGuajiRoleFormation {
 		optional int64 role_id = 1;//主角id
 		optional int32 type = 2;//(1竞技场，2副本&挂机)
 	}
 	
-	
-	//1023 请求对应role阵型 返回
+	//1301 请求对应role阵型 返回
 	message GetGuajiRoleFormationResult {
 		optional int32 type = 1;//(1竞技场，2副本&挂机)
 		optional int32 result = 2;//0：允许 1：对应role_id 不在线
 		repeated FormationStruct formations = 3;
 	}
 	
-	//1024 英雄上阵 下阵
+	//1302 英雄上阵 下阵
 	message HerosFormation {
 		optional int32 type = 1;//(1竞技场，2副本&挂机)
 		optional bool  is_on = 2;//(true 上阵 false 下阵)
@@ -384,78 +468,293 @@ message Game {
 		optional int32 hero_uid = 4;//英雄uid
 	}
 	
-	//1024 英雄上阵 下阵 返回
+	//1302 英雄上阵 下阵 返回
 	message HerosFormationResult {
 		optional int32 result = 1;//(0:ok 1:失败 2:非法数据)
 	}
 	
-	//1025 位置交换
+	//1303 位置交换
 	message ChangeHerosFormation {
 		optional int32 type = 1; //(1竞技场，2副本&挂机)
-		optional int32 pos_id_1 = 2; 
-		optional int32 pos_id_2 = 3; 
+		optional int32 pos_id_1 = 2; //from
+		optional int32 pos_id_2 = 3; //to
 	}
 	
-	//1025 位置交换 返回
+	//1303 位置交换 返回
 	message ChangeHerosFormationResult {
 		optional int32 result = 1;//(0:ok 1:失败 2:非法数据)
 	}
-	
-	//pid = 1026 C2S 挑战其他玩家
-	message ChallengePlayer{
-		optional int32 type = 1;//1:挂机挑战其他玩家
-		optional int64 role_id = 2;//其他玩家role_id
-	}
-	
-	//pid = 1026 挑战其他玩家 返回
-	message ChallengePlayerResult {
-		optional bool is_can_change = 1;//是否可以挑战
-		repeated HeroStruct team_2 = 2;//队二(其他)
-	}
-	
-	//pid = 1027 使用某道具
-	message UseProp {
-		optional int32 uid = 1;//某个道具uid
-		optional int32 count = 2;//数量 
-	}
-	
-	//pid = 1027 使用某道具 返回
-	message UsePropResult {
-		optional int32 result = 1;//0:ok 1:不存该道具id 2:道具总量少于请求数量
-	}
-	
-	//pid = 1028 服务器通知客户端消息
-	message Notice2CMsg {
-		optional int32 msg = 1;//(1:装备背包满 2：道具背包满)
-	}
-	
-	//pid = 1029 查看道具背包
-	message CheckPropBag {
-	}
-	
-	//pid = 1029 查看道具背包 返回
-	message CheckPropBagResult {
-		repeated PropStruct prop_struct = 1;//道具相关
-	}
-	
-	//pid = 1030 查看道具背包
-	message CheckEquipBag {
-	}
-	
-	//pid = 1030 查看道具背包 返回
-	message CheckEquipBagResult {
-		repeated EquipStruct equip_struct = 1;//所有装备列表
-	}
-	
-	//pid = 1031 获取角色的英雄相关信息
+}
+
+
+//英雄1401-1500
+message Hero {
+
+	//pid = 1401 获取角色的英雄相关信息
 	message GetHeros {
 		optional int64 role_id = 1;//角色id
 		optional int32 type = 2;//1:全部英雄 2:只获取竞技场上的英雄 3:挂机 关卡阵型上的英雄
 	}
 	
-	//pid = 1031 获取角色的英雄相关信息
+	//pid = 1401 获取角色的英雄相关信息
 	message GetHerosResult {
-		repeated HeroStruct heros = 1;
+		optional int32 result = 1;//0:ok 1:role_id 未找到或者未上线
+		repeated FightingAttr heros = 2;
+	}
+	
+	//pid = 1402 英雄升阶请求
+	message StepHero {
+		optional int32 hero_uid = 1;
+	}
+	
+	//pid = 1402  英雄升阶请求 返回
+	message StepHeroResult {
+		optional int32 result = 1;//0:ok 1：等级不足 2：金币不足 3：材料不足 4：非法数据
+	}
+	
+	//pid = 1403 升星
+	message StarHero {
+		optional int32 hero_uid = 1; 
+	}
+	
+	//pid = 1403  升星 返回
+	message StarHeroResult {
+		optional int32 result = 1;//0:ok 1：材料不足 2：非法数据
+	}
+	
+	//pid = 1404 天赋开启id
+	message OpenHeroGift {
+		optional int32 hero_uid = 1;
+		repeated int32 id = 2;//编号id
+	}
+	
+	//pid = 1404  天赋开启 返回
+	message OpenHeroGiftResult {
+		optional int32 result = 1;//0:ok 1:等级不足
+	}
+	
+	//pid = 1405 英雄升级
+	message HeroLevelUp {
+		optional int32 hero_uid = 1; 
+		optional int32 prop_id = 2;//所需物品id
+		optional int32 count = 3;//数量
+	}
+	
+	//pid = 1405 英雄升级 返回
+	message HeroLevelUpResult {
+		optional int32 result = 1; //0成功 1:道具不足
+	}
+}
+
+//道具 装备相关 1501-1600
+message Goods {
+	//pid = 1501 使用某道具
+	message UseProp {
+		optional int32 uid = 1;//某个道具uid
+		optional int32 count = 2;//数量 
+	}
+	
+	//pid = 1501 使用某道具 返回
+	message UsePropResult {
+		optional int32 result = 1;//0:ok 1:不存该道具id 2:道具总量少于请求数量
+	}
+	
+	//pid = 1502 穿戴 或 卸载某装备
+	message UseEquip {
+		optional int32 equip_uid = 1;
+		optional int32 pos = 2;//阵型位置
+		optional int32 type = 3;//1穿戴 2卸载
+	}
+	
+	//pid = 1502 穿戴 或 卸载某装备 返回
+	message UseEquipResult{
+		optional int32 result = 1; //0:ok 1:失败等级不足
+	}
+	
+	//pid = 1503 //装备强化
+	message EquipStrengthen {
+		optional int32 equip_uid = 1;
+	}
+	
+	//pid = 1503 //装备强化 返回
+	message EquipStrengthenResult{
+		optional int32 result = 1; //0:ok 1:强化等级不足 2：铜钱不足 3：道具不足 4:非法数据
+	}
+	
+	//pid = 1504 //装备精炼
+	message EquipRefine {
+		optional int32 equip_uid = 1;
+	}
+	
+	//pid = 1504 //装备精炼 返回
+	message EquipRefineResult{
+		optional int32 result = 1; //0:ok 1:强化等级不足 2：铜钱不足 3：道具不足 4:非法数据
+	}
+	
+	//pid = 1505 //装备分解
+	message EquipDecompose {
+		repeated int32 equip_uids = 1;
+	}
+	
+	//pid = 1505 //装备分解 返回
+	message EquipDecomposeResult{
+		optional int32 result = 1; //0:ok 1:失败
+	}
+	
+	//pid = 1506 道具出售
+	message SaleProp {
+		optional int32 prop_uid = 1;
+		optional int32 count = 2;
+	}
+	
+	//pid = 1506 道具出售 Result
+	message SalePropResult {
+		optional int32 result = 1;//0:ok 1:uid不存在 2:出售数量大于拥有数量
+	}
+}
+
+
+//GM 1601-1700 xxx:数量 id:对应类型id
+//gold xxx 
+//diamond xxx
+//energy xxx
+//exp xxx
+//prop id xxx
+//equip id xxx
+//hero id
+message GM {
+	//pid = 1601	 
+	message Msg {
+		optional string msg = 1;
+	}
+	
+	//pid = 1601	 
+	message MsgResult {
+		optional int32 result = 1;//0:ok 1:不能识别的GM指令
 	}
 	
 }
+
+//活动 1701-1800
+message Activity {
+	
+	//pid = 1701 扭蛋
+	message NiuDan {
+		optional int32 type = 1;//1:单抽 2:10连抽
+		optional int32 type_group = 2;//抽卡类型(看配置102)
+	}
+	
+	//pid = 1701 扭蛋 返回
+	message NiuDanResult {
+		optional int32 result = 1;//0:ok 1:等级不足 2:消耗道具不足 3:抽卡地址传入配置表未找到
+		repeated PropStruct props = 2;//获取道具
+		repeated int32 gold = 3;//获取金币
+		repeated int32 hero_uids = 4;//获取的英雄uids
+	}
+	
+	//pid = 1702 免费刷新请求
+	message FreeRefresh {
+	}
+	
+	//pid = 1702 免费刷新请求 Result
+	message FreeRefreshResult {
+		optional int32 one_free_last1 = 1;//单抽1免费刷新剩余时间
+		optional int32 ten_free_last1 = 2;//十连抽免费刷新剩余时间
+		optional int32 one_free_last2 = 3;//单抽1免费刷新剩余时间
+		optional int32 ten_free_last2 = 4;//十连抽免费刷新剩余时间
+	}
+}
+
+
+//任务系统 1801-1900
+message Task {
+
+	//pid = 1801 当前所有满足任务 
+	message AllTask
+	{
+	}
+	
+	//pid = 1801 当前所有满足任务 
+	message AllTaskResult
+	{
+		repeated TaskInfo tasks  = 1;
+	}
+	
+	//pid 1802 c2s手动接受任务
+	message AcceptTask {
+		optional TaskType task_info = 1;
+	}
+	
+	//pid 1802 c2s手动接受任务 返回
+	message AcceptTaskResult {
+		optional int32 result = 1;//0:ok 1:任务接取达到上线 2:不能识别的任务
+	}
+	
+	//pid 1803 c2s 手动提交任务获取奖励
+	message SubmitTask {
+		optional TaskType task_info = 1;
+	}
+	
+	//pid 1803 c2s 手动提交任务获取奖励 返回
+	message SubmitTaskResult {
+		optional int32 result = 1;//0:ok 1:任务未完成不能领取奖励
+		optional int32 gold = 2;//铜钱
+		optional int32 role_exp = 3;//主角exp
+		repeated RwardProp props = 4;//所获道具
+		repeated int32 equip_uids = 5;//装备uid
+		repeated int32 hero_uids = 6;//英雄
+	}
+	
+		
+	//pid 1821 c2s 获取悬赏任务相关
+	message GetXuanShangInfo {
+	}
+	
+	//pid 1821 c2s 获取悬赏任务相关 Result
+	message GetXuanShangInfoResult {
+		optional int32 last_num = 1;//悬赏任务可完成剩余次数
+		optional int32 free_last_time = 2;//悬赏免费刷新剩余时间(0表示可以免费刷新)
+	}
+	
+	//pid 1822 悬赏元宝刷新请求
+	message XuanShangDiamondRef  {
+ 
+	}
+	
+	//pid 1822 c2s 悬赏元宝刷新请求 Result
+	message XuanShangDiamondRefResult {
+		optional int32 result = 1;//0:ok 1:元宝不足 2:刷新任务次数已用完
+	}
+	
+	//pid 1824 任务放弃
+	message GiveUpTask {
+		optional TaskType task = 1;
+	}
+	
+	//pid 1824 任务放弃 返回
+	message GiveUpTaskResult {
+		optional int32 result = 1; //0:成功 1:不能放弃该任务
+	}
+	 
+	//pid 1851 请求获取成就列表
+	message GetAchievement {
+	}
+	
+	//pid 1851 请求获取成就完成列表 Result
+	message GetAchievementResult {
+		repeated AchievementInfo infos = 1;//成就列表
+	}
+	
+	//pid 1852 请求领取成就奖励
+	message GetAchievementReward {
+		optional int32 id = 1;//成就id
+	}
+	
+	//pid 1852 请求领取成就奖励 Result
+	message GetAchievementRewardResult {
+		optional int32 result = 1;//0:ok 1:该任务未完成 2:已经领取 3:未查询到该任务id
+		repeated RwardProp props = 4;//道具
+	}
+
+}
+	

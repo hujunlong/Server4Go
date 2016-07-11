@@ -7,19 +7,20 @@ import (
 	"math/rand"
 	"net"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/game_engine/cache/redis"
 )
 
-var Csv *CsvConfig                     //CSV 配置
-var Sys_config *SysConfig              //系统配置
-var Json_config *JsonConfig            //json 配置
-var rand_ *rand.Rand                   //随机数
-var Global_Uid int32 = 0               //uid
+var Csv *CsvConfig          //CSV 配置
+var Sys_config *SysConfig   //系统配置
+var Json_config *JsonConfig //json 配置
+var rand_ *rand.Rand        //随机数
+var Global_Uid int32 = 0    //uid
+
 var global_guaji_players *GuajiPlayers //全局的玩家进入关卡数据
 var word *World                        //全局玩家
+var timer_Manager *TimerManager        //全局定时刷新
 
 func createbeginUid() int32 {
 	t1 := int(time.Now().Unix())
@@ -64,13 +65,17 @@ func init() {
 		Global_Uid += 200 //解决宕机后Global_uid未存储
 	}
 
-	//world 初始化
+	//全局world 初始化
 	word = new(World)
 	word.Init()
 
-	//各个关卡挂机玩家
+	//全局各个关卡挂机玩家
 	global_guaji_players = new(GuajiPlayers)
 	global_guaji_players.Init()
+
+	//定时器
+	timer_Manager = new(TimerManager)
+	timer_Manager.Init()
 }
 
 func SendPackage(conn net.Conn, pid int32, body []byte) {
@@ -87,6 +92,7 @@ func SendPackage(conn net.Conn, pid int32, body []byte) {
 	msg := append(len_buf.Bytes(), pid_buf.Bytes()...)
 	msg2 := append(msg, body...)
 	conn.Write(msg2)
+	fmt.Println("发送数据：id=", pid)
 }
 
 func GetUid() int32 {
@@ -117,56 +123,22 @@ func writeInfo(str string) {
 	//Log.Error(str)
 }
 
-func randGold(data int32) int32 {
-	if data < 10 {
-		return 10
-	}
-	index := Csv.property.index_value["102"]
-	data_float32 := Csv.property.simple_info_map[2009][index]
-
-	var float_32 float32 = float32(data) * data_float32 / 10000.0
-	rand_data := rand_.Int31n(int32(float_32))
-	return data + rand_data
-}
-
 //产生随机数
-func randGoodsNum(min int32, max int32) int32 {
+func RandNum(min int32, max int32) int32 {
 	if max < min {
 		return 0
 	}
+
 	if min == max {
 		return min
 	}
-	fmt.Println("randGoodsNum min max", min, max)
+	fmt.Println("RandNum min max", min, max)
 	var num int32 = min
 	num += int32(rand_.Intn(int(max - min)))
 	return num
 }
 
-func randStr2int32(str string) int32 {
-	var num int32 = 0
-	if strings.Contains(str, "-") {
-		strs := strings.Split(str, "-")
-		if len(strs) == 2 {
-			min_str := strings.TrimSpace(strs[0])
-			max_str := strings.TrimSpace(strs[1])
-
-			min_int, _ := strconv.Atoi(min_str)
-			max_int, _ := strconv.Atoi(max_str)
-
-			//产生随机数
-			num = int32(rand_.Intn(int(max_int - min_int)))
-			num += int32(min_int)
-		}
-	} else {
-		min_int, _ := strconv.Atoi(str)
-		num = int32(min_int)
-	}
-
-	return num
-}
-
-func getRandomIndex(list []int32) int {
+func GetRandomIndex(list []int32) int32 {
 	var count int32 = 0
 	for _, v := range list {
 		count += v
@@ -177,8 +149,22 @@ func getRandomIndex(list []int32) int {
 	for i, v := range list {
 		total_rand += v
 		if rand_num <= total_rand {
-			return i
+			return int32(i)
 		}
 	}
 	return 0
+}
+
+func Str2float32(str string) float32 {
+	if len(str) <= 0 {
+		return 0
+	}
+
+	f, err := strconv.ParseFloat(str, 32)
+	if err != nil {
+		writeInfo("can't to number %s=" + str)
+		return 0
+	}
+
+	return float32(f)
 }

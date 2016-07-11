@@ -52,8 +52,9 @@ func Find(key interface{}, inter interface{}) error {
 		buf := bytes.NewBuffer(data)
 		dec := gob.NewDecoder(buf)
 		dec.Decode(inter)
+		fmt.Println("数据库中数据:", inter)
 	} else {
-		fmt.Println("err:", err)
+		//fmt.Println("err:", err)
 	}
 	return err
 }

@@ -66,6 +66,7 @@ func (this *Deal4G) Handler4Game(conn net.Conn) {
 			if err := proto.Unmarshal(buf[8:n], get_account); err == nil {
 				key := get_account.GetGameId()
 				this.GameConnects[key] = ConnectInfo{key, get_account.GetGameAddress(), get_account.GetCount(), conn}
+				fmt.Println("get_account.GetGameAddress():", get_account.GetGameAddress(), "num:", get_account.GetCount())
 			} else {
 				fmt.Println(err)
 			}

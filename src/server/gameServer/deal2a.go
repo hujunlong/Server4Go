@@ -1,7 +1,7 @@
 package main
 
 import (
-	//"fmt"
+	"fmt"
 	"net"
 	"server/gameServer/game"
 	"server/share/protocol"
@@ -23,7 +23,6 @@ func (this *Deal2A) Init() {
 	this.server_note_address = sys_config.ServerNoteAddress
 	this.server_id = sys_config.GameId
 	this.server_count = 0
-
 }
 
 func (this *Deal2A) send2AccountMenber() {
@@ -36,7 +35,6 @@ func (this *Deal2A) send2AccountMenber() {
 
 	encObj, _ := proto.Marshal(result2A)
 	SendPackage(conn2a, 101, encObj)
-
 }
 
 func (this *Deal2A) Task(pid int32, buf []byte, n int) {
@@ -62,6 +60,7 @@ func (this *Deal2A) NoteGame(player_id int64) {
 	if !is_exists {
 		redis.Modify(player_id, "")
 	}
+	fmt.Println("通知账号服务", player_id)
 }
 
 //账号服务器通知game服务器 消息下发

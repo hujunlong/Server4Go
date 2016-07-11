@@ -2,11 +2,11 @@
 package game
 
 import (
-	"fmt"
+	//"fmt"
 	//"strconv"
 	"sync"
 
-	"github.com/game_engine/timer"
+	//"github.com/game_engine/timer"
 )
 
 type World struct {
@@ -17,12 +17,6 @@ type World struct {
 func (this *World) Init() {
 	this.worldMutex = new(sync.RWMutex)
 	this.players = make(map[int64]*Player)
-
-	//定时器开启
-	index_property := Csv.property.index_value["102"]
-	distance_time := int(Csv.property.simple_info_map[2057][index_property])
-	timer.CreateTimer(1, true, this.TimerDealEnergy)
-	fmt.Println(distance_time)
 }
 
 func (this *World) SearchPlayer(ID int64) *Player {
@@ -37,15 +31,4 @@ func (this *World) EnterWorld(player *Player) {
 
 func (this *World) ExitWorld(player_id int64) { //退出游戏
 	delete(this.players, player_id)
-}
-
-func (this *World) TimerDealEnergy() { //在线体力恢复
-
-	for _, v := range this.players {
-		//在线推送体力恢复
-		if v.Info.EnergyMax > v.Info.Energy {
-			v.Info.Energy += 1
-			v.Notice2CEnergy()
-		}
-	}
 }

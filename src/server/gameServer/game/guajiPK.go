@@ -32,29 +32,29 @@ type GuajiPK struct {
 
 func (this *GuajiPK) Init() {
 
-	this.pk_open_level = int32(Csv.property.simple_info_map[2062][1])
+	this.pk_open_level = int32(Csv.property[2062].Id_102)
 
-	this.pk_num = int32(Csv.property.simple_info_map[2063][1])
+	this.pk_num = int32(Csv.property[2063].Id_102)
 
-	this.pked_num = int32(Csv.property.simple_info_map[2064][1])
+	this.pked_num = int32(Csv.property[2064].Id_102)
 
-	this.pk_consumer_yuanbao = int32(Csv.property.simple_info_map[2065][1])
+	this.pk_consumer_yuanbao = int32(Csv.property[2065].Id_102)
 
-	this.pk_protect_time = int32(Csv.property.simple_info_map[2066][1])
+	this.pk_protect_time = int32(Csv.property[2066].Id_102)
 
-	this.pk_cd = int32(Csv.property.simple_info_map[2067][1])
+	this.pk_cd = int32(Csv.property[2067].Id_102)
 
-	this.pk_less_per = int32(Csv.property.simple_info_map[2068][1])
+	this.pk_less_per = int32(Csv.property[2068].Id_102)
 
-	this.pk_less_time = int32(Csv.property.simple_info_map[2069][1])
+	this.pk_less_time = int32(Csv.property[2069].Id_102)
 
-	this.pk_other_less_per = int32(Csv.property.simple_info_map[2076][1])
+	this.pk_other_less_per = int32(Csv.property[2076].Id_102)
 
-	this.pk_other_less_time = int32(Csv.property.simple_info_map[2070][1])
+	this.pk_other_less_time = int32(Csv.property[2070].Id_102)
 
-	this.pk_fanji_yuanbao = int32(Csv.property.simple_info_map[2071][1])
+	this.pk_fanji_yuanbao = int32(Csv.property[2071].Id_102)
 
-	this.pk_buy_num = int32(Csv.property.simple_info_map[2075][1])
+	this.pk_buy_num = int32(Csv.property[2075].Id_102)
 
 	Log.Info("pk_open_level = %d pk_num=%d pked_num =%d pk_consumer_yuanbao = %d pk_protect_time = %d pk_cd = %d pk_less_per=%d pk_less_time = %d pk_other_less_per = %d pk_other_less_time = %d pk_fanji_yuanbao=%d pk_buy_num = %d", this.pk_open_level, this.pk_num, this.pked_num, this.pk_consumer_yuanbao, this.pk_protect_time, this.pk_cd, this.pk_less_per, this.pk_less_time, this.pk_other_less_per, this.pk_other_less_time, this.pk_fanji_yuanbao, this.pk_buy_num)
 }
@@ -107,8 +107,6 @@ func (this *GuajiPK) GetPKLessTime() int32 {
 		return (this.pk_less_time + this.Pk_less_time - now)
 	}
 }
-
-//使用购买次数剩余
 
 //获取最新状况
 func (this *GuajiPK) GetGuajiNowInfo() (int32, int32) {
